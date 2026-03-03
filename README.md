@@ -1,6 +1,3 @@
-# powerbi-portfolio
-Power BI reports and dashboards with clean Nordic-inspired design.
-
 # Power BI Portfolio
 
 This repository showcases my Power BI reports and dashboards, with a focus on clean, Nordic-inspired design and effective storytelling.
