@@ -1,0 +1,77 @@
+{
+    "name": "Nordic-Minimal",
+    
+    "dataColors": [
+        "#4A90A7",  // Muted Nordic blue (main accent)
+        "#7AB8C7",  // Light blue (secondary)
+        "#E8F4F8",  // Ice blue (positive/neutral)
+        "#D9E6F2",  // Light grey-blue (backgrounds)
+        "#F8F9FA",  // Near-white (main bg)
+        "#6C757D",  // Soft grey (text)
+        "#28A745",  // Subtle green (gains, muted)
+        "#DC3545"   // Subtle red (losses, muted)
+    ],
+    
+    "background": "#F8F9FA",
+    "foreground": "#2C3E50",
+    
+    "tableAccent": "#4A90A7",
+    
+    "visualStyles": {
+        "title": [{
+            "fontColor": { "solid": { "color": "#2C3E50" } },
+            "fontSize": 16,
+            "fontFamily": "Segoe UI",
+            "bold": true
+        }],
+        "*": {
+            "background": [{
+                "color": { "solid": { "color": "#FFFFFF" } }
+            }],
+            "*": {
+                "fontColor": { "solid": { "color": "#2C3E50" } },
+                "fontFamily": "Segoe UI"
+            }
+        },
+        "tableEx": {
+            "*": {
+                "grid": [{
+                    "gridVertical": false,
+                    "gridHorizontal": false,
+                    "outline": "None"
+                }]
+            }
+        },
+        "card": {
+            "*": {
+                "background": [{ "color": { "solid": { "color": "#FFFFFF" } } }]
+            }
+        }
+    },
+    
+    "textClasses": {
+        "title": [{
+            "fontSize": 16,
+            "fontColor": { "solid": { "color": "#2C3E50" } },
+            "fontFamily": "Segoe UI",
+            "bold": true
+        }],
+        "header": [{
+            "fontSize": 14,
+            "fontColor": { "solid": { "color": "#2C3E50" } },
+            "fontFamily": "Segoe UI",
+            "bold": true
+        }],
+        "callout": [{
+            "fontSize": 24,
+            "fontColor": { "solid": { "color": "#2C3E50" } },
+            "fontFamily": "Segoe UI",
+            "bold": true
+        }],
+        "body": [{
+            "fontSize": 12,
+            "fontColor": { "solid": { "color": "#495057" } },
+            "fontFamily": "Segoe UI"
+        }]
+    }
+}
