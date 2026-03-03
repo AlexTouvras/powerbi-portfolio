@@ -10,12 +10,12 @@ This repository showcases my Power BI reports and dashboards, with a focus on cl
 
 ## Projects
 
-> These projects are in progress. I will add links and screenshots as each one is completed.
+> These projects are in progress. I will add files as each one is completed.
 
 1. **01 – finance**  
    High-level view of revenue, profit, and key sales KPIs over time and stock market reports
 
-5. **05 – Public Data Dashboard**  
+5. **02 – Public Data Dashboard**  
    A dashboard built on open data (e.g. sports, unemployment, or global indicators).
 
 ## Design system
