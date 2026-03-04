@@ -152,21 +152,7 @@
         "title": [{"show":false}]
       }
     },
-
-    "slicer": {
-      "*": {
-        "background": [{"show":true,"color":{"solid":{"color":"#FFFFFF"}},"transparency":0}],
-        "effects": [{"background":{"transparency":100}}],
-        "items": [{
-          "fontColor": {"solid":{"color":"#2C3E50"}},
-          "background": {"solid":{"color":"#4A90A7"},"transparency":10},
-          "outline": "None",
-          "textSize": 11,
-          "fontFamily": "Segoe UI"
-        }]
-      }
-    },
-
+    
     "donutChart": {
       "*": {
         "legend": [{"show":false}],
