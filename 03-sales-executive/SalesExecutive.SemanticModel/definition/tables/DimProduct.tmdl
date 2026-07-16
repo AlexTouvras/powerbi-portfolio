@@ -1,0 +1,73 @@
+table DimProduct
+	lineageTag: c2660bef-41e1-4fe6-85eb-3d8ab1cff028
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 994e0db2-f979-498a-b76b-2dbdc8b969b5
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column ProductID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1be89531-9e1e-4c62-8710-b5ca20408102
+		summarizeBy: none
+		sourceColumn: ProductID
+
+	column ProductNumber
+		dataType: string
+		isHidden
+		lineageTag: 3757c43e-d9fc-42e2-8831-5e3a7b18db0f
+		sourceColumn: ProductNumber
+
+	column ProductName
+		dataType: string
+		lineageTag: 8b35bb77-9eec-422b-aabf-59e3cc4302bf
+		sourceColumn: ProductName
+
+	column CategoryId
+		dataType: string
+		isHidden
+		lineageTag: b2ac8964-3cb7-4b3e-bbf8-13bff8a66f9f
+		sourceColumn: CategoryId
+
+	column Category
+		dataType: string
+		lineageTag: e17e8304-6d00-4042-b091-0f7599799b92
+		sourceColumn: Category
+
+	column Subcategory
+		dataType: string
+		lineageTag: 01272ed8-ed5b-44c7-8d5a-82d93834c976
+		sourceColumn: Subcategory
+
+	column ProductLine
+		dataType: string
+		lineageTag: c67062a0-bb31-49d8-83cb-f38d571fc07f
+		sourceColumn: ProductLine
+
+	column Cost
+		dataType: double
+		formatString: $#,0.00
+		lineageTag: f5075468-624d-4fa2-9afd-f5aab633c9ac
+		summarizeBy: none
+		sourceColumn: Cost
+
+	column Maintenance
+		dataType: string
+		isHidden
+		lineageTag: c2c6bdf0-3a06-48e6-9022-d3aaa1714322
+		sourceColumn: Maintenance
+
+	partition DimProduct = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimProduct.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"ProductKey", Int64.Type}, {"ProductID", Int64.Type}, {"ProductNumber", type text}, {"ProductName", type text}, {"CategoryId", type text}, {"Category", type text}, {"Subcategory", type text}, {"ProductLine", type text}, {"Cost", type number}, {"Maintenance", type text}})
+				in
+					#"Changed Type"
+

@@ -1,0 +1,27 @@
+relationship FactSales_DimDate
+	fromColumn: FactSales.OrderDate
+	toColumn: DimDate.Date
+
+relationship FactSales_DimCustomer
+	fromColumn: FactSales.CustomerKey
+	toColumn: DimCustomer.CustomerKey
+
+relationship FactSales_DimProduct
+	fromColumn: FactSales.ProductKey
+	toColumn: DimProduct.ProductKey
+
+relationship 8de63620-a45d-4f4d-b166-39e9f22320bc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: FactSales.ShippingDate
+	toColumn: LocalDateTable_f7b607ec-1fb3-4b71-a781-7d13b79b30e1.Date
+
+relationship 537c69c3-8ef0-42d4-a486-02122f1c332b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: FactSales.DueDate
+	toColumn: LocalDateTable_5a4945f2-52dd-44c8-b759-18fcf31e3a6c.Date
+
+relationship 5fb626a6-f6ad-49b9-9d33-897c6a55a00a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: DimCustomer.Birthdate
+	toColumn: LocalDateTable_9f6220f2-d345-4b3d-a72a-31603f6f2827.Date
+

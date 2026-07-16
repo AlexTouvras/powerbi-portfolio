@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["GoldDataFolder","FactSales","DimDate","DimCustomer","DimProduct"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref expression GoldDataFolder
+ref table FactSales
+ref table DimDate
+ref table DimCustomer
+ref table DimProduct
+ref table DateTableTemplate_ac449ce0-6815-4a7a-a522-bc474626d2ea
+ref table LocalDateTable_f7b607ec-1fb3-4b71-a781-7d13b79b30e1
+ref table LocalDateTable_5a4945f2-52dd-44c8-b759-18fcf31e3a6c
+ref table LocalDateTable_9f6220f2-d345-4b3d-a72a-31603f6f2827
+

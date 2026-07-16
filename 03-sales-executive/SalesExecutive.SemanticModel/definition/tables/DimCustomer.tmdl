@@ -1,0 +1,104 @@
+table DimCustomer
+	lineageTag: 794618b3-e5e3-4aa3-bd53-1fea52f13f26
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a1f1e31-1a02-4f10-b8a7-534864d23955
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+	column CustomerID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 32fa0710-8095-45c5-85d8-558a711949f6
+		summarizeBy: count
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerNumber
+		dataType: string
+		isHidden
+		lineageTag: 77efaf2d-04fa-44b0-85b8-c709261d961f
+		summarizeBy: none
+		sourceColumn: CustomerNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: dafd7444-2b7f-475a-9364-cd1539a3332d
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstName
+		dataType: string
+		isHidden
+		lineageTag: e3ea103a-c12b-469b-be66-bbd5b4830741
+		summarizeBy: none
+		sourceColumn: FirstName
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastName
+		dataType: string
+		isHidden
+		lineageTag: 5747dea5-2778-4411-964e-f5bc9ec85152
+		summarizeBy: none
+		sourceColumn: LastName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: cfc3682d-8156-4082-b7bc-124a48fa8cb8
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaritalStatus
+		dataType: string
+		lineageTag: 6fbbf56d-924f-4c49-8572-a3716f63b1ef
+		summarizeBy: none
+		sourceColumn: MaritalStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: 45772dab-2377-4d34-9fba-dd3a34b678db
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column Birthdate
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 14497b21-1a69-4fe5-b2a0-99f71907c63a
+		summarizeBy: none
+		sourceColumn: Birthdate
+
+		variation Variation
+			isDefault
+			relationship: 5fb626a6-f6ad-49b9-9d33-897c6a55a00a
+			defaultHierarchy: LocalDateTable_9f6220f2-d345-4b3d-a72a-31603f6f2827.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition DimCustomer = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerKey", Int64.Type}, {"CustomerID", Int64.Type}, {"CustomerNumber", type text}, {"CustomerName", type text}, {"FirstName", type text}, {"LastName", type text}, {"Country", type text}, {"MaritalStatus", type text}, {"Gender", type text}, {"Birthdate", type nullable date}})
+				in
+					#"Changed Type"
+

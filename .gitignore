@@ -416,3 +416,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Power BI / local tooling
+*.pbix
+*.pbit
+.cursor/
+**/AnalysisServicesState*/
+**/.pbi/
+

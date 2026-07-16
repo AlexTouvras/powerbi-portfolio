@@ -1,0 +1,298 @@
+table FactSales
+	lineageTag: c744a607-82d3-418f-b3f7-c08cb64fb054
+
+	/// Total sales revenue
+	measure Revenue = SUM(FactSales[SalesAmount])
+		formatString: $#,0
+		lineageTag: 95139073-2b9c-4a2a-a283-dcb2dc6e2edb
+
+	/// Distinct order count
+	measure Orders = DISTINCTCOUNT(FactSales[OrderNumber])
+		formatString: #,0
+		lineageTag: 40580762-0783-4d45-a452-260f34036437
+
+	/// Units sold
+	measure Units = SUM(FactSales[Quantity])
+		formatString: #,0
+		lineageTag: 06b3b846-e03b-4cf1-bfe7-b14757bdda26
+
+	/// Average order value
+	measure AOV = DIVIDE([Revenue], [Orders])
+		formatString: $#,0.00
+		lineageTag: 82b46b9a-de5b-403b-9580-f62ac2eca6d3
+
+	/// Distinct customers
+	measure Customers = DISTINCTCOUNT(FactSales[CustomerKey])
+		formatString: #,0
+		lineageTag: 956eb958-48c6-4ae7-b36c-9329b748b5aa
+
+	/// Prior-year revenue via Year offset (works with Year slicer; needs continuous DimDate)
+	measure 'YoY Revenue' =
+			VAR yearsInScope = VALUES(DimDate[Year])
+			RETURN
+				CALCULATE(
+					[Revenue],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+		formatString: $#,0
+		lineageTag: 579b3b31-7df1-40d1-a8ea-5d2bf0c433db
+
+	measure 'YoY Revenue %' =
+			VAR cur = [Revenue]
+			VAR prev = [YoY Revenue]
+			RETURN IF(ISBLANK(prev) || prev = 0, BLANK(), DIVIDE(cur - prev, prev))
+		formatString: 0.0%
+		lineageTag: a1343ca0-5695-4c2a-9a47-df88e9a24099
+
+	measure 'YoY Orders' =
+			VAR yearsInScope = VALUES(DimDate[Year])
+			RETURN
+				CALCULATE(
+					[Orders],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+		formatString: #,0
+		lineageTag: 93ff903a-37af-4168-8bd5-df3baee804d2
+
+	measure 'YoY Orders %' =
+			VAR cur = [Orders]
+			VAR prev = [YoY Orders]
+			RETURN IF(ISBLANK(prev) || prev = 0, BLANK(), DIVIDE(cur - prev, prev))
+		formatString: 0.0%
+		lineageTag: 6836e703-1f7b-497a-940d-34ba58931b54
+
+	measure 'YoY AOV' =
+			VAR yearsInScope = VALUES(DimDate[Year])
+			RETURN
+				CALCULATE(
+					[AOV],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+		formatString: $#,0.00
+		lineageTag: c3bcea1d-b6db-4e8a-8964-c55b4b44a4ec
+
+	measure 'YoY AOV %' =
+			VAR cur = [AOV]
+			VAR prev = [YoY AOV]
+			RETURN IF(ISBLANK(prev) || prev = 0, BLANK(), DIVIDE(cur - prev, prev))
+		formatString: 0.0%
+		lineageTag: cae2e011-11dc-4dcf-b2b4-d333c096482e
+
+	measure 'YoY Customers' =
+			VAR yearsInScope = VALUES(DimDate[Year])
+			RETURN
+				CALCULATE(
+					[Customers],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+		formatString: #,0
+		lineageTag: f11665f3-69b5-4ea2-a9ed-36fb59f8bf6a
+
+	measure 'YoY Customers %' =
+			VAR cur = [Customers]
+			VAR prev = [YoY Customers]
+			RETURN IF(ISBLANK(prev) || prev = 0, BLANK(), DIVIDE(cur - prev, prev))
+		formatString: 0.0%
+		lineageTag: f0b208fa-f431-4bfa-a9f4-316c24f2e22d
+
+	measure 'YoY Units' =
+			VAR yearsInScope = VALUES(DimDate[Year])
+			RETURN
+				CALCULATE(
+					[Units],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+		formatString: #,0
+		lineageTag: 5ce72452-e2be-42ca-b7a8-26196ab472d4
+
+	measure 'YoY Units %' =
+			VAR cur = [Units]
+			VAR prev = [YoY Units]
+			RETURN IF(ISBLANK(prev) || prev = 0, BLANK(), DIVIDE(cur - prev, prev))
+		formatString: 0.0%
+		lineageTag: 6bb19535-e219-4f92-9792-560e649be75a
+
+	measure 'Cost Amount' = SUMX(FactSales, RELATED(DimProduct[Cost]) * FactSales[Quantity])
+		formatString: $#,0
+		lineageTag: 127d4cf2-2717-4507-b684-4ad6922faf79
+
+	measure 'Margin %' = DIVIDE([Revenue] - [Cost Amount], [Revenue])
+		formatString: 0.0%
+		lineageTag: 21262b9a-19d7-48bd-aa17-7c9200564574
+
+	measure 'Revenue Top15 Products' =
+			VAR r = RANKX(ALLSELECTED(DimProduct[ProductName]), [Revenue], , DESC, Dense)
+			RETURN IF(r <= 15, [Revenue])
+		formatString: $#,0
+		lineageTag: ef327eaf-bd3a-4539-abd5-72349fe29096
+
+	measure 'Revenue Top15 Customers' =
+			VAR r = RANKX(ALLSELECTED(DimCustomer[CustomerName]), [Revenue], , DESC, Dense)
+			RETURN IF(r <= 15, [Revenue])
+		formatString: $#,0
+		lineageTag: ee1a7c8d-66c1-4bde-8a75-71ea1391dd1a
+
+	/// Dual-channel YoY labels (arrow + magnitude; never color alone)
+	measure 'Rev YoY' =
+			VAR p = [YoY Revenue %]
+			RETURN IF(ISBLANK(p), "n/a vs LY", IF(p >= 0, UNICHAR(9650) & " ", UNICHAR(9660) & " ") & FORMAT(ABS(p), "0.0%") & " vs LY")
+		lineageTag: 371a23fe-0d6f-4036-9b15-fe63e62bff14
+
+	measure 'Ord YoY' =
+			VAR p = [YoY Orders %]
+			RETURN IF(ISBLANK(p), "n/a vs LY", IF(p >= 0, UNICHAR(9650) & " ", UNICHAR(9660) & " ") & FORMAT(ABS(p), "0.0%") & " vs LY")
+		lineageTag: 10412f6b-54d3-41e6-ad4d-53e2a069d09f
+
+	measure 'AOV YoY' =
+			VAR p = [YoY AOV %]
+			RETURN IF(ISBLANK(p), "n/a vs LY", IF(p >= 0, UNICHAR(9650) & " ", UNICHAR(9660) & " ") & FORMAT(ABS(p), "0.0%") & " vs LY")
+		lineageTag: ad01f1c1-54ed-4a02-a098-5d2e63a884c3
+
+	measure 'Cust YoY' =
+			VAR p = [YoY Customers %]
+			RETURN IF(ISBLANK(p), "n/a vs LY", IF(p >= 0, UNICHAR(9650) & " ", UNICHAR(9660) & " ") & FORMAT(ABS(p), "0.0%") & " vs LY")
+		lineageTag: e214c275-04b7-4a95-bc4a-56786bd28dcd
+
+	measure 'Unit YoY' =
+			VAR p = [YoY Units %]
+			RETURN IF(ISBLANK(p), "n/a vs LY", IF(p >= 0, UNICHAR(9650) & " ", UNICHAR(9660) & " ") & FORMAT(ABS(p), "0.0%") & " vs LY")
+		lineageTag: 1d622adf-a22a-42d4-8bb0-a2b27831f6fe
+
+	measure 'Top5 Customer Share' =
+			VAR top5 =
+				CALCULATE(
+					[Revenue],
+					KEEPFILTERS(
+						TOPN(5, ALLSELECTED(DimCustomer[CustomerName]), [Revenue], DESC)
+					)
+				)
+			RETURN DIVIDE(top5, [Revenue])
+		formatString: 0.0%
+		lineageTag: 9b355733-b264-4245-a17e-5ff473613e96
+
+	measure 'Top5 Product Share' =
+			VAR top5 =
+				CALCULATE(
+					[Revenue],
+					KEEPFILTERS(
+						TOPN(5, ALLSELECTED(DimProduct[ProductName]), [Revenue], DESC)
+					)
+				)
+			RETURN DIVIDE(top5, [Revenue])
+		formatString: 0.0%
+		lineageTag: 43a814a0-2dc5-41c3-95d4-fc5d38600166
+
+	measure 'YoY Margin %' =
+			VAR cur = [Margin %]
+			VAR yearsInScope = VALUES(DimDate[Year])
+			VAR ly =
+				CALCULATE(
+					[Margin %],
+					REMOVEFILTERS(DimDate),
+					TREATAS(SELECTCOLUMNS(yearsInScope, "Y", [Year] - 1), DimDate[Year])
+				)
+			RETURN IF(ISBLANK(ly), BLANK(), cur - ly)
+		formatString: 0.0%
+		lineageTag: 74c2be7c-a16a-4102-952e-3e03f04889e6
+
+	column OrderNumber
+		dataType: string
+		lineageTag: bb31a33f-db01-45be-a00f-24b1d0157ff0
+		summarizeBy: none
+		sourceColumn: OrderNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3f1fb818-f9a6-40d8-aca9-dcec9c56a7cb
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f55f961e-e31e-4d3f-a26b-8d9444ce6b6b
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 08340f38-80db-4ba6-a637-68e3c4c667f8
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ShippingDate
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 07a608ba-b978-450c-85e1-cdc285396bab
+		summarizeBy: none
+		sourceColumn: ShippingDate
+
+		variation Variation
+			isDefault
+			relationship: 8de63620-a45d-4f4d-b166-39e9f22320bc
+			defaultHierarchy: LocalDateTable_f7b607ec-1fb3-4b71-a781-7d13b79b30e1.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DueDate
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 5606aa4c-63af-4f58-ac41-117c618f7351
+		summarizeBy: none
+		sourceColumn: DueDate
+
+		variation Variation
+			isDefault
+			relationship: 537c69c3-8ef0-42d4-a486-02122f1c332b
+			defaultHierarchy: LocalDateTable_5a4945f2-52dd-44c8-b759-18fcf31e3a6c.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SalesAmount
+		dataType: double
+		formatString: $#,0.00
+		lineageTag: b6f5f85c-322d-4eb3-b4d6-28f78f7f3711
+		summarizeBy: sum
+		sourceColumn: SalesAmount
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: 459a0534-899e-48cb-ba33-39927933b754
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+	column Price
+		dataType: double
+		formatString: $#,0.00
+		lineageTag: 8c8435d5-3403-486d-be6e-02b0f20a8fb3
+		summarizeBy: sum
+		sourceColumn: Price
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactSales = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactSales.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"OrderNumber", type text}, {"ProductKey", Int64.Type}, {"CustomerKey", Int64.Type}, {"OrderDate", type date}, {"ShippingDate", type nullable date}, {"DueDate", type nullable date}, {"SalesAmount", type number}, {"Quantity", Int64.Type}, {"Price", type number}})
+				in
+					#"Changed Type"
+

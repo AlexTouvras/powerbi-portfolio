@@ -1,0 +1,77 @@
+table DimDate
+	lineageTag: ade3688f-d94a-4675-8d68-f6de39b5ed47
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		isNullable: false
+		formatString: yyyy-mm-dd
+		lineageTag: ee13d0e8-cafb-46d0-b8dd-065f427f929d
+		dataCategory: Time
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: aad97622-e828-4772-9bea-f13e554581fa
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aa6d8d28-63ce-4860-b7af-e2a8a216160e
+		summarizeBy: none
+		sourceColumn: Month
+
+	column MonthName
+		dataType: string
+		lineageTag: 0a4dd70d-8000-4f62-8c2f-6dd88c5eb494
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+	column YearMonth
+		dataType: string
+		lineageTag: 291f081f-1a37-48b2-8f55-177e73a73c4d
+		sourceColumn: YearMonth
+		sortByColumn: MonthYearSort
+
+	column Quarter
+		dataType: string
+		lineageTag: dfdd43ee-ab64-4ca9-9701-59a7e7968a25
+		sourceColumn: Quarter
+
+	column YearQuarter
+		dataType: string
+		lineageTag: cef8df3b-75e8-4038-8ed5-38ee773936d7
+		sourceColumn: YearQuarter
+
+	column Day
+		dataType: int64
+		formatString: 0
+		lineageTag: bcfbf41b-c33b-4dae-9040-54014c6f15be
+		summarizeBy: none
+		sourceColumn: Day
+
+	column MonthYearSort
+		dataType: int64
+		isHidden
+		lineageTag: 6a537600-8df3-4ae6-9be4-bad9252dd5f2
+		summarizeBy: none
+		sourceColumn: MonthYearSort
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimDate.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"MonthName", type text}, {"YearMonth", type text}, {"Quarter", type text}, {"YearQuarter", type text}, {"Day", Int64.Type}, {"MonthYearSort", Int64.Type}})
+				in
+					#"Changed Type"
+
