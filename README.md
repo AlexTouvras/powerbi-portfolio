@@ -46,9 +46,8 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 |--------|-------|--------|
 | [`03-sales-executive`](03-sales-executive/) | Sales executive (KDNuggets #3) | **Featured** — PBIP + screenshots |
 | [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
+| [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | Next — planning |
 | [`01-finance`](01-finance/) | Nordic stock treemap | Brief / theme WIP |
-| [`04-sql-data-warehouse`](04-sql-data-warehouse/) | SQL data warehouse | Data staged |
-| [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation | SQL generators staged |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare | Pending dataset |
 
 ## Design system

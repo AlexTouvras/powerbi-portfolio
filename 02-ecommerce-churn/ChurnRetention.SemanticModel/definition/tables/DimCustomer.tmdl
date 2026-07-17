@@ -1,157 +1,200 @@
 table DimCustomer
+	lineageTag: d4aa0e27-aa8a-4354-8dfc-580cb09f0f75
 
 	measure Customers = DISTINCTCOUNT(DimCustomer[CustomerID])
 		formatString: #,0
+		lineageTag: dab50798-8a8d-490a-9eed-df6cb99811c5
 
 	measure 'Churned Customers' = CALCULATE([Customers], DimCustomer[Churn] = 1)
 		formatString: #,0
+		lineageTag: 98cfb95b-9fc9-45cd-bc7c-480f35759f98
 
 	measure 'Churn Rate' = DIVIDE([Churned Customers], [Customers])
 		formatString: 0.0%
+		lineageTag: babfa1e1-1d95-4060-9db9-92bf2a72bc16
 
 	measure 'Avg Churn Probability' = AVERAGE(DimCustomer[ChurnProbability])
 		formatString: 0.0%
+		lineageTag: 870d8c22-0302-4c23-971d-f844ee6a648c
 
 	measure 'High Risk Customers' = CALCULATE([Customers], DimCustomer[RiskBand] = "High")
 		formatString: #,0
+		lineageTag: 0182a568-8586-4ea3-b78e-b08a44cdd20d
 
 	measure 'Retained High Risk' = CALCULATE([Customers], DimCustomer[RiskBand] = "High", DimCustomer[Churn] = 0)
 		formatString: #,0
+		lineageTag: 0571c7fa-5ccb-4d92-9893-ab161abb7a18
 
 	measure 'Lift vs Baseline' = [Churn Rate] - CALCULATE([Churn Rate], ALLSELECTED(DimCustomer))
 		formatString: 0.0%
+		lineageTag: a4aa4c4f-ccb8-4862-a26f-d902a34e0825
 
 	column CustomerID
 		dataType: int64
+		lineageTag: 7978e855-97e5-470b-ac08-a5b66cb054a2
 		sourceColumn: CustomerID
 
 	column Churn
-		dataType: double
+		dataType: int64
 		formatString: 0
+		lineageTag: 8faebf42-abfd-41c6-a0b2-d4ff789e3ea5
+		summarizeBy: sum
 		sourceColumn: Churn
+
+		annotation SummarizationSetBy = Automatic
 
 	column Tenure
 		dataType: double
+		lineageTag: 1f4bd182-be04-44e3-92d8-9b44356e45a3
 		sourceColumn: Tenure
 
 	column PreferredLoginDevice
 		dataType: string
+		lineageTag: 225139c7-fe21-4f78-8572-659db30b9d4f
 		sourceColumn: PreferredLoginDevice
 
 	column CityTier
 		dataType: int64
+		lineageTag: 9dda1234-ca4e-46a1-83e4-135650b99c29
 		sourceColumn: CityTier
 
 	column WarehouseToHome
 		dataType: double
+		lineageTag: 11194465-6205-4652-8a63-f058be8d307e
 		sourceColumn: WarehouseToHome
 
 	column PreferredPaymentMode
 		dataType: string
+		lineageTag: 7f41b16a-6332-478f-81f2-db6a6041a3c2
 		sourceColumn: PreferredPaymentMode
 
 	column Gender
 		dataType: string
+		lineageTag: 10c9a33a-6308-413d-b2bf-fda4754aae2b
 		sourceColumn: Gender
 
 	column HourSpendOnApp
 		dataType: double
+		lineageTag: 050b0661-4b75-478a-9c91-559a5de10394
 		sourceColumn: HourSpendOnApp
 
 	column NumberOfDeviceRegistered
 		dataType: int64
+		lineageTag: 1f4c42da-ca17-46a3-a2cc-7a3e87aed5fd
 		sourceColumn: NumberOfDeviceRegistered
 
 	column PreferedOrderCat
 		dataType: string
+		lineageTag: 82900f3a-5444-48a0-9c27-238aeee47806
 		sourceColumn: PreferedOrderCat
 
 	column SatisfactionScore
 		dataType: int64
+		lineageTag: 76308c91-4cb4-4484-a80d-65f8e0c99880
 		sourceColumn: SatisfactionScore
 
 	column MaritalStatus
 		dataType: string
+		lineageTag: e3fc71ba-0eac-480e-b1e4-de3c0d4441a4
 		sourceColumn: MaritalStatus
 
 	column NumberOfAddress
 		dataType: int64
+		lineageTag: 3f02b655-3d18-4267-84f7-334e1a68946b
 		sourceColumn: NumberOfAddress
 
 	column Complain
 		dataType: int64
+		lineageTag: 278d80e9-4581-42a5-bca2-8c8e622a23f2
 		sourceColumn: Complain
 
 	column OrderAmountHikeFromlastYear
 		dataType: double
+		lineageTag: 53a1e218-9af0-471c-bfab-fdbafb145b81
 		sourceColumn: OrderAmountHikeFromlastYear
 
 	column CouponUsed
 		dataType: double
+		lineageTag: b63763e3-7a08-415e-8583-26eba410048d
 		sourceColumn: CouponUsed
 
 	column OrderCount
 		dataType: double
+		lineageTag: 4558ba88-ebb8-4c38-8bd6-43d5079e6013
 		sourceColumn: OrderCount
 
 	column DaySinceLastOrder
 		dataType: double
+		lineageTag: adac92bb-acfc-44eb-815e-4e4798a4bc16
 		sourceColumn: DaySinceLastOrder
 
 	column CashbackAmount
 		dataType: double
+		lineageTag: 7a0465b7-f4ef-40c9-9d6a-eadcfbd81cd7
 		sourceColumn: CashbackAmount
 
 	column CustomerStatus
 		dataType: string
+		lineageTag: 9d60c714-f8a8-431b-91ef-a816410c0452
 		sourceColumn: CustomerStatus
 
 	column WarehouseDistanceBand
 		dataType: string
+		lineageTag: edffb8c4-c88b-4c2d-b6ed-e8ba523b7a30
 		sourceColumn: WarehouseDistanceBand
 
 	column TenureBand
 		dataType: string
+		lineageTag: 636f2241-768a-42ee-b9b5-bc60665fa72c
 		sourceColumn: TenureBand
 
 	column CashbackBand
 		dataType: string
+		lineageTag: 5bc2599c-7886-4831-b434-aa35a8e2fa12
 		sourceColumn: CashbackBand
 
 	column RecencyScore
 		dataType: int64
+		lineageTag: 4c1e3296-3720-48ca-a79a-13a21a0e5260
 		sourceColumn: RecencyScore
 
 	column FrequencyScore
 		dataType: int64
+		lineageTag: 4fc6391a-734e-4f9c-be8c-41d49e543dff
 		sourceColumn: FrequencyScore
 
 	column ChurnProbability
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 780c57a0-7fe3-4cfb-9af8-d6b95d970706
 		sourceColumn: ChurnProbability
 
 	column PredictedChurn
 		dataType: int64
 		isHidden
+		lineageTag: 46aff6fa-13a8-4f3a-b5cf-be3c495a8fe4
 		sourceColumn: PredictedChurn
 
 	column RiskBand
 		dataType: string
+		lineageTag: 5d8bb1ba-76b1-471c-9e5c-8eebf1d2d302
 		sourceColumn: RiskBand
 
 	column RiskRank
 		dataType: int64
 		isHidden
+		lineageTag: 599e322e-3654-485f-b5ba-6e2269e2be01
 		sourceColumn: RiskRank
-
 
 	partition DimCustomer = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", Int64.Type}, {"Churn", Int64.Type}, {"Tenure", type number}, {"PreferredLoginDevice", type text}, {"CityTier", Int64.Type}, {"WarehouseToHome", type number}, {"PreferredPaymentMode", type text}, {"Gender", type text}, {"HourSpendOnApp", type number}, {"NumberOfDeviceRegistered", Int64.Type}, {"PreferedOrderCat", type text}, {"SatisfactionScore", Int64.Type}, {"MaritalStatus", type text}, {"NumberOfAddress", Int64.Type}, {"Complain", Int64.Type}, {"OrderAmountHikeFromlastYear", type number}, {"CouponUsed", type number}, {"OrderCount", type number}, {"DaySinceLastOrder", type number}, {"CashbackAmount", type number}, {"CustomerStatus", type text}, {"WarehouseDistanceBand", type text}, {"TenureBand", type text}, {"CashbackBand", type text}, {"RecencyScore", Int64.Type}, {"FrequencyScore", Int64.Type}, {"ChurnProbability", type number}, {"PredictedChurn", Int64.Type}, {"RiskBand", type text}, {"RiskRank", Int64.Type}})
-			in
-				#"Changed Type"
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", Int64.Type}, {"Churn", Int64.Type}, {"Tenure", type number}, {"PreferredLoginDevice", type text}, {"CityTier", Int64.Type}, {"WarehouseToHome", type number}, {"PreferredPaymentMode", type text}, {"Gender", type text}, {"HourSpendOnApp", type number}, {"NumberOfDeviceRegistered", Int64.Type}, {"PreferedOrderCat", type text}, {"SatisfactionScore", Int64.Type}, {"MaritalStatus", type text}, {"NumberOfAddress", Int64.Type}, {"Complain", Int64.Type}, {"OrderAmountHikeFromlastYear", type number}, {"CouponUsed", type number}, {"OrderCount", type number}, {"DaySinceLastOrder", type number}, {"CashbackAmount", type number}, {"CustomerStatus", type text}, {"WarehouseDistanceBand", type text}, {"TenureBand", type text}, {"CashbackBand", type text}, {"RecencyScore", Int64.Type}, {"FrequencyScore", Int64.Type}, {"ChurnProbability", type number}, {"PredictedChurn", Int64.Type}, {"RiskBand", type text}, {"RiskRank", Int64.Type}})
+				in
+					#"Changed Type"
+
+	annotation PBI_ResultType = Table
+

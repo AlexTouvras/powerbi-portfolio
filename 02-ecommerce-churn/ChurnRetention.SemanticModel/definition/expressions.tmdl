@@ -1,1 +1,5 @@
 expression GoldDataFolder = "C:/Users/kater/.cursor/projects/PowerBI/02-ecommerce-churn/data/gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 7e4af651-8a79-49b0-8172-95acbc314c4e
+
+	annotation PBI_ResultType = Text
+

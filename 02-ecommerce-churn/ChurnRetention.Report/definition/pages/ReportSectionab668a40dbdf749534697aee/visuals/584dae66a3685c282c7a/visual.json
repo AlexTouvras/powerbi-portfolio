@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.10.0/schema.json",
   "name": "584dae66a3685c282c7a",
   "position": {
     "x": 976,
@@ -111,6 +111,21 @@
           ]
         }
       }
+    },
+    "objects": {
+      "tree": [
+        {
+          "properties": {
+            "effectiveBarsPerLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "5L"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "background": [

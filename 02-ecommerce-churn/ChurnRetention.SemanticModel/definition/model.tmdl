@@ -10,5 +10,7 @@ annotation PBI_QueryOrder = ["GoldDataFolder","DimCustomer"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-ref expression GoldDataFolder
+annotation PBI_ProTooling = ["DevMode"]
+
 ref table DimCustomer
+
