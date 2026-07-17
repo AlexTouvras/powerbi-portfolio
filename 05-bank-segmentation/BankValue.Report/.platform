@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Bank Value"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3de57a9b-a0bc-4a1d-90d8-ad134f4a24ac"
+  }
+}

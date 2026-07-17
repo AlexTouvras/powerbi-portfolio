@@ -1,0 +1,50 @@
+table DimAccount
+	lineageTag: 4e31008a-45f5-4556-b8f6-c07b4f077ad6
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: cebdacff-6bf9-412d-80c2-04547ff7022a
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 348565ac-3ca2-4144-b5af-934da0ba5a4c
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column AccountNumber
+		dataType: string
+		lineageTag: c8cd792d-0ad9-45bf-9c5e-71c68f67dc26
+		sourceColumn: AccountNumber
+
+	column AccountType
+		dataType: string
+		lineageTag: 9da71a86-de2c-4a6f-a766-7eefefbaae75
+		sourceColumn: AccountType
+
+	column OpenDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: abdbe345-f256-436f-b2b3-8a72812ae7d9
+		summarizeBy: none
+		sourceColumn: OpenDate
+
+	column Balance
+		dataType: double
+		formatString: #,0.00
+		lineageTag: b7ddddde-d87b-49d1-974e-b465a375b4d5
+		sourceColumn: Balance
+
+	partition DimAccount = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimAccount.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"AccountID", Int64.Type}, {"CustomerID", Int64.Type}, {"AccountNumber", type text}, {"AccountType", type text}, {"OpenDate", type date}, {"Balance", type number}})
+				in
+					#"Changed Type"
+

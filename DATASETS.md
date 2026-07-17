@@ -7,7 +7,7 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 | 1 | E-commerce churn | [Judithokon/Ecommerce-Customer-Churn…](https://github.com/Judithokon/Ecommerce-Customer-Churn-Analysis-Using-SQL) | `02-ecommerce-churn/data/raw/` |
 | 2 | SQL data warehouse | [DataWithBaraa/sql-data-warehouse-project](https://github.com/DataWithBaraa/sql-data-warehouse-project) | Used as raw input for Sales (`03-sales-executive/data/raw/`) — no separate portfolio folder |
 | 3 | Sales analysis | [Kaggle: emirakyer/sql-sales-data-analysis](https://www.kaggle.com/code/emirakyer/sql-sales-data-analysis) | `03-sales-executive/data/raw/` *(see note)* |
-| 4 | Bank segmentation | [franklinanalytics/Bank-Segmentation-Analysis](https://github.com/franklinanalytics/Bank-Segmentation-Analysis) | `05-bank-segmentation/data/raw/` (SQL generators; gold CSVs to be built) |
+| 4 | Bank segmentation | [franklinanalytics/Bank-Segmentation-Analysis](https://github.com/franklinanalytics/Bank-Segmentation-Analysis) | `05-bank-segmentation/data/raw/` + scaled `data/gold/` |
 | 5 | Healthcare | [Kaggle: gizellef/healthcare…](https://www.kaggle.com/code/gizellef/healthcare-data-analysis-using-sql) | `06-healthcare-analytics/` — **pending** (needs Kaggle download) |
 
 ## Active / featured builds
@@ -16,7 +16,7 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 |---------|---------|-------|
 | `03-sales-executive` | KDNuggets #2 warehouse CSVs (sales grain) | C-level sales — **featured** |
 | `02-ecommerce-churn` | KDNuggets #1 `ecommerce_churn.csv` | ML propensity + drivers — **featured** |
-| `05-bank-segmentation` | KDNuggets #4 simulated bank (customers · accounts · transactions) | **Next** |
+| `05-bank-segmentation` | KDNuggets #4 simulated bank (customers · accounts · transactions) | **Featured** — RFM + k-means |
 
 ### Sales (`03-sales-executive`)
 
@@ -43,4 +43,4 @@ Upstream ships PostgreSQL generators only (`schema_setup.sql`, `data_generation.
 - `accounts` — customer_id, account_type (`savings` | `current` | `loan`), balance, account_number  
 - `transactions` — account_id, date, amount, credit/debit, description  
 
-Upstream scale is small (~200 customers · ~1k transactions). Portfolio build should **seed a larger gold layer** (Node/Python) with the same schema for credible volume, then RFM + engagement analytics in Power BI.
+Upstream scale is small (~200 customers · ~1k transactions). Portfolio gold is a **scaled seed** (~5k customers · ~113k transactions) plus RFM + k-means `ValueSegment`, geocoded `DimCity`, and `FactFlowBridge` for the waterfall.

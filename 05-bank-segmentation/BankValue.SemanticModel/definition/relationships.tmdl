@@ -1,0 +1,16 @@
+relationship FactTransactions_DimDate
+	fromColumn: FactTransactions.TransactionDate
+	toColumn: DimDate.Date
+
+relationship FactTransactions_DimAccount
+	fromColumn: FactTransactions.AccountID
+	toColumn: DimAccount.AccountID
+
+relationship DimAccount_DimCustomer
+	fromColumn: DimAccount.CustomerID
+	toColumn: DimCustomer.CustomerID
+
+relationship DimCustomer_DimCity
+	fromColumn: DimCustomer.City
+	toColumn: DimCity.City
+

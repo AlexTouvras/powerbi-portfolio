@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 618.46675423546014,
+            "y": -14.706649080150214
+          },
+          "nodeIndex": "DimAccount",
+          "nodeLineageTag": "4e31008a-45f5-4556-b8f6-c07b4f077ad6",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 21.184039719148586
+          },
+          "nodeIndex": "DimCity",
+          "nodeLineageTag": "9ccf261c-fecc-4ddd-a701-8ef62b123982",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 334.22811592580382,
+            "y": -50.000000000000028
+          },
+          "nodeIndex": "DimCustomer",
+          "nodeLineageTag": "fb5ccedc-aaf6-4aa3-a807-44f0416f34fb",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1186.9312480545996,
+            "y": -38.623027992408424
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "4889cfbf-8e63-4709-816b-1ed5fdf2a0f2",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1420.9312480545996,
+            "y": 65.688486003795788
+          },
+          "nodeIndex": "FactFlowBridge",
+          "nodeLineageTag": "039d0cbe-55af-4ece-97ee-5c4e66ca2797",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 902.71483468181577,
+            "y": -47.468333941877148
+          },
+          "nodeIndex": "FactTransactions",
+          "nodeLineageTag": "b50560d2-fff1-4277-bc02-5a4ab98d021e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

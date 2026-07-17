@@ -1,0 +1,93 @@
+table FactTransactions
+	lineageTag: b50560d2-fff1-4277-bc02-5a4ab98d021e
+
+	measure Customers = DISTINCTCOUNT(FactTransactions[CustomerID])
+		formatString: #,0
+		lineageTag: 6063d287-da56-425d-b0ff-416e464df1ae
+
+	measure Accounts = DISTINCTCOUNT(FactTransactions[AccountID])
+		formatString: #,0
+		lineageTag: 9b1afe27-fad9-4a03-9ddc-4e8d5f339746
+
+	measure 'Transaction Volume' = SUM(FactTransactions[Amount])
+		formatString: #,0
+		lineageTag: 34fe9c41-2826-4d3b-baa0-f29ac3edf5c0
+
+	measure 'Credit Volume' = CALCULATE([Transaction Volume], FactTransactions[TransactionType] = "credit")
+		formatString: #,0
+		lineageTag: 14983525-d221-47c4-b125-35c7d7c12fd7
+
+	measure 'Debit Volume' = CALCULATE([Transaction Volume], FactTransactions[TransactionType] = "debit")
+		formatString: #,0
+		lineageTag: b1a72e55-84b2-46a2-9115-b2632b246388
+
+	measure 'Net Flow' = [Credit Volume] - [Debit Volume]
+		formatString: #,0
+		lineageTag: 59249880-d856-4583-beef-7263f74e6430
+
+	measure Transactions = COUNTROWS(FactTransactions)
+		formatString: #,0
+		lineageTag: 56a4700c-66f2-4d29-9bd4-fc47a19ef732
+
+	measure 'Active Customers' = CALCULATE([Customers], FactTransactions[TransactionDate] >= TODAY() - 90)
+		formatString: #,0
+		lineageTag: caf44c31-9615-4e57-a376-a8c63b382d41
+
+	measure 'Avg Transaction' = DIVIDE([Transaction Volume], [Transactions])
+		formatString: #,0
+		lineageTag: 634f2d89-542f-42de-9c58-37792e51db8f
+
+	column TransactionID
+		dataType: int64
+		formatString: 0
+		lineageTag: 1bd60672-0d66-4ef1-affb-99d8688011b6
+		summarizeBy: none
+		sourceColumn: TransactionID
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e39aef5-a741-465d-9f52-e887278dfdd3
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 18497e31-bb62-4502-986b-4f0eac11076a
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column TransactionDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 32faa2eb-03d1-4fee-9fb6-2aacc2aad231
+		summarizeBy: none
+		sourceColumn: TransactionDate
+
+	column Amount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 4cf09403-43ef-44a1-85c9-14a8ef7107d2
+		sourceColumn: Amount
+
+	column TransactionType
+		dataType: string
+		lineageTag: 79ef49f4-df09-4427-9c24-8d8b261b26b4
+		sourceColumn: TransactionType
+
+	column Description
+		dataType: string
+		lineageTag: 5c3ff9e4-2b3d-42f0-88f6-258aab101fbb
+		sourceColumn: Description
+
+	partition FactTransactions = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactTransactions.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"TransactionID", Int64.Type}, {"AccountID", Int64.Type}, {"CustomerID", Int64.Type}, {"TransactionDate", type date}, {"Amount", type number}, {"TransactionType", type text}, {"Description", type text}})
+				in
+					#"Changed Type"
+

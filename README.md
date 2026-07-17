@@ -38,6 +38,25 @@ ML propensity scoring + Key Influencers + at-risk queue for e-commerce retention
 
 Details: [`02-ecommerce-churn/README.md`](02-ecommerce-churn/README.md)
 
+### Bank Value & Engagement
+
+RFM + k-means segments, dual-flow waterfall, city map, and a dormancy / cross-sell relationship book.
+
+| | |
+|---|---|
+| Audience | Retail-bank CRO / relationship lead |
+| Theme | Nordic Boardroom |
+| Pages | Franchise Pulse · Segments & Markets · Relationship Book |
+| Open | [`05-bank-segmentation/BankValue.pbip`](05-bank-segmentation/BankValue.pbip) |
+
+![Franchise Pulse](05-bank-segmentation/screenshots/franchise-pulse.png)
+
+![Segments & Markets](05-bank-segmentation/screenshots/segments-markets.png)
+
+![Relationship Book](05-bank-segmentation/screenshots/relationship-book.png)
+
+Details: [`05-bank-segmentation/README.md`](05-bank-segmentation/README.md)
+
 ## Projects
 
 Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-portfolio) — see [`DATASETS.md`](DATASETS.md).
@@ -46,7 +65,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 |--------|-------|--------|
 | [`03-sales-executive`](03-sales-executive/) | Sales executive (KDNuggets #3) | **Featured** — PBIP + screenshots |
 | [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
-| [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | Next — planning |
+| [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | **Featured** — RFM + map + drillthrough |
 | [`01-finance`](01-finance/) | Nordic stock treemap | Brief / theme WIP |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare | Pending dataset |
 

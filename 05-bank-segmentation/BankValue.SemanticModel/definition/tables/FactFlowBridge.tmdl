@@ -1,0 +1,37 @@
+table FactFlowBridge
+	lineageTag: 039d0cbe-55af-4ece-97ee-5c4e66ca2797
+
+	measure 'Flow Amount' = SUM(FactFlowBridge[FlowAmount])
+		formatString: #,0
+		lineageTag: b3782b0c-0618-4a56-b504-b595b47a1b93
+
+	column FlowStage
+		dataType: string
+		lineageTag: 85544376-3cfe-4edb-909c-52d18dd3db0a
+		sourceColumn: FlowStage
+		sortByColumn: FlowOrder
+
+	column FlowOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a640449b-bae8-47b4-b19e-49f81c3521c1
+		summarizeBy: none
+		sourceColumn: FlowOrder
+
+	column FlowAmount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 27bc7b77-cb53-4cc0-9ff0-c6e03d0328e0
+		sourceColumn: FlowAmount
+
+	partition FactFlowBridge = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactFlowBridge.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"FlowStage", type text}, {"FlowOrder", Int64.Type}, {"FlowAmount", type number}})
+				in
+					#"Changed Type"
+

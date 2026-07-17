@@ -427,4 +427,5 @@ FodyWeavers.xsd
 
 # Local scratch / temp clones
 _tmp_sources/
+**/_tmp/
 

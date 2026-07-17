@@ -1,0 +1,181 @@
+table DimCustomer
+	lineageTag: fb5ccedc-aaf6-4aa3-a807-44f0416f34fb
+
+	measure 'Customer Base' = DISTINCTCOUNT(DimCustomer[CustomerID])
+		formatString: #,0
+		lineageTag: ff537309-9c49-4f54-b866-4b5070e2c229
+
+	measure 'Dormant Customers' = CALCULATE([Customer Base], DimCustomer[IsDormant] = 1)
+		formatString: #,0
+		lineageTag: 6faa4843-1df4-4bfc-b422-1b09caa9135b
+
+	measure 'Dormant %' = DIVIDE([Dormant Customers], [Customer Base])
+		formatString: 0.0%
+		lineageTag: d2138ec4-6a5a-412b-a317-e3e868b738eb
+
+	measure 'Single Product Customers' = CALCULATE([Customer Base], DimCustomer[ProductCount] = 1)
+		formatString: #,0
+		lineageTag: e8fd8cf7-c328-41b4-b264-5472f7489474
+
+	measure 'Avg Balance' = AVERAGE(DimCustomer[TotalBalance])
+		formatString: #,0
+		lineageTag: 48ba649a-0a8c-4b52-9e66-65dea03d51ea
+
+	measure 'Avg Frequency' = AVERAGE(DimCustomer[Frequency])
+		formatString: #,0.0
+		lineageTag: 51d72a4d-3535-4690-b261-85780e42d83b
+
+	measure 'Avg Monetary' = AVERAGE(DimCustomer[MonetaryDebit])
+		formatString: #,0
+		lineageTag: 23ea003b-23e1-4bb6-93e0-85327d33b92c
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: fe2fcda9-8d93-4b59-8378-c4f6b0a2efd6
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column CustomerName
+		dataType: string
+		lineageTag: 396cf81e-5925-4ca2-ae5a-fcd544f55de0
+		sourceColumn: CustomerName
+
+	column Gender
+		dataType: string
+		lineageTag: da620094-063c-4f86-911f-3f36c871aea7
+		sourceColumn: Gender
+
+	column BirthDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 4d62f388-15d4-4496-82b6-312d93a3cb47
+		summarizeBy: none
+		sourceColumn: BirthDate
+
+	column SignupDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 08f34db8-a424-49cb-93fc-3bdf9eb30340
+		summarizeBy: none
+		sourceColumn: SignupDate
+
+	column City
+		dataType: string
+		lineageTag: 964aa0a2-4745-4c4a-9ea5-777bf8c38a29
+		sourceColumn: City
+
+	column Latitude
+		dataType: double
+		lineageTag: 1e438787-6eb0-441e-8dcc-64c3aed57526
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: Latitude
+
+	column Longitude
+		dataType: double
+		lineageTag: 381509cd-65a8-41be-88df-3cbb598d30c3
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: Longitude
+
+	column ProductCount
+		dataType: int64
+		formatString: 0
+		lineageTag: d25f52b7-3365-47e0-879f-7a13479a1903
+		summarizeBy: none
+		sourceColumn: ProductCount
+
+	column TotalBalance
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a75055c9-badc-40d1-82c7-1adc125c0eb5
+		sourceColumn: TotalBalance
+
+	column AccountTypes
+		dataType: string
+		lineageTag: 7cfc86d4-24ed-45f4-88c9-9d0c6679f442
+		sourceColumn: AccountTypes
+
+	column RecencyDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 8d06ce65-6090-496a-8275-0886d525370d
+		summarizeBy: none
+		sourceColumn: RecencyDays
+
+	column Frequency
+		dataType: int64
+		formatString: 0
+		lineageTag: 3fb8d0ad-4d30-4cb5-937e-776ca144ace0
+		summarizeBy: none
+		sourceColumn: Frequency
+
+	column MonetaryDebit
+		dataType: double
+		formatString: #,0.00
+		lineageTag: f3e49705-fc86-44ac-939c-99437b54fa81
+		sourceColumn: MonetaryDebit
+
+	column R_Score
+		dataType: int64
+		formatString: 0
+		lineageTag: 0834dc22-d0b9-4aef-a294-d812603685fb
+		summarizeBy: none
+		sourceColumn: R_Score
+
+	column F_Score
+		dataType: int64
+		formatString: 0
+		lineageTag: fcd786ee-4d49-406f-8ccf-874c1f5fb6a6
+		summarizeBy: none
+		sourceColumn: F_Score
+
+	column M_Score
+		dataType: int64
+		formatString: 0
+		lineageTag: 503eb905-4ff4-42d3-9bcb-cc01f2643da4
+		summarizeBy: none
+		sourceColumn: M_Score
+
+	column RFM_Score
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a863d83-9d27-4cd1-8ca6-d85b6362c55b
+		summarizeBy: none
+		sourceColumn: RFM_Score
+
+	column IsDormant
+		dataType: int64
+		formatString: 0
+		lineageTag: 9ff8a5b3-3634-4a4f-a47f-94c7953824ae
+		summarizeBy: none
+		sourceColumn: IsDormant
+
+	column ValueSegment
+		dataType: string
+		lineageTag: 71d71919-407b-4bc3-8b9c-a9038dbae2be
+		sourceColumn: ValueSegment
+
+	column EngagementStage
+		dataType: string
+		lineageTag: 8145d4e1-7200-4a03-a0ca-6942f46837f3
+		sourceColumn: EngagementStage
+
+	column LastTxnDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 24a465de-e4d9-4762-9aa6-964e877256e9
+		summarizeBy: none
+		sourceColumn: LastTxnDate
+
+	partition DimCustomer = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", Int64.Type}, {"CustomerName", type text}, {"Gender", type text}, {"BirthDate", type date}, {"SignupDate", type date}, {"City", type text}, {"Latitude", type number}, {"Longitude", type number}, {"ProductCount", Int64.Type}, {"TotalBalance", type number}, {"AccountTypes", type text}, {"RecencyDays", Int64.Type}, {"Frequency", Int64.Type}, {"MonetaryDebit", type number}, {"R_Score", Int64.Type}, {"F_Score", Int64.Type}, {"M_Score", Int64.Type}, {"RFM_Score", Int64.Type}, {"IsDormant", Int64.Type}, {"ValueSegment", type text}, {"EngagementStage", type text}, {"LastTxnDate", type nullable date}})
+				in
+					#"Changed Type"
+

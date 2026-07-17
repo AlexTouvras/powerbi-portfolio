@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Bank Value"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a464159c-2d0e-4234-b27d-38682a509e38"
+  }
+}
