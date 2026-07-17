@@ -4,13 +4,21 @@ Nordic Boardroom retention report: churn rate and propensity at a glance, driver
 
 **Open:** [`ChurnRetention.pbip`](ChurnRetention.pbip)
 
+## Preview
+
+![Retention Pulse](screenshots/retention-pulse.png)
+
+![Churn Drivers](screenshots/churn-drivers.png)
+
+![At-Risk Queue](screenshots/at-risk-queue.png)
+
 ## Pages
 
 | Page | Role |
 |------|------|
-| **Retention Pulse** | Churn rate · customers · avg propensity · retained high risk · tenure-band mix |
-| **Churn Drivers** | Key Influencers on churn · decomposition tree · payment × city-tier matrix |
-| **At-Risk Queue** | Customers ranked by `ChurnProbability` · risk-band / city / satisfaction slicers |
+| **Retention Pulse** | KPI strip · churn rate by tenure band |
+| **Churn Drivers** | Key Influencers · decomposition tree · payment × city-tier matrix |
+| **At-Risk Queue** | Customers ranked by `ChurnProbability` · risk / city / satisfaction slicers |
 
 ## What's in the folder
 
@@ -22,11 +30,11 @@ Nordic Boardroom retention report: churn rate and propensity at a glance, driver
 | Gold scored CSV | `data/gold/DimCustomer.csv` |
 | Raw export + SQL notes | `data/raw/` |
 | Spec | `_brief/report-spec.md` |
+| Screenshots | `screenshots/` |
 | Gold ETL | `scripts/build-gold.mjs` |
 | ML scoring | `scripts/score-churn.py` |
-| PBIP scaffold | `scripts/scaffold-churn-pbip.mjs` |
+| Elevate layout | `scripts/elevate-churn-report.mjs` |
 | Python deps | `requirements.txt` |
-| Theme | Nordic Boardroom (registered in report) |
 
 ## Open in Power BI Desktop
 
@@ -60,5 +68,5 @@ powerbi-report-author validate ChurnRetention.Report
 ## Audience & design
 
 - Audience: CRO / retention lead / lifecycle marketing  
-- Theme: Nordic Boardroom  
+- Theme: Nordic Boardroom (same chrome as Sales Executive: page nav pills, mist canvas, footer source line)  
 - Source: [Judithokon E-commerce Churn SQL](https://github.com/Judithokon/Ecommerce-Customer-Churn-Analysis-Using-SQL) (KDNuggets #1) — see [`../DATASETS.md`](../DATASETS.md)

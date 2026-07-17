@@ -30,6 +30,12 @@ ML propensity scoring + Key Influencers + at-risk queue for e-commerce retention
 | Pages | Retention Pulse · Churn Drivers · At-Risk Queue |
 | Open | [`02-ecommerce-churn/ChurnRetention.pbip`](02-ecommerce-churn/ChurnRetention.pbip) |
 
+![Retention Pulse](02-ecommerce-churn/screenshots/retention-pulse.png)
+
+![Churn Drivers](02-ecommerce-churn/screenshots/churn-drivers.png)
+
+![At-Risk Queue](02-ecommerce-churn/screenshots/at-risk-queue.png)
+
 Details: [`02-ecommerce-churn/README.md`](02-ecommerce-churn/README.md)
 
 ## Projects
