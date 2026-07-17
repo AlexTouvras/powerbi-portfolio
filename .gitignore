@@ -424,3 +424,7 @@ FodyWeavers.xsd
 **/AnalysisServicesState*/
 **/.pbi/
 
+
+# Local scratch / temp clones
+_tmp_sources/
+
