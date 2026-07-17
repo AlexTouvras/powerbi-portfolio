@@ -1,0 +1,157 @@
+table DimCustomer
+
+	measure Customers = DISTINCTCOUNT(DimCustomer[CustomerID])
+		formatString: #,0
+
+	measure 'Churned Customers' = CALCULATE([Customers], DimCustomer[Churn] = 1)
+		formatString: #,0
+
+	measure 'Churn Rate' = DIVIDE([Churned Customers], [Customers])
+		formatString: 0.0%
+
+	measure 'Avg Churn Probability' = AVERAGE(DimCustomer[ChurnProbability])
+		formatString: 0.0%
+
+	measure 'High Risk Customers' = CALCULATE([Customers], DimCustomer[RiskBand] = "High")
+		formatString: #,0
+
+	measure 'Retained High Risk' = CALCULATE([Customers], DimCustomer[RiskBand] = "High", DimCustomer[Churn] = 0)
+		formatString: #,0
+
+	measure 'Lift vs Baseline' = [Churn Rate] - CALCULATE([Churn Rate], ALLSELECTED(DimCustomer))
+		formatString: 0.0%
+
+	column CustomerID
+		dataType: int64
+		sourceColumn: CustomerID
+
+	column Churn
+		dataType: double
+		formatString: 0
+		sourceColumn: Churn
+
+	column Tenure
+		dataType: double
+		sourceColumn: Tenure
+
+	column PreferredLoginDevice
+		dataType: string
+		sourceColumn: PreferredLoginDevice
+
+	column CityTier
+		dataType: int64
+		sourceColumn: CityTier
+
+	column WarehouseToHome
+		dataType: double
+		sourceColumn: WarehouseToHome
+
+	column PreferredPaymentMode
+		dataType: string
+		sourceColumn: PreferredPaymentMode
+
+	column Gender
+		dataType: string
+		sourceColumn: Gender
+
+	column HourSpendOnApp
+		dataType: double
+		sourceColumn: HourSpendOnApp
+
+	column NumberOfDeviceRegistered
+		dataType: int64
+		sourceColumn: NumberOfDeviceRegistered
+
+	column PreferedOrderCat
+		dataType: string
+		sourceColumn: PreferedOrderCat
+
+	column SatisfactionScore
+		dataType: int64
+		sourceColumn: SatisfactionScore
+
+	column MaritalStatus
+		dataType: string
+		sourceColumn: MaritalStatus
+
+	column NumberOfAddress
+		dataType: int64
+		sourceColumn: NumberOfAddress
+
+	column Complain
+		dataType: int64
+		sourceColumn: Complain
+
+	column OrderAmountHikeFromlastYear
+		dataType: double
+		sourceColumn: OrderAmountHikeFromlastYear
+
+	column CouponUsed
+		dataType: double
+		sourceColumn: CouponUsed
+
+	column OrderCount
+		dataType: double
+		sourceColumn: OrderCount
+
+	column DaySinceLastOrder
+		dataType: double
+		sourceColumn: DaySinceLastOrder
+
+	column CashbackAmount
+		dataType: double
+		sourceColumn: CashbackAmount
+
+	column CustomerStatus
+		dataType: string
+		sourceColumn: CustomerStatus
+
+	column WarehouseDistanceBand
+		dataType: string
+		sourceColumn: WarehouseDistanceBand
+
+	column TenureBand
+		dataType: string
+		sourceColumn: TenureBand
+
+	column CashbackBand
+		dataType: string
+		sourceColumn: CashbackBand
+
+	column RecencyScore
+		dataType: int64
+		sourceColumn: RecencyScore
+
+	column FrequencyScore
+		dataType: int64
+		sourceColumn: FrequencyScore
+
+	column ChurnProbability
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: ChurnProbability
+
+	column PredictedChurn
+		dataType: int64
+		isHidden
+		sourceColumn: PredictedChurn
+
+	column RiskBand
+		dataType: string
+		sourceColumn: RiskBand
+
+	column RiskRank
+		dataType: int64
+		isHidden
+		sourceColumn: RiskRank
+
+
+	partition DimCustomer = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", Int64.Type}, {"Churn", Int64.Type}, {"Tenure", type number}, {"PreferredLoginDevice", type text}, {"CityTier", Int64.Type}, {"WarehouseToHome", type number}, {"PreferredPaymentMode", type text}, {"Gender", type text}, {"HourSpendOnApp", type number}, {"NumberOfDeviceRegistered", Int64.Type}, {"PreferedOrderCat", type text}, {"SatisfactionScore", Int64.Type}, {"MaritalStatus", type text}, {"NumberOfAddress", Int64.Type}, {"Complain", Int64.Type}, {"OrderAmountHikeFromlastYear", type number}, {"CouponUsed", type number}, {"OrderCount", type number}, {"DaySinceLastOrder", type number}, {"CashbackAmount", type number}, {"CustomerStatus", type text}, {"WarehouseDistanceBand", type text}, {"TenureBand", type text}, {"CashbackBand", type text}, {"RecencyScore", Int64.Type}, {"FrequencyScore", Int64.Type}, {"ChurnProbability", type number}, {"PredictedChurn", Int64.Type}, {"RiskBand", type text}, {"RiskRank", Int64.Type}})
+			in
+				#"Changed Type"

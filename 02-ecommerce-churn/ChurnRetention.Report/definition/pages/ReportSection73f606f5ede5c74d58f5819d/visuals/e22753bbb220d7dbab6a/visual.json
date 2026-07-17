@@ -1,0 +1,59 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "e22753bbb220d7dbab6a",
+  "position": {
+    "x": 472,
+    "y": 96,
+    "z": 6,
+    "height": 100,
+    "width": 420,
+    "tabOrder": 6
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimCustomer"
+                    }
+                  },
+                  "Property": "Retained High Risk"
+                }
+              },
+              "queryRef": "DimCustomer.Retained High Risk",
+              "nativeQueryRef": "Retained High Risk"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Retained high risk'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

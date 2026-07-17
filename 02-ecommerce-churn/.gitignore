@@ -1,0 +1,4 @@
+data/gold/models/
+__pycache__/
+*.pyc
+.Python

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.0.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY25SU06",
+      "reportVersionAtImport": {
+        "visual": "1.8.92",
+        "report": "2.0.84",
+        "page": "1.3.40"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Nordic-Boardroom-a1b2c3d4.json",
+      "reportVersionAtImport": {
+        "visual": "1.8.92",
+        "report": "2.0.84",
+        "page": "1.3.40"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Middle'"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY25SU06",
+          "path": "BaseThemes/CY25SU06.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Nordic-Boardroom-a1b2c3d4.json",
+          "path": "Nordic-Boardroom-a1b2c3d4.json",
+          "type": "CustomTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized"
+  }
+}

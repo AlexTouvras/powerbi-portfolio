@@ -2,7 +2,9 @@
 
 Nordic-inspired Power BI reports and dashboards — clean executive storytelling you can open as PBIP projects.
 
-## Featured: Sales Executive
+## Featured projects
+
+### Sales Executive
 
 C-level sales portfolio report built as a local **PBIP** (report + semantic model + gold data).
 
@@ -13,15 +15,22 @@ C-level sales portfolio report built as a local **PBIP** (report + semantic mode
 | Pages | Portfolio Pulse · Performance Drivers · Customer & Market |
 | Open | [`03-sales-executive/SalesExecutive.pbip`](03-sales-executive/SalesExecutive.pbip) |
 
-### Preview
-
 ![Portfolio Pulse](03-sales-executive/screenshots/portfolio-pulse.png)
 
-![Performance Drivers](03-sales-executive/screenshots/performance-drivers.png)
+Details: [`03-sales-executive/README.md`](03-sales-executive/README.md)
 
-![Customer & Market](03-sales-executive/screenshots/customer-market.png)
+### Churn Retention (Advanced)
 
-Details, open steps, and model notes: [`03-sales-executive/README.md`](03-sales-executive/README.md)
+ML propensity scoring + Key Influencers + at-risk queue for e-commerce retention.
+
+| | |
+|---|---|
+| Audience | CRO / retention lead |
+| Theme | Nordic Boardroom |
+| Pages | Retention Pulse · Churn Drivers · At-Risk Queue |
+| Open | [`02-ecommerce-churn/ChurnRetention.pbip`](02-ecommerce-churn/ChurnRetention.pbip) |
+
+Details: [`02-ecommerce-churn/README.md`](02-ecommerce-churn/README.md)
 
 ## Projects
 
@@ -30,8 +39,8 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | Folder | Topic | Status |
 |--------|-------|--------|
 | [`03-sales-executive`](03-sales-executive/) | Sales executive (KDNuggets #3) | **Featured** — PBIP + screenshots |
+| [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
 | [`01-finance`](01-finance/) | Nordic stock treemap | Brief / theme WIP |
-| [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn | Data staged |
 | [`04-sql-data-warehouse`](04-sql-data-warehouse/) | SQL data warehouse | Data staged |
 | [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation | SQL generators staged |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare | Pending dataset |
