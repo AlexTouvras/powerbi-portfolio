@@ -1,0 +1,26 @@
+name: Notify Orbit Power BI sync
+
+# When screenshots or report READMEs change, ask Orbit to re-sync the
+# portfolio showcase. Requires repo secret ORBIT_DISPATCH_TOKEN
+# (PAT or fine-grained token with contents:write on AlexTouvras/Orbit).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/screenshots/**"
+      - "**/README.md"
+      - "0*/**"
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch powerbi-sync on Orbit
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.ORBIT_DISPATCH_TOKEN }}
+          repository: AlexTouvras/Orbit
+          event-type: powerbi-sync
+          client-payload: '{"source":"powerbi-portfolio","sha":"${{ github.sha }}"}'
