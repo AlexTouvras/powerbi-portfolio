@@ -1,22 +1,43 @@
 # 06 – Care Pulse (Hospital Readmission)
 
+30-day readmission propensity, admission→disposition pathways, and a discharge risk queue for hospital quality storytelling.
+
 **Status:** Built locally — PBIP + Nordic Boardroom; Desktop Bridge verified with screenshots  
 **Audience:** Hospital CMO / quality & utilization lead  
 **Theme:** Nordic Boardroom (`_shared/themes/Nordic-Boardroom-a1b2c3d4.json`)
 
+**Open:** [`CarePulse.pbip`](CarePulse.pbip)
+
+## Preview
+
+![Care Pulse](screenshots/care-pulse.png)
+
+![Pathways & Drivers](screenshots/pathways-drivers.png)
+
+![Discharge Risk Queue](screenshots/discharge-risk-queue.png)
+
+![Context](screenshots/context.png)
+
+## Pages
+
+| Page | Role |
+|------|------|
+| **Care Pulse** | KPI strip · monthly volume · readmit by diagnosis |
+| **Pathways & Drivers** | Sankey admission→disposition · age × diagnosis heat · discharge-group bars |
+| **Discharge Risk Queue** | Encounters ranked by `ReadmitProbability` · risk / age / discharge slicers |
+| **Context** | Audience, how to read Sankey, data/model caveats (last visible page) |
+
 ## Open in Desktop
 
-```text
-06-healthcare-analytics/CarePulse.pbip
-```
+1. Open `06-healthcare-analytics/CarePulse.pbip`.
+2. Set the **GoldDataFolder** parameter to your local `data/gold` path (forward slashes), then **Close & Apply**.
+3. If banners say data needs refresh: **Refresh**, then **Save**.
 
 Store Desktop path (if Bridge can't find exe):
 
 ```powershell
 $env:PBI_DESKTOP_PATH = "C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBIDesktop_*\bin\PBIDesktop.exe"
 ```
-
-If banners say data needs refresh: **Refresh** (or Modeling MCP `RefreshWithXMLA`), then **Save**.
 
 ## What's included
 
