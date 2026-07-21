@@ -58,7 +58,11 @@ function col(name, dataType, opts = {}) {
   return lines.join("\n") + "\n";
 }
 function measure(name, expr, formatString) {
-  return `\tmeasure ${name} = ${expr}${formatString ? `\n\t\tformatString: ${formatString}` : ""}\n`;
+  const needsQuote = /[\s%]/.test(name) || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name);
+  const label = needsQuote ? `'${name.replace(/'/g, "''")}'` : name;
+  // TMDL formatString is unquoted (e.g. #,0.00) — do not wrap in JSON quotes
+  const fmt = formatString ? formatString.replace(/^"|"$/g, "") : null;
+  return `\tmeasure ${label} = ${expr}${fmt ? `\n\t\tformatString: ${fmt}` : ""}\n`;
 }
 function writePlatform(dir, displayName, type) {
   write(
@@ -226,46 +230,46 @@ const measures = [
   measure(
     "Advancers",
     `CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1, FactPrices[ChangePct] > 0 )`,
-    `"#,0"`
+    "#,0"
   ),
   measure(
     "Decliners",
     `CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1, FactPrices[ChangePct] < 0 )`,
-    `"#,0"`
+    "#,0"
   ),
   measure(
     "Universe Count",
     `CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1 )`,
-    `"#,0"`
+    "#,0"
   ),
   measure(
     "Avg Day Change %",
     `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`,
-    `"0.00"`
+    "0.00"
   ),
   measure(
     "Market Cap Latest EURm",
     `CALCULATE( SUM( FactPrices[MarketCapEURm] ), FactPrices[IsLatest] = 1 )`,
-    `"#,0"`
+    "#,0"
   ),
-  measure("Last Close", `CALCULATE( AVERAGE( FactPrices[Close] ), FactPrices[IsLatest] = 1 )`, `"#,0.00"`),
-  measure("Last Change %", `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`, `"0.00"`),
-  measure("Last RSI", `CALCULATE( AVERAGE( FactPrices[RSI14] ), FactPrices[IsLatest] = 1 )`, `"0.0"`),
-  measure("Last Volume", `CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )`, `"#,0"`),
-  measure("Close", `AVERAGE( FactPrices[Close] )`, `"#,0.00"`),
-  measure("SMA 20", `AVERAGE( FactPrices[SMA20] )`, `"#,0.00"`),
-  measure("SMA 50", `AVERAGE( FactPrices[SMA50] )`, `"#,0.00"`),
-  measure("BB Upper", `AVERAGE( FactPrices[BBUpper] )`, `"#,0.00"`),
-  measure("BB Lower", `AVERAGE( FactPrices[BBLower] )`, `"#,0.00"`),
-  measure("MACD Line", `AVERAGE( FactPrices[MACD] )`, `"0.0000"`),
-  measure("MACD Signal", `AVERAGE( FactPrices[MACDSignal] )`, `"0.0000"`),
-  measure("MACD Hist", `AVERAGE( FactPrices[MACDHist] )`, `"0.0000"`),
-  measure("RSI 14", `AVERAGE( FactPrices[RSI14] )`, `"0.0"`),
-  measure("Volume", `SUM( FactPrices[Volume] )`, `"#,0"`),
+  measure("Last Close", `CALCULATE( AVERAGE( FactPrices[Close] ), FactPrices[IsLatest] = 1 )`, "#,0.00"),
+  measure("Last Change %", `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`, "0.00"),
+  measure("Last RSI", `CALCULATE( AVERAGE( FactPrices[RSI14] ), FactPrices[IsLatest] = 1 )`, "0.0"),
+  measure("Last Volume", `CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )`, "#,0"),
+  measure("Close", `AVERAGE( FactPrices[Close] )`, "#,0.00"),
+  measure("SMA 20", `AVERAGE( FactPrices[SMA20] )`, "#,0.00"),
+  measure("SMA 50", `AVERAGE( FactPrices[SMA50] )`, "#,0.00"),
+  measure("BB Upper", `AVERAGE( FactPrices[BBUpper] )`, "#,0.00"),
+  measure("BB Lower", `AVERAGE( FactPrices[BBLower] )`, "#,0.00"),
+  measure("MACD Line", `AVERAGE( FactPrices[MACD] )`, "0.0000"),
+  measure("MACD Signal", `AVERAGE( FactPrices[MACDSignal] )`, "0.0000"),
+  measure("MACD Hist", `AVERAGE( FactPrices[MACDHist] )`, "0.0000"),
+  measure("RSI 14", `AVERAGE( FactPrices[RSI14] )`, "0.0"),
+  measure("Volume", `SUM( FactPrices[Volume] )`, "#,0"),
   measure(
     "Day Change % Latest",
     `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`,
-    `"0.00"`
+    "0.00"
   ),
 ].join("\n");
 

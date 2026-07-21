@@ -116,64 +116,64 @@ table FactPrices
 		sourceColumn: IsLatest
 
 	measure Advancers = CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1, FactPrices[ChangePct] > 0 )
-		formatString: "#,0"
+		formatString: #,0
 
 	measure Decliners = CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1, FactPrices[ChangePct] < 0 )
-		formatString: "#,0"
+		formatString: #,0
 
-	measure Universe Count = CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1 )
-		formatString: "#,0"
+	measure 'Universe Count' = CALCULATE( DISTINCTCOUNT( FactPrices[Ticker] ), FactPrices[IsLatest] = 1 )
+		formatString: #,0
 
-	measure Avg Day Change % = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
-		formatString: "0.00"
+	measure 'Avg Day Change %' = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
+		formatString: 0.00
 
-	measure Market Cap Latest EURm = CALCULATE( SUM( FactPrices[MarketCapEURm] ), FactPrices[IsLatest] = 1 )
-		formatString: "#,0"
+	measure 'Market Cap Latest EURm' = CALCULATE( SUM( FactPrices[MarketCapEURm] ), FactPrices[IsLatest] = 1 )
+		formatString: #,0
 
-	measure Last Close = CALCULATE( AVERAGE( FactPrices[Close] ), FactPrices[IsLatest] = 1 )
-		formatString: "#,0.00"
+	measure 'Last Close' = CALCULATE( AVERAGE( FactPrices[Close] ), FactPrices[IsLatest] = 1 )
+		formatString: #,0.00
 
-	measure Last Change % = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
-		formatString: "0.00"
+	measure 'Last Change %' = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
+		formatString: 0.00
 
-	measure Last RSI = CALCULATE( AVERAGE( FactPrices[RSI14] ), FactPrices[IsLatest] = 1 )
-		formatString: "0.0"
+	measure 'Last RSI' = CALCULATE( AVERAGE( FactPrices[RSI14] ), FactPrices[IsLatest] = 1 )
+		formatString: 0.0
 
-	measure Last Volume = CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )
-		formatString: "#,0"
+	measure 'Last Volume' = CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )
+		formatString: #,0
 
 	measure Close = AVERAGE( FactPrices[Close] )
-		formatString: "#,0.00"
+		formatString: #,0.00
 
-	measure SMA 20 = AVERAGE( FactPrices[SMA20] )
-		formatString: "#,0.00"
+	measure 'SMA 20' = AVERAGE( FactPrices[SMA20] )
+		formatString: #,0.00
 
-	measure SMA 50 = AVERAGE( FactPrices[SMA50] )
-		formatString: "#,0.00"
+	measure 'SMA 50' = AVERAGE( FactPrices[SMA50] )
+		formatString: #,0.00
 
-	measure BB Upper = AVERAGE( FactPrices[BBUpper] )
-		formatString: "#,0.00"
+	measure 'BB Upper' = AVERAGE( FactPrices[BBUpper] )
+		formatString: #,0.00
 
-	measure BB Lower = AVERAGE( FactPrices[BBLower] )
-		formatString: "#,0.00"
+	measure 'BB Lower' = AVERAGE( FactPrices[BBLower] )
+		formatString: #,0.00
 
-	measure MACD Line = AVERAGE( FactPrices[MACD] )
-		formatString: "0.0000"
+	measure 'MACD Line' = AVERAGE( FactPrices[MACD] )
+		formatString: 0.0000
 
-	measure MACD Signal = AVERAGE( FactPrices[MACDSignal] )
-		formatString: "0.0000"
+	measure 'MACD Signal' = AVERAGE( FactPrices[MACDSignal] )
+		formatString: 0.0000
 
-	measure MACD Hist = AVERAGE( FactPrices[MACDHist] )
-		formatString: "0.0000"
+	measure 'MACD Hist' = AVERAGE( FactPrices[MACDHist] )
+		formatString: 0.0000
 
-	measure RSI 14 = AVERAGE( FactPrices[RSI14] )
-		formatString: "0.0"
+	measure 'RSI 14' = AVERAGE( FactPrices[RSI14] )
+		formatString: 0.0
 
 	measure Volume = SUM( FactPrices[Volume] )
-		formatString: "#,0"
+		formatString: #,0
 
-	measure Day Change % Latest = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
-		formatString: "0.00"
+	measure 'Day Change % Latest' = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
+		formatString: 0.00
 
 
 	partition FactPrices = m
