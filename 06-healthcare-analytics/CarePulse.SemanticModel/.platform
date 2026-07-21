@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Care Pulse"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ef0060fb-a9fd-4ce7-9f0e-64e5ad7d8a71"
+  }
+}

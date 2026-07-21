@@ -1,22 +1,29 @@
 /**
  * Elevate Churn Retention report to match Sales Executive Nordic Boardroom format.
+ * Reads page IDs from pages.json; adds Context as last visible page when missing.
  */
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { fileURLToPath } from "url";
 
-const REPORT =
-  "C:/Users/kater/.cursor/projects/PowerBI/02-ecommerce-churn/ChurnRetention.Report";
-const PAGES = {
-  pulse: "ReportSectiona4b9204cc682fd2806841583",
-  drivers: "ReportSectionab668a40dbdf749534697aee",
-  queue: "ReportSection73f606f5ede5c74d58f5819d",
-};
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+const REPORT = path.join(root, "ChurnRetention.Report");
 const SCHEMA =
   "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json";
 const PAGE_SCHEMA =
   "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json";
 const T = "DimCustomer";
+const FOOTER =
+  "Source: Judithokon e-commerce churn sample · Local PBIP · Nordic Boardroom · Propensity = logistic sample model";
+/** Four visible pages — slicers end before NAV (gap ≥16px). */
+const NAV = { x: 1496, y: 12, height: 80, width: 392 };
+const SL = {
+  a: { x: 900, y: 12, height: 80, width: 176 },
+  b: { x: 1088, y: 12, height: 80, width: 176 },
+  c: { x: 1276, y: 12, height: 80, width: 200 },
+};
 
 const ACCENTS = {
   churn: "#B42318",
@@ -70,6 +77,109 @@ function column(name, active = true) {
   if (active) p.active = true;
   return p;
 }
+function ensureContextPage(meta) {
+  const byDisplay = {};
+  for (const pageKey of meta.pageOrder) {
+    const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
+    if (!fs.existsSync(pagePath)) continue;
+    const pj = JSON.parse(fs.readFileSync(pagePath, "utf8"));
+    byDisplay[pj.displayName] = pageKey;
+  }
+  if (byDisplay["Context"]) return meta;
+
+  const pageKey = "ReportSection" + crypto.randomBytes(12).toString("hex");
+  const pageDir = path.join(REPORT, "definition/pages", pageKey);
+  fs.mkdirSync(path.join(pageDir, "visuals"), { recursive: true });
+  fs.writeFileSync(
+    path.join(pageDir, "page.json"),
+    JSON.stringify(
+      {
+        $schema: PAGE_SCHEMA,
+        name: pageKey,
+        displayName: "Context",
+        displayOption: "FitToPage",
+        height: 1080,
+        width: 1920,
+        objects: {
+          background: [
+            {
+              properties: {
+                color: { solid: { color: { expr: { Literal: { Value: "'#F7FAFC'" } } } } },
+                transparency: { expr: { Literal: { Value: "0D" } } },
+              },
+            },
+          ],
+        },
+      },
+      null,
+      2
+    )
+  );
+
+  meta.pageOrder = [...meta.pageOrder, pageKey];
+  fs.writeFileSync(
+    path.join(REPORT, "definition/pages/pages.json"),
+    JSON.stringify(
+      {
+        $schema:
+          "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+        pageOrder: meta.pageOrder,
+        activePageName: meta.activePageName,
+      },
+      null,
+      2
+    )
+  );
+  return meta;
+}
+
+function resolvePages() {
+  const pagesPath = path.join(REPORT, "definition/pages/pages.json");
+  if (!fs.existsSync(pagesPath)) {
+    throw new Error(`Missing ${pagesPath}`);
+  }
+  let meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
+  meta = ensureContextPage(meta);
+  const byDisplay = {};
+  for (const pageKey of meta.pageOrder) {
+    const pj = JSON.parse(
+      fs.readFileSync(path.join(REPORT, "definition/pages", pageKey, "page.json"), "utf8")
+    );
+    byDisplay[pj.displayName] = pageKey;
+  }
+  const required = ["Retention Pulse", "Churn Drivers", "At-Risk Queue", "Context"];
+  for (const name of required) {
+    if (!byDisplay[name]) {
+      throw new Error(`Page "${name}" not found in pages.json / page.json`);
+    }
+  }
+  if (!byDisplay["Retention Pulse"]) {
+    throw new Error("Retention Pulse page not found");
+  }
+  meta.activePageName = byDisplay["Retention Pulse"];
+  fs.writeFileSync(
+    pagesPath,
+    JSON.stringify(
+      {
+        ...JSON.parse(fs.readFileSync(pagesPath, "utf8")),
+        pageOrder: meta.pageOrder,
+        activePageName: meta.activePageName,
+      },
+      null,
+      2
+    )
+  );
+  return {
+    pulse: byDisplay["Retention Pulse"],
+    drivers: byDisplay["Churn Drivers"],
+    queue: byDisplay["At-Risk Queue"],
+    context: byDisplay["Context"],
+    meta,
+  };
+}
+
+const PAGES = resolvePages();
+
 function clearVisuals(pageName) {
   const dir = path.join(REPORT, "definition/pages", pageName, "visuals");
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
@@ -758,10 +868,10 @@ function riskTable(name, pos) {
         color: "#5A6B75",
       },
     ]),
-    dropdownSlicer(id(), { x: 980, y: 12, z: z++, height: 80, width: 180, tabOrder: 2 }, "RiskBand", "Risk band", "ChurnSync"),
-    dropdownSlicer(id(), { x: 1174, y: 12, z: z++, height: 80, width: 180, tabOrder: 3 }, "CityTier", "City tier", "ChurnSync"),
-    dropdownSlicer(id(), { x: 1368, y: 12, z: z++, height: 80, width: 200, tabOrder: 4 }, "TenureBand", "Tenure", "ChurnSync"),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 5 }),
+    dropdownSlicer(id(), { ...SL.a, z: z++, tabOrder: 2 }, "RiskBand", "Risk band", "ChurnSync"),
+    dropdownSlicer(id(), { ...SL.b, z: z++, tabOrder: 3 }, "CityTier", "City tier", "ChurnSync"),
+    dropdownSlicer(id(), { ...SL.c, z: z++, tabOrder: 4 }, "TenureBand", "Tenure", "ChurnSync"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 5 }),
     classicCard(id(), { x: 32, y: 112, z: z++, height: 140, width: 448, tabOrder: 6 }, "Churn Rate", "Churn rate", ACCENTS.churn),
     classicCard(id(), { x: 504, y: 112, z: z++, height: 140, width: 448, tabOrder: 7 }, "Customers", "Customers", ACCENTS.customers),
     classicCard(id(), { x: 976, y: 112, z: z++, height: 140, width: 448, tabOrder: 8 }, "Avg Churn Probability", "Avg propensity", ACCENTS.propensity),
@@ -776,11 +886,7 @@ function riskTable(name, pos) {
       "#D7E6EC"
     ),
     textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 11 }, [
-      {
-        text: "Source: Judithokon e-commerce churn sample · Local PBIP · Nordic Boardroom · Propensity = logistic sample model",
-        size: "9pt",
-        color: "#6B7C86",
-      },
+      { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
   ];
   visuals.forEach((v) => writeVisual(p, v));
@@ -808,9 +914,9 @@ function riskTable(name, pos) {
         color: "#5A6B75",
       },
     ]),
-    dropdownSlicer(id(), { x: 980, y: 12, z: z++, height: 80, width: 200, tabOrder: 2 }, "TenureBand", "Tenure", "ChurnSync"),
-    dropdownSlicer(id(), { x: 1194, y: 12, z: z++, height: 80, width: 240, tabOrder: 3 }, "PreferredPaymentMode", "Payment mode", "ChurnSync"),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 4 }),
+    dropdownSlicer(id(), { ...SL.b, z: z++, tabOrder: 2 }, "TenureBand", "Tenure", "ChurnSync"),
+    dropdownSlicer(id(), { ...SL.c, z: z++, tabOrder: 3 }, "PreferredPaymentMode", "Payment mode", "ChurnSync"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 4 }),
     keyDrivers(id(), { x: 32, y: 112, z: z++, height: 460, width: 920, tabOrder: 5 }),
     decompTree(id(), { x: 976, y: 112, z: z++, height: 460, width: 912, tabOrder: 6 }),
     matrixSegment(id(), { x: 32, y: 596, z: z++, height: 416, width: 1856, tabOrder: 7 }),
@@ -847,10 +953,10 @@ function riskTable(name, pos) {
         color: "#5A6B75",
       },
     ]),
-    dropdownSlicer(id(), { x: 980, y: 12, z: z++, height: 80, width: 180, tabOrder: 2 }, "RiskBand", "Risk band", "ChurnSync"),
-    dropdownSlicer(id(), { x: 1174, y: 12, z: z++, height: 80, width: 180, tabOrder: 3 }, "CityTier", "City tier", "ChurnSync"),
-    dropdownSlicer(id(), { x: 1368, y: 12, z: z++, height: 80, width: 200, tabOrder: 4 }, "SatisfactionScore", "Satisfaction", "ChurnSync"),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 5 }),
+    dropdownSlicer(id(), { ...SL.a, z: z++, tabOrder: 2 }, "RiskBand", "Risk band", "ChurnSync"),
+    dropdownSlicer(id(), { ...SL.b, z: z++, tabOrder: 3 }, "CityTier", "City tier", "ChurnSync"),
+    dropdownSlicer(id(), { ...SL.c, z: z++, tabOrder: 4 }, "SatisfactionScore", "Satisfaction", "ChurnSync"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 5 }),
     classicCard(id(), { x: 32, y: 112, z: z++, height: 120, width: 448, tabOrder: 6 }, "High Risk Customers", "High risk", ACCENTS.highRisk),
     classicCard(id(), { x: 504, y: 112, z: z++, height: 120, width: 448, tabOrder: 7 }, "Retained High Risk", "Retained high risk", ACCENTS.retained),
     classicCard(id(), { x: 976, y: 112, z: z++, height: 120, width: 448, tabOrder: 8 }, "Avg Churn Probability", "Avg propensity", ACCENTS.propensity),
@@ -862,6 +968,112 @@ function riskTable(name, pos) {
         size: "9pt",
         color: "#6B7C86",
       },
+    ]),
+  ];
+  visuals.forEach((v) => writeVisual(p, v));
+}
+
+// --- Page 4: Context (last visible) ---
+{
+  const p = PAGES.context;
+  pageChrome(p, "Context");
+  clearVisuals(p);
+  let z = 0;
+  const visuals = [
+    textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 900, tabOrder: 0 }, [
+      {
+        text: "Context — How to read Churn Retention",
+        size: "18pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+    ]),
+    textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 1100, tabOrder: 1 }, [
+      {
+        text: "Short framing for demos — Retention Pulse stays the landing page; this is reference, not the open.",
+        size: "11pt",
+        color: "#5A6B75",
+      },
+    ]),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 2 }),
+    textbox(id(), { x: 32, y: 120, z: z++, height: 120, width: 1856, tabOrder: 3 }, [
+      {
+        text: "Audience",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "CRO / retention lead / lifecycle marketing. Use Retention Pulse for portfolio health, Churn Drivers for explainability, At-Risk Queue for outreach lists.",
+        size: "12pt",
+        color: "#0F1C24",
+      },
+    ]),
+    textbox(id(), { x: 32, y: 260, z: z++, height: 220, width: 900, tabOrder: 4 }, [
+      {
+        text: "Questions this report answers",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      { text: "• What is our churn rate and how does it vary by tenure?", size: "12pt" },
+      { text: "• Which customer attributes drive churn?", size: "12pt" },
+      { text: "• How does churn decompose across risk bands and segments?", size: "12pt" },
+      { text: "• Which retained customers rank highest on churn propensity?", size: "12pt" },
+    ]),
+    textbox(id(), { x: 976, y: 260, z: z++, height: 220, width: 912, tabOrder: 5 }, [
+      {
+        text: "How to read Drivers visuals",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "Key Influencers ranks features by impact on the Churn label.",
+        size: "12pt",
+      },
+      {
+        text: "Decomposition tree walks churn rate through segments you expand.",
+        size: "12pt",
+      },
+      {
+        text: "Matrix compares payment mode × city tier — lift vs baseline, not causality.",
+        size: "12pt",
+      },
+    ]),
+    textbox(id(), { x: 32, y: 520, z: z++, height: 280, width: 1856, tabOrder: 6 }, [
+      {
+        text: "Data & model caveats",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "• Source: Judithokon e-commerce churn sample (KDNuggets #1) — 5,630 customers, ~17% churn.",
+        size: "12pt",
+      },
+      {
+        text: "• ChurnProbability / RiskBand: local logistic sample model — portfolio analytics, not production CRM scoring.",
+        size: "12pt",
+      },
+      {
+        text: "• At-Risk Queue is sorted propensity; filter High risk + Stayed for intervention targeting.",
+        size: "12pt",
+      },
+      {
+        text: "• Hold-out ROC-AUC ~0.89 — see scripts/score-churn.py for metrics.",
+        size: "12pt",
+      },
+    ]),
+    textbox(id(), { x: 32, y: 840, z: z++, height: 60, width: 1856, tabOrder: 7 }, [
+      {
+        text: "Suggested walkthrough: Retention Pulse → Churn Drivers (influencers + decomposition) → At-Risk Queue → (optional) Context.",
+        size: "12pt",
+        color: "#5A6B75",
+      },
+    ]),
+    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+      { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
   ];
   visuals.forEach((v) => writeVisual(p, v));

@@ -12,6 +12,8 @@ Nordic Boardroom retention report: churn rate and propensity at a glance, driver
 
 ![At-Risk Queue](screenshots/at-risk-queue.png)
 
+![Context](screenshots/context.png)
+
 ## Pages
 
 | Page | Role |
@@ -19,6 +21,7 @@ Nordic Boardroom retention report: churn rate and propensity at a glance, driver
 | **Retention Pulse** | KPI strip · churn rate by tenure band |
 | **Churn Drivers** | Key Influencers · decomposition tree · payment × city-tier matrix |
 | **At-Risk Queue** | Customers ranked by `ChurnProbability` · risk / city / satisfaction slicers |
+| **Context** | Audience, how to read drivers, data/model caveats (last visible page) |
 
 ## What's in the folder
 

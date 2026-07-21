@@ -1,0 +1,183 @@
+table FactEncounter
+
+	measure Encounters = COUNTROWS(FactEncounter)
+		formatString: #,0
+
+	measure Patients = DISTINCTCOUNT(FactEncounter[PatientID])
+		formatString: #,0
+
+	measure 'Readmit30 Encounters' = CALCULATE([Encounters], FactEncounter[Readmit30] = 1)
+		formatString: #,0
+
+	measure 'Readmit Rate' = DIVIDE([Readmit30 Encounters], [Encounters])
+		formatString: 0.0%
+
+	measure 'Avg Length of Stay' = AVERAGE(FactEncounter[LengthOfStay])
+		formatString: #,0.0
+
+	measure 'High Risk Discharges' = CALCULATE([Encounters], FactEncounter[RiskBand] = "High")
+		formatString: #,0
+
+	measure 'Avg Readmit Probability' = AVERAGE(FactEncounter[ReadmitProbability])
+		formatString: 0.0%
+
+	measure 'Avg Medications' = AVERAGE(FactEncounter[Medications])
+		formatString: #,0.0
+
+	column EncounterID
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: EncounterID
+
+	column PatientID
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PatientID
+
+	column AdmissionDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: AdmissionDate
+
+	column AdmissionType
+		dataType: string
+		sourceColumn: AdmissionType
+
+	column AdmissionSource
+		dataType: string
+		sourceColumn: AdmissionSource
+
+	column DischargeDisposition
+		dataType: string
+		sourceColumn: DischargeDisposition
+
+	column DischargeGroup
+		dataType: string
+		sourceColumn: DischargeGroup
+
+	column AgeBand
+		dataType: string
+		sourceColumn: AgeBand
+
+	column Gender
+		dataType: string
+		sourceColumn: Gender
+
+	column Race
+		dataType: string
+		sourceColumn: Race
+
+	column DiagGroup
+		dataType: string
+		sourceColumn: DiagGroup
+
+	column LengthOfStay
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: LengthOfStay
+
+	column LabProcedures
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: LabProcedures
+
+	column Procedures
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Procedures
+
+	column Medications
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Medications
+
+	column PriorOutpatient
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PriorOutpatient
+
+	column PriorEmergency
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PriorEmergency
+
+	column PriorInpatient
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PriorInpatient
+
+	column DiagnosesCount
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: DiagnosesCount
+
+	column DiabetesMed
+		dataType: string
+		sourceColumn: DiabetesMed
+
+	column MedChange
+		dataType: string
+		sourceColumn: MedChange
+
+	column A1CResult
+		dataType: string
+		sourceColumn: A1CResult
+
+	column Insulin
+		dataType: string
+		sourceColumn: Insulin
+
+	column ReadmittedRaw
+		dataType: string
+		sourceColumn: ReadmittedRaw
+
+	column Readmit30
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Readmit30
+
+	column ReadmitOutcome
+		dataType: string
+		sourceColumn: ReadmitOutcome
+
+	column LOSBand
+		dataType: string
+		sourceColumn: LOSBand
+
+	column ReadmitProbability
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: ReadmitProbability
+
+	column RiskBand
+		dataType: string
+		sourceColumn: RiskBand
+
+	column RiskRank
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: RiskRank
+
+
+	partition FactEncounter = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(GoldDataFolder & "/FactEncounter.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"EncounterID", Int64.Type}, {"PatientID", Int64.Type}, {"AdmissionDate", type date}, {"AdmissionType", type text}, {"AdmissionSource", type text}, {"DischargeDisposition", type text}, {"DischargeGroup", type text}, {"AgeBand", type text}, {"Gender", type text}, {"Race", type text}, {"DiagGroup", type text}, {"LengthOfStay", Int64.Type}, {"LabProcedures", Int64.Type}, {"Procedures", Int64.Type}, {"Medications", Int64.Type}, {"PriorOutpatient", Int64.Type}, {"PriorEmergency", Int64.Type}, {"PriorInpatient", Int64.Type}, {"DiagnosesCount", Int64.Type}, {"DiabetesMed", type text}, {"MedChange", type text}, {"A1CResult", type text}, {"Insulin", type text}, {"ReadmittedRaw", type text}, {"Readmit30", Int64.Type}, {"ReadmitOutcome", type text}, {"LOSBand", type text}, {"ReadmitProbability", type number}, {"RiskBand", type text}, {"RiskRank", Int64.Type}})
+			in
+				#"Changed Type"

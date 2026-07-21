@@ -1,0 +1,44 @@
+Source,Target,Weight,Hop
+Elective,Expired,49,1
+Elective,Home,4061,1
+Elective,Home health,934,1
+Elective,Hospice,10,1
+Elective,Left AMA,19,1
+Elective,Rehab,225,1
+Elective,SNF / nursing,677,1
+Elective,Transfer,222,1
+Elective,Unknown,330,1
+Emergency,Expired,362,1
+Emergency,Home,10968,1
+Emergency,Home health,2257,1
+Emergency,Hospice,70,1
+Emergency,Left AMA,143,1
+Emergency,Other,1,1
+Emergency,Rehab,350,1
+Emergency,SNF / nursing,2714,1
+Emergency,Transfer,934,1
+Emergency,Unknown,697,1
+Newborn,Home,2,1
+Trauma Center,Expired,2,1
+Trauma Center,Home,2,1
+Trauma Center,Home health,1,1
+Trauma Center,SNF / nursing,5,1
+Trauma Center,Transfer,1,1
+Unknown,Expired,56,1
+Unknown,Home,1813,1
+Unknown,Home health,518,1
+Unknown,Hospice,30,1
+Unknown,Left AMA,27,1
+Unknown,Rehab,26,1
+Unknown,SNF / nursing,697,1
+Unknown,Transfer,189,1
+Unknown,Unknown,330,1
+Urgent,Expired,85,1
+Urgent,Home,3929,1
+Urgent,Home health,745,1
+Urgent,Hospice,11,1
+Urgent,Left AMA,34,1
+Urgent,Rehab,121,1
+Urgent,SNF / nursing,829,1
+Urgent,Transfer,330,1
+Urgent,Unknown,194,1

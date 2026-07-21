@@ -27,7 +27,7 @@ ML propensity scoring + Key Influencers + at-risk queue for e-commerce retention
 |---|---|
 | Audience | CRO / retention lead |
 | Theme | Nordic Boardroom |
-| Pages | Retention Pulse · Churn Drivers · At-Risk Queue |
+| Pages | Retention Pulse · Churn Drivers · At-Risk Queue · Context |
 | Open | [`02-ecommerce-churn/ChurnRetention.pbip`](02-ecommerce-churn/ChurnRetention.pbip) |
 
 ![Retention Pulse](02-ecommerce-churn/screenshots/retention-pulse.png)
@@ -57,6 +57,25 @@ RFM + k-means segments, dual-flow waterfall, city map, and a dormancy / cross-se
 
 Details: [`05-bank-segmentation/README.md`](05-bank-segmentation/README.md)
 
+### Care Pulse (Hospital Readmission)
+
+30-day readmission propensity, admission→disposition pathway ribbon, and clinical age × diagnosis heat — hospital CMO / quality storytelling.
+
+| | |
+|---|---|
+| Audience | Hospital CMO / quality lead |
+| Theme | Nordic Boardroom |
+| Pages | Care Pulse · Pathways & Drivers · Discharge Risk Queue · Context |
+| Open | [`06-healthcare-analytics/CarePulse.pbip`](06-healthcare-analytics/CarePulse.pbip) |
+
+![Care Pulse](06-healthcare-analytics/screenshots/care-pulse.png)
+
+![Pathways & Drivers](06-healthcare-analytics/screenshots/pathways-drivers.png)
+
+![Discharge Risk Queue](06-healthcare-analytics/screenshots/discharge-risk-queue.png)
+
+Details: [`06-healthcare-analytics/README.md`](06-healthcare-analytics/README.md)
+
 ## Projects
 
 Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-portfolio) — see [`DATASETS.md`](DATASETS.md).
@@ -67,7 +86,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
 | [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | **Featured** — RFM + map + drillthrough |
 | [`01-finance`](01-finance/) | Nordic stock treemap | Brief / theme WIP |
-| [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare | Pending dataset |
+| [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
 
 ## Design system
 

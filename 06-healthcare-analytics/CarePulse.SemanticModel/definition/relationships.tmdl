@@ -1,0 +1,7 @@
+relationship FactEncounter_DimDate
+	fromColumn: FactEncounter.AdmissionDate
+	toColumn: DimDate.Date
+
+relationship FactEncounter_DimPatient
+	fromColumn: FactEncounter.PatientID
+	toColumn: DimPatient.patient_nbr

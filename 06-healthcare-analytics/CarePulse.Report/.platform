@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Care Pulse"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "48118d56-00c6-4596-9458-46175fa0f37c"
+  }
+}

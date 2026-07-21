@@ -8,7 +8,7 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 | 2 | SQL data warehouse | [DataWithBaraa/sql-data-warehouse-project](https://github.com/DataWithBaraa/sql-data-warehouse-project) | Used as raw input for Sales (`03-sales-executive/data/raw/`) — no separate portfolio folder |
 | 3 | Sales analysis | [Kaggle: emirakyer/sql-sales-data-analysis](https://www.kaggle.com/code/emirakyer/sql-sales-data-analysis) | `03-sales-executive/data/raw/` *(see note)* |
 | 4 | Bank segmentation | [franklinanalytics/Bank-Segmentation-Analysis](https://github.com/franklinanalytics/Bank-Segmentation-Analysis) | `05-bank-segmentation/data/raw/` + scaled `data/gold/` |
-| 5 | Healthcare | [Kaggle: gizellef/healthcare…](https://www.kaggle.com/code/gizellef/healthcare-data-analysis-using-sql) | `06-healthcare-analytics/` — **pending** (needs Kaggle download) |
+| 5 | Healthcare | [Kaggle: gizellef/healthcare…](https://www.kaggle.com/code/gizellef/healthcare-data-analysis-using-sql) | KDNuggets #5 billing sample lacks outcomes — **portfolio uses UCI Diabetes 130-US** under `06-healthcare-analytics/data/raw/uci/` |
 
 ## Active / featured builds
 
@@ -17,6 +17,7 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 | `03-sales-executive` | KDNuggets #2 warehouse CSVs (sales grain) | C-level sales — **featured** |
 | `02-ecommerce-churn` | KDNuggets #1 `ecommerce_churn.csv` | ML propensity + drivers — **featured** |
 | `05-bank-segmentation` | KDNuggets #4 simulated bank (customers · accounts · transactions) | **Featured** — RFM + k-means |
+| `06-healthcare-analytics` | UCI Diabetes 130-US Hospitals (~35k encounter sample) | **Featured** — 30d readmit propensity + pathway ribbon + heat |
 
 ### Sales (`03-sales-executive`)
 
@@ -44,3 +45,12 @@ Upstream ships PostgreSQL generators only (`schema_setup.sql`, `data_generation.
 - `transactions` — account_id, date, amount, credit/debit, description  
 
 Upstream scale is small (~200 customers · ~1k transactions). Portfolio gold is a **scaled seed** (~5k customers · ~113k transactions) plus RFM + k-means `ValueSegment`, geocoded `DimCity`, and `FactFlowBridge` for the waterfall.
+
+### Healthcare (`06-healthcare-analytics`)
+
+KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care Pulse uses **[UCI Diabetes 130-US Hospitals](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)**:
+
+- Raw: `diabetic_data.csv` (+ IDS mappings)
+- Gold: ~35k encounters with `Readmit30`, pathway bridge, heat bridge
+- ML: logistic **ReadmitProbability** / **RiskBand** / **RiskRank** (sample model, not clinical CDS)
+
