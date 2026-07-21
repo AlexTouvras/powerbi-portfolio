@@ -6,6 +6,8 @@ Nordic Boardroom executive report for sales health: status in seconds, then self
 
 ## Preview
 
+![Landing](screenshots/landing.png)
+
 ![Portfolio Pulse](screenshots/portfolio-pulse.png)
 
 ![Performance Drivers](screenshots/performance-drivers.png)
@@ -16,6 +18,7 @@ Nordic Boardroom executive report for sales health: status in seconds, then self
 
 | Page | Role |
 |------|------|
+| **Landing** | Artistic cover · thesis · audience · page map (opens first) |
 | **Portfolio Pulse** | KPI strip (value + YoY ▲/▼) · monthly revenue trend · category mix |
 | **Performance Drivers** | Filter rail · category / product line · top 15 products · margin & YoY callouts |
 | **Customer & Market** | Country revenue & YoY · top 15 customers · concentration KPIs |

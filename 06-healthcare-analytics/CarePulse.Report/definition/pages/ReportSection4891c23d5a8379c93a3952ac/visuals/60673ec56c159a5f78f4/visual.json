@@ -1,0 +1,409 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "60673ec56c159a5f78f4",
+  "position": {
+    "x": 32,
+    "y": 304,
+    "z": 7,
+    "height": 700,
+    "width": 1856,
+    "tabOrder": 7
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "EncounterID"
+                }
+              },
+              "queryRef": "FactEncounter.EncounterID",
+              "nativeQueryRef": "EncounterID",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "PatientID"
+                }
+              },
+              "queryRef": "FactEncounter.PatientID",
+              "nativeQueryRef": "PatientID",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "AdmissionDate"
+                }
+              },
+              "queryRef": "FactEncounter.AdmissionDate",
+              "nativeQueryRef": "AdmissionDate",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "AdmissionType"
+                }
+              },
+              "queryRef": "FactEncounter.AdmissionType",
+              "nativeQueryRef": "AdmissionType",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "DiagGroup"
+                }
+              },
+              "queryRef": "FactEncounter.DiagGroup",
+              "nativeQueryRef": "DiagGroup",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "DischargeGroup"
+                }
+              },
+              "queryRef": "FactEncounter.DischargeGroup",
+              "nativeQueryRef": "DischargeGroup",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "LengthOfStay"
+                }
+              },
+              "queryRef": "FactEncounter.LengthOfStay",
+              "nativeQueryRef": "LengthOfStay",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "Medications"
+                }
+              },
+              "queryRef": "FactEncounter.Medications",
+              "nativeQueryRef": "Medications",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "LabProcedures"
+                }
+              },
+              "queryRef": "FactEncounter.LabProcedures",
+              "nativeQueryRef": "LabProcedures",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "ReadmitProbability"
+                }
+              },
+              "queryRef": "FactEncounter.ReadmitProbability",
+              "nativeQueryRef": "ReadmitProbability",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "RiskBand"
+                }
+              },
+              "queryRef": "FactEncounter.RiskBand",
+              "nativeQueryRef": "RiskBand",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "Readmit30"
+                }
+              },
+              "queryRef": "FactEncounter.Readmit30",
+              "nativeQueryRef": "Readmit30",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactEncounter"
+                    }
+                  },
+                  "Property": "ReadmitOutcome"
+                }
+              },
+              "queryRef": "FactEncounter.ReadmitOutcome",
+              "nativeQueryRef": "ReadmitOutcome",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E8EEF2'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Encounter detail'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F1C24'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'None'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

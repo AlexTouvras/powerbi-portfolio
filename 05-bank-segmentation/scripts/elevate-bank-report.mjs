@@ -19,6 +19,13 @@ const PAGE_SCHEMA =
 const SYNC_PREFIX = "BankSync";
 const FOOTER =
   "Source: franklinanalytics Bank Segmentation sample (scaled) · Local PBIP · Nordic Boardroom · RFM + k-means segments";
+/** Four visible pages (Landing + 3 analysis); Customer Profile stays hidden. */
+const NAV = { x: 1496, y: 12, height: 80, width: 392 };
+const SL = {
+  a: { x: 900, y: 12, height: 80, width: 176 },
+  b: { x: 1088, y: 12, height: 80, width: 176 },
+  c: { x: 1276, y: 12, height: 80, width: 200 },
+};
 
 const ACCENTS = {
   credit: "#1B7A4E",
@@ -85,7 +92,7 @@ function resolvePages() {
   if (!fs.existsSync(pagesPath)) {
     throw new Error(`Missing ${pagesPath} — run scaffold-bank-pbip.mjs first`);
   }
-  const meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
+  let meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
   const byDisplay = {};
   for (const pageKey of meta.pageOrder) {
     const pj = JSON.parse(
@@ -93,7 +100,42 @@ function resolvePages() {
     );
     byDisplay[pj.displayName] = pageKey;
   }
+
+  let landingKey = byDisplay["Landing"];
+  if (!landingKey) {
+    landingKey = "ReportSection" + crypto.randomBytes(12).toString("hex");
+    const pageDir = path.join(REPORT, "definition/pages", landingKey);
+    fs.mkdirSync(path.join(pageDir, "visuals"), { recursive: true });
+    fs.writeFileSync(
+      path.join(pageDir, "page.json"),
+      JSON.stringify(
+        {
+          $schema: PAGE_SCHEMA,
+          name: landingKey,
+          displayName: "Landing",
+          displayOption: "FitToPage",
+          height: 1080,
+          width: 1920,
+          objects: {
+            background: [
+              {
+                properties: {
+                  color: { solid: { color: { expr: { Literal: { Value: "'#F7FAFC'" } } } } },
+                  transparency: { expr: { Literal: { Value: "0D" } } },
+                },
+              },
+            ],
+          },
+        },
+        null,
+        2
+      )
+    );
+    byDisplay["Landing"] = landingKey;
+  }
+
   const required = [
+    "Landing",
     "Franchise Pulse",
     "Segments & Markets",
     "Relationship Book",
@@ -105,6 +147,7 @@ function resolvePages() {
     }
   }
   return {
+    landing: byDisplay["Landing"],
     pulse: byDisplay["Franchise Pulse"],
     segments: byDisplay["Segments & Markets"],
     book: byDisplay["Relationship Book"],
@@ -247,6 +290,50 @@ function textbox(name, pos, lines) {
                 horizontalTextAlignment: l.align || "left",
               })),
             },
+          },
+        ],
+      },
+      visualContainerObjects: {
+        background: [{ properties: { show: lit(false) } }],
+        border: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(0),
+              bottom: litD(0),
+              left: litD(0),
+              right: litD(0),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+      },
+    },
+  };
+}
+
+function shapeRect(name, pos, fillHex) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "shape",
+      objects: {
+        shape: [{ properties: { tileShape: lit("rectangle") } }],
+        fill: [
+          {
+            properties: {
+              fillColor: solid(fillHex),
+              transparency: litD(0),
+            },
+            selector: { id: "default" },
+          },
+        ],
+        outline: [
+          {
+            properties: { show: lit(false) },
+            selector: { id: "default" },
           },
         ],
       },
@@ -1032,13 +1119,76 @@ fs.writeFileSync(
     {
       $schema:
         "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
-      pageOrder: [PAGES.pulse, PAGES.segments, PAGES.book, PAGES.profile],
-      activePageName: PAGES.pulse,
+      pageOrder: [PAGES.landing, PAGES.pulse, PAGES.segments, PAGES.book, PAGES.profile],
+      activePageName: PAGES.landing,
     },
     null,
     2
   )
 );
+
+// --- Page 0: Landing ---
+{
+  const p = PAGES.landing;
+  pageChrome(p, "Landing");
+  clearVisuals(p);
+  let z = 0;
+  const visuals = [
+    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 12, tabOrder: 0 }, "#2F5F73"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 1 }),
+    textbox(id(), { x: 72, y: 220, z: z++, height: 72, width: 1200, tabOrder: 2 }, [
+      {
+        text: "Bank Value & Engagement",
+        size: "32pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+    ]),
+    textbox(id(), { x: 72, y: 300, z: z++, height: 48, width: 1400, tabOrder: 3 }, [
+      {
+        text: "RFM franchise view and relationship book — segments, city footprint, dormancy queues.",
+        size: "16pt",
+        color: "#5A6B75",
+      },
+    ]),
+    shapeRect(id(), { x: 72, y: 372, z: z++, height: 3, width: 420, tabOrder: 4 }, "#2F5F73"),
+    textbox(id(), { x: 72, y: 420, z: z++, height: 40, width: 1400, tabOrder: 5 }, [
+      {
+        text: "Audience · Retail-bank CRO / relationship lead",
+        size: "13pt",
+        color: "#0F1C24",
+      },
+    ]),
+    textbox(id(), { x: 72, y: 480, z: z++, height: 160, width: 900, tabOrder: 6 }, [
+      {
+        text: "What you’ll see",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      { text: "Franchise Pulse — credit, debit, and net flow", size: "13pt" },
+      { text: "Segments & Markets — RFM clusters and city map", size: "13pt" },
+      { text: "Relationship Book — dormancy and cross-sell queues", size: "13pt" },
+    ]),
+    textbox(id(), { x: 1000, y: 480, z: z++, height: 160, width: 700, tabOrder: 7 }, [
+      {
+        text: "Signature",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "Value segments × city footprint — Icon Map without Azure login.",
+        size: "13pt",
+        color: "#5A6B75",
+      },
+    ]),
+    textbox(id(), { x: 72, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+      { text: FOOTER, size: "9pt", color: "#6B7C86" },
+    ]),
+  ];
+  visuals.forEach((v) => writeVisual(p, v));
+}
 
 // --- Page 1: Franchise Pulse ---
 {
@@ -1064,7 +1214,7 @@ fs.writeFileSync(
     ]),
     dropdownSlicer(
       id(),
-      { x: 980, y: 12, z: z++, height: 80, width: 180, tabOrder: 2 },
+      { ...SL.a, z: z++, tabOrder: 2 },
       "DimCustomer",
       "ValueSegment",
       "Value segment",
@@ -1072,7 +1222,7 @@ fs.writeFileSync(
     ),
     dropdownSlicer(
       id(),
-      { x: 1174, y: 12, z: z++, height: 80, width: 180, tabOrder: 3 },
+      { ...SL.b, z: z++, tabOrder: 3 },
       "DimCustomer",
       "City",
       "City",
@@ -1080,13 +1230,13 @@ fs.writeFileSync(
     ),
     dropdownSlicer(
       id(),
-      { x: 1368, y: 12, z: z++, height: 80, width: 200, tabOrder: 4 },
+      { ...SL.c, z: z++, tabOrder: 4 },
       "DimCustomer",
       "Gender",
       "Gender",
       SYNC_PREFIX
     ),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 5 }),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 5 }),
     classicCard(
       id(),
       { x: 32, y: 112, z: z++, height: 140, width: 448, tabOrder: 6 },
@@ -1160,7 +1310,7 @@ fs.writeFileSync(
     ]),
     dropdownSlicer(
       id(),
-      { x: 1174, y: 12, z: z++, height: 80, width: 180, tabOrder: 2 },
+      { ...SL.b, z: z++, tabOrder: 2 },
       "DimCustomer",
       "ValueSegment",
       "Value segment",
@@ -1168,13 +1318,13 @@ fs.writeFileSync(
     ),
     dropdownSlicer(
       id(),
-      { x: 1368, y: 12, z: z++, height: 80, width: 200, tabOrder: 3 },
+      { ...SL.c, z: z++, tabOrder: 3 },
       "DimCustomer",
       "City",
       "City",
       SYNC_PREFIX
     ),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 4 }),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 4 }),
     clusteredBar(
       id(),
       { x: 32, y: 112, z: z++, height: 896, width: 600, tabOrder: 5 },
@@ -1221,7 +1371,7 @@ fs.writeFileSync(
     ]),
     dropdownSlicer(
       id(),
-      { x: 980, y: 12, z: z++, height: 80, width: 180, tabOrder: 2 },
+      { ...SL.a, z: z++, tabOrder: 2 },
       "DimCustomer",
       "IsDormant",
       "Dormant",
@@ -1229,7 +1379,7 @@ fs.writeFileSync(
     ),
     dropdownSlicer(
       id(),
-      { x: 1174, y: 12, z: z++, height: 80, width: 180, tabOrder: 3 },
+      { ...SL.b, z: z++, tabOrder: 3 },
       "DimCustomer",
       "ProductCount",
       "Products",
@@ -1237,13 +1387,13 @@ fs.writeFileSync(
     ),
     dropdownSlicer(
       id(),
-      { x: 1368, y: 12, z: z++, height: 80, width: 200, tabOrder: 4 },
+      { ...SL.c, z: z++, tabOrder: 4 },
       "DimCustomer",
       "ValueSegment",
       "Value segment",
       SYNC_PREFIX
     ),
-    pageNavigator(id(), { x: 1592, y: 12, z: z++, height: 80, width: 296, tabOrder: 5 }),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 5 }),
     classicCard(
       id(),
       { x: 32, y: 112, z: z++, height: 120, width: 448, tabOrder: 6 },

@@ -12,8 +12,10 @@ C-level sales portfolio report built as a local **PBIP** (report + semantic mode
 |---|---|
 | Audience | CEO / CFO / CRO / board |
 | Theme | Nordic Boardroom |
-| Pages | Portfolio Pulse · Performance Drivers · Customer & Market |
+| Pages | Landing · Portfolio Pulse · Performance Drivers · Customer & Market |
 | Open | [`03-sales-executive/SalesExecutive.pbip`](03-sales-executive/SalesExecutive.pbip) |
+
+![Landing](03-sales-executive/screenshots/landing.png)
 
 ![Portfolio Pulse](03-sales-executive/screenshots/portfolio-pulse.png)
 
@@ -27,8 +29,10 @@ ML propensity scoring + Key Influencers + at-risk queue for e-commerce retention
 |---|---|
 | Audience | CRO / retention lead |
 | Theme | Nordic Boardroom |
-| Pages | Retention Pulse · Churn Drivers · At-Risk Queue · Context |
+| Pages | Landing · Retention Pulse · Churn Drivers · At-Risk Queue · Context |
 | Open | [`02-ecommerce-churn/ChurnRetention.pbip`](02-ecommerce-churn/ChurnRetention.pbip) |
+
+![Landing](02-ecommerce-churn/screenshots/landing.png)
 
 ![Retention Pulse](02-ecommerce-churn/screenshots/retention-pulse.png)
 
@@ -46,8 +50,10 @@ RFM + k-means segments, dual-flow waterfall, city map, and a dormancy / cross-se
 |---|---|
 | Audience | Retail-bank CRO / relationship lead |
 | Theme | Nordic Boardroom |
-| Pages | Franchise Pulse · Segments & Markets · Relationship Book |
+| Pages | Landing · Franchise Pulse · Segments & Markets · Relationship Book |
 | Open | [`05-bank-segmentation/BankValue.pbip`](05-bank-segmentation/BankValue.pbip) |
+
+![Landing](05-bank-segmentation/screenshots/landing.png)
 
 ![Franchise Pulse](05-bank-segmentation/screenshots/franchise-pulse.png)
 
@@ -65,8 +71,10 @@ Details: [`05-bank-segmentation/README.md`](05-bank-segmentation/README.md)
 |---|---|
 | Audience | Hospital CMO / quality lead |
 | Theme | Nordic Boardroom |
-| Pages | Care Pulse · Pathways & Drivers · Discharge Risk Queue · Context |
+| Pages | Landing · Care Pulse · Pathways & Drivers · Discharge Risk Queue · Context |
 | Open | [`06-healthcare-analytics/CarePulse.pbip`](06-healthcare-analytics/CarePulse.pbip) |
+
+![Landing](06-healthcare-analytics/screenshots/landing.png)
 
 ![Care Pulse](06-healthcare-analytics/screenshots/care-pulse.png)
 

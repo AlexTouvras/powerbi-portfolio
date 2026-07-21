@@ -10,6 +10,8 @@
 
 ## Preview
 
+![Landing](screenshots/landing.png)
+
 ![Care Pulse](screenshots/care-pulse.png)
 
 ![Pathways & Drivers](screenshots/pathways-drivers.png)
@@ -22,10 +24,11 @@
 
 | Page | Role |
 |------|------|
+| **Landing** | Artistic cover · thesis · audience · page map (opens first) |
 | **Care Pulse** | KPI strip · monthly volume · readmit by diagnosis |
 | **Pathways & Drivers** | Sankey admission→disposition · age × diagnosis heat · discharge-group bars |
 | **Discharge Risk Queue** | Encounters ranked by `ReadmitProbability` · risk / age / discharge slicers |
-| **Context** | Audience, how to read Sankey, data/model caveats (last visible page) |
+| **Context** | Facts-only reference · Sankey how-to · data/model caveats (last visible) |
 
 ## Open in Desktop
 

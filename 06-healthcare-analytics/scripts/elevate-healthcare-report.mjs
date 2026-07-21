@@ -29,12 +29,12 @@ const PAGE_SCHEMA =
 const SYNC_PREFIX = "CareSync";
 const FOOTER =
   "Source: UCI Diabetes 130-US Hospitals · Local PBIP · Nordic Boardroom · 30d readmission propensity (sample model)";
-/** Four visible pages — slicers end before NAV (gap ≥16px). */
-const NAV = { x: 1496, y: 12, z: 0, height: 80, width: 392 };
+/** Five visible pages (Landing + 3 analysis + Context) — slicers end before NAV. */
+const NAV = { x: 1448, y: 12, z: 0, height: 80, width: 440 };
 const SL = {
-  a: { x: 900, y: 12, height: 80, width: 176 },
-  b: { x: 1088, y: 12, height: 80, width: 176 },
-  c: { x: 1276, y: 12, height: 80, width: 200 },
+  a: { x: 860, y: 12, height: 80, width: 176 },
+  b: { x: 1048, y: 12, height: 80, width: 176 },
+  c: { x: 1236, y: 12, height: 80, width: 192 },
 };
 
 const ACCENTS = {
@@ -122,7 +122,7 @@ function aggColumn(entity, col, func = 1) {
   };
 }
 
-function ensureContextPage(meta) {
+function pageDisplayMap(meta) {
   const byDisplay = {};
   for (const pageKey of meta.pageOrder) {
     const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
@@ -130,8 +130,10 @@ function ensureContextPage(meta) {
     const pj = JSON.parse(fs.readFileSync(pagePath, "utf8"));
     byDisplay[pj.displayName] = pageKey;
   }
-  if (byDisplay["Context"]) return meta;
+  return byDisplay;
+}
 
+function createBlankPage(displayName) {
   const pageKey = "ReportSection" + crypto.randomBytes(12).toString("hex");
   const pageDir = path.join(REPORT, "definition/pages", pageKey);
   fs.mkdirSync(path.join(pageDir, "visuals"), { recursive: true });
@@ -141,7 +143,7 @@ function ensureContextPage(meta) {
       {
         $schema: PAGE_SCHEMA,
         name: pageKey,
-        displayName: "Context",
+        displayName,
         displayOption: "FitToPage",
         height: 1080,
         width: 1920,
@@ -160,13 +162,10 @@ function ensureContextPage(meta) {
       2
     )
   );
+  return pageKey;
+}
 
-  // Insert Context as last visible page (before hidden Encounter Profile if present)
-  const profileKey = byDisplay["Encounter Profile"];
-  const order = meta.pageOrder.filter((k) => k !== profileKey);
-  order.push(pageKey);
-  if (profileKey) order.push(profileKey);
-  meta.pageOrder = order;
+function writePagesMeta(meta) {
   fs.writeFileSync(
     path.join(REPORT, "definition/pages/pages.json"),
     JSON.stringify(
@@ -180,6 +179,34 @@ function ensureContextPage(meta) {
       2
     )
   );
+}
+
+function ensureLandingPage(meta) {
+  const byDisplay = pageDisplayMap(meta);
+  let landingKey = byDisplay["Landing"];
+  const profileKey = byDisplay["Encounter Profile"];
+  const withoutHidden = meta.pageOrder.filter((k) => k !== profileKey && k !== landingKey);
+  if (!landingKey) {
+    landingKey = createBlankPage("Landing");
+  }
+  meta.pageOrder = [landingKey, ...withoutHidden];
+  if (profileKey) meta.pageOrder.push(profileKey);
+  meta.activePageName = landingKey;
+  writePagesMeta(meta);
+  return meta;
+}
+
+function ensureContextPage(meta) {
+  const byDisplay = pageDisplayMap(meta);
+  if (byDisplay["Context"]) return meta;
+
+  const pageKey = createBlankPage("Context");
+  const profileKey = byDisplay["Encounter Profile"];
+  const order = meta.pageOrder.filter((k) => k !== profileKey);
+  order.push(pageKey);
+  if (profileKey) order.push(profileKey);
+  meta.pageOrder = order;
+  writePagesMeta(meta);
   return meta;
 }
 
@@ -189,15 +216,23 @@ function resolvePages() {
     throw new Error(`Missing ${pagesPath} — run scaffold-healthcare-pbip.mjs first`);
   }
   let meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
+  meta = ensureLandingPage(meta);
   meta = ensureContextPage(meta);
-  const byDisplay = {};
-  for (const pageKey of meta.pageOrder) {
-    const pj = JSON.parse(
-      fs.readFileSync(path.join(REPORT, "definition/pages", pageKey, "page.json"), "utf8")
-    );
-    byDisplay[pj.displayName] = pageKey;
-  }
+  // Re-order: Landing first, Context before hidden profile
+  const byDisplay = pageDisplayMap(meta);
+  const order = [
+    byDisplay["Landing"],
+    byDisplay["Care Pulse"],
+    byDisplay["Pathways & Drivers"],
+    byDisplay["Discharge Risk Queue"],
+    byDisplay["Context"],
+    byDisplay["Encounter Profile"],
+  ].filter(Boolean);
+  meta.pageOrder = order;
+  meta.activePageName = byDisplay["Landing"];
+  writePagesMeta(meta);
   const required = [
+    "Landing",
     "Care Pulse",
     "Pathways & Drivers",
     "Discharge Risk Queue",
@@ -210,6 +245,7 @@ function resolvePages() {
     }
   }
   return {
+    landing: byDisplay["Landing"],
     pulse: byDisplay["Care Pulse"],
     pathways: byDisplay["Pathways & Drivers"],
     queue: byDisplay["Discharge Risk Queue"],
@@ -353,6 +389,50 @@ function textbox(name, pos, lines) {
                 horizontalTextAlignment: l.align || "left",
               })),
             },
+          },
+        ],
+      },
+      visualContainerObjects: {
+        background: [{ properties: { show: lit(false) } }],
+        border: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(0),
+              bottom: litD(0),
+              left: litD(0),
+              right: litD(0),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+      },
+    },
+  };
+}
+
+function shapeRect(name, pos, fillHex) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "shape",
+      objects: {
+        shape: [{ properties: { tileShape: lit("rectangle") } }],
+        fill: [
+          {
+            properties: {
+              fillColor: solid(fillHex),
+              transparency: litD(0),
+            },
+            selector: { id: "default" },
+          },
+        ],
+        outline: [
+          {
+            properties: { show: lit(false) },
+            selector: { id: "default" },
           },
         ],
       },
@@ -1190,13 +1270,83 @@ fs.writeFileSync(
     {
       $schema:
         "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
-      pageOrder: [PAGES.pulse, PAGES.pathways, PAGES.queue, PAGES.context, PAGES.profile],
-      activePageName: PAGES.pulse,
+      pageOrder: [
+        PAGES.landing,
+        PAGES.pulse,
+        PAGES.pathways,
+        PAGES.queue,
+        PAGES.context,
+        PAGES.profile,
+      ],
+      activePageName: PAGES.landing,
     },
     null,
     2
   )
 );
+
+// --- Page 0: Landing (artistic cover, active on open) ---
+{
+  const p = PAGES.landing;
+  pageChrome(p, "Landing");
+  clearVisuals(p);
+  let z = 0;
+  const visuals = [
+    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 12, tabOrder: 0 }, "#2F5F73"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 1 }),
+    textbox(id(), { x: 72, y: 220, z: z++, height: 72, width: 1200, tabOrder: 2 }, [
+      {
+        text: "Care Pulse",
+        size: "32pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+    ]),
+    textbox(id(), { x: 72, y: 300, z: z++, height: 48, width: 1400, tabOrder: 3 }, [
+      {
+        text: "30-day readmit pulse for quality leads — volume, pathways, and discharge risk in one narrative.",
+        size: "16pt",
+        color: "#5A6B75",
+      },
+    ]),
+    shapeRect(id(), { x: 72, y: 372, z: z++, height: 3, width: 420, tabOrder: 4 }, "#2F5F73"),
+    textbox(id(), { x: 72, y: 420, z: z++, height: 40, width: 1400, tabOrder: 5 }, [
+      {
+        text: "Audience · Hospital CMO / quality & utilization lead",
+        size: "13pt",
+        color: "#0F1C24",
+      },
+    ]),
+    textbox(id(), { x: 72, y: 480, z: z++, height: 160, width: 900, tabOrder: 6 }, [
+      {
+        text: "What you’ll see",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      { text: "Care Pulse — utilization and readmit KPIs", size: "13pt" },
+      { text: "Pathways & Drivers — Sankey flow and clinical heat", size: "13pt" },
+      { text: "Discharge Risk Queue — propensity-ranked encounters", size: "13pt" },
+    ]),
+    textbox(id(), { x: 1000, y: 480, z: z++, height: 160, width: 700, tabOrder: 7 }, [
+      {
+        text: "Signature",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "Admission→disposition pathways plus a discharge risk queue — story first, caveats on Context.",
+        size: "13pt",
+        color: "#5A6B75",
+      },
+    ]),
+    textbox(id(), { x: 72, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+      { text: FOOTER, size: "9pt", color: "#6B7C86" },
+    ]),
+  ];
+  visuals.forEach((v) => writeVisual(p, v));
+}
 
 // --- Page 1: Care Pulse ---
 {
@@ -1442,7 +1592,7 @@ fs.writeFileSync(
   visuals.forEach((v) => writeVisual(p, v));
 }
 
-// --- Page 4: Context (last visible) ---
+// --- Page 4: Context (last visible, facts only) ---
 {
   const p = PAGES.context;
   pageChrome(p, "Context");
@@ -1451,7 +1601,7 @@ fs.writeFileSync(
   const visuals = [
     textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 900, tabOrder: 0 }, [
       {
-        text: "Context — How to read Care Pulse",
+        text: "Context — Reference",
         size: "18pt",
         font: "Segoe UI Semibold",
         bold: true,
@@ -1459,13 +1609,13 @@ fs.writeFileSync(
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 1100, tabOrder: 1 }, [
       {
-        text: "Short framing for demos — Care Pulse stays the landing page; this is reference, not the open.",
+        text: "Facts and caveats only. Landing is the open; this page is documentation.",
         size: "11pt",
         color: "#5A6B75",
       },
     ]),
     pageNavigator(id(), { ...NAV, z: z++, tabOrder: 2 }),
-    textbox(id(), { x: 32, y: 120, z: z++, height: 120, width: 1856, tabOrder: 3 }, [
+    textbox(id(), { x: 32, y: 120, z: z++, height: 100, width: 1856, tabOrder: 3 }, [
       {
         text: "Audience",
         size: "14pt",
@@ -1473,24 +1623,12 @@ fs.writeFileSync(
         bold: true,
       },
       {
-        text: "Hospital CMO / quality & utilization lead. Use Care Pulse for portfolio health, Pathways for flow and heat, Discharge Risk Queue for intervention lists.",
+        text: "Hospital CMO / quality & utilization lead.",
         size: "12pt",
         color: "#0F1C24",
       },
     ]),
-    textbox(id(), { x: 32, y: 260, z: z++, height: 220, width: 900, tabOrder: 4 }, [
-      {
-        text: "Questions this report answers",
-        size: "14pt",
-        font: "Segoe UI Semibold",
-        bold: true,
-      },
-      { text: "• What is our 30-day readmit rate, volume, and LOS?", size: "12pt" },
-      { text: "• Where do admission→disposition pathways concentrate?", size: "12pt" },
-      { text: "• Which age × diagnosis cells run hot on readmit?", size: "12pt" },
-      { text: "• Which discharges rank highest on readmit propensity?", size: "12pt" },
-    ]),
-    textbox(id(), { x: 976, y: 260, z: z++, height: 220, width: 912, tabOrder: 5 }, [
+    textbox(id(), { x: 32, y: 240, z: z++, height: 200, width: 900, tabOrder: 4 }, [
       {
         text: "How to read the Sankey",
         size: "14pt",
@@ -1510,7 +1648,23 @@ fs.writeFileSync(
         size: "12pt",
       },
     ]),
-    textbox(id(), { x: 32, y: 520, z: z++, height: 280, width: 1856, tabOrder: 6 }, [
+    textbox(id(), { x: 976, y: 240, z: z++, height: 200, width: 912, tabOrder: 5 }, [
+      {
+        text: "Heat & queue",
+        size: "14pt",
+        font: "Segoe UI Semibold",
+        bold: true,
+      },
+      {
+        text: "Heat uses FactEncounter readmit rate (filterable).",
+        size: "12pt",
+      },
+      {
+        text: "Queue sorted by ReadmitProbability; Encounter Profile is hidden drillthrough.",
+        size: "12pt",
+      },
+    ]),
+    textbox(id(), { x: 32, y: 480, z: z++, height: 280, width: 1856, tabOrder: 6 }, [
       {
         text: "Data & model caveats",
         size: "14pt",
@@ -1526,22 +1680,11 @@ fs.writeFileSync(
         size: "12pt",
       },
       {
-        text: "• Heat uses FactEncounter readmit rate (filterable). Pathway bridge is admission→disposition only.",
-        size: "12pt",
-      },
-      {
-        text: "• Encounter Profile is a hidden drillthrough target from the risk queue.",
+        text: "• Pathway bridge is admission→disposition only (Hop 1).",
         size: "12pt",
       },
     ]),
-    textbox(id(), { x: 32, y: 840, z: z++, height: 60, width: 1856, tabOrder: 7 }, [
-      {
-        text: "Suggested walkthrough: Care Pulse → Pathways & Drivers (Sankey + heat) → Discharge Risk Queue → (optional) Context.",
-        size: "12pt",
-        color: "#5A6B75",
-      },
-    ]),
-    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 7 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
   ];

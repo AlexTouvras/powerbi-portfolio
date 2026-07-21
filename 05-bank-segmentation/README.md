@@ -6,6 +6,8 @@ Nordic Boardroom retail-bank report: dual-flow KPIs, RFM/k-means segments, geoco
 
 ## Preview
 
+![Landing](screenshots/landing.png)
+
 ![Franchise Pulse](screenshots/franchise-pulse.png)
 
 ![Segments & Markets](screenshots/segments-markets.png)
@@ -16,6 +18,7 @@ Nordic Boardroom retail-bank report: dual-flow KPIs, RFM/k-means segments, geoco
 
 | Page | Role |
 |------|------|
+| **Landing** | Artistic cover · thesis · audience · page map (opens first) |
 | **Franchise Pulse** | Credit / debit / net flow · waterfall bridge · monthly volume |
 | **Segments & Markets** | Value segment mix · F×M scatter · Icon Map (OpenTopoMap) |
 | **Relationship Book** | Dormant + single-product queue · engagement funnel · drillthrough |

@@ -1,22 +1,24 @@
 /**
  * Elevate Sales Executive report to board-ready Nordic Boardroom quality.
  * Composite KPIs (value + YoY tag), accent bars, insight titles, page nav, polish.
+ * Landing is visible page 1 (active on open).
  */
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { fileURLToPath } from "url";
 
-const REPORT =
-  "C:/Users/kater/.cursor/projects/PowerBI/03-sales-executive/SalesExecutive.Report";
-const PAGES = {
-  pulse: "ReportSection035c09e2ea04501067c189c6",
-  drivers: "ReportSection627401f3bc0ed21de870c88d",
-  market: "ReportSection8bec1e38448cf01490d178d1",
-};
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+const REPORT = path.join(root, "SalesExecutive.Report");
 const SCHEMA =
   "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json";
 const PAGE_SCHEMA =
   "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json";
+const FOOTER =
+  "Source: AdventureWorks-style CRM/ERP sample · Local PBIP · Nordic Boardroom · YoY uses SAMEPERIODLASTYEAR";
+/** Four visible pages (Landing + 3 analysis). */
+const NAV = { x: 1496, y: 12, height: 80, width: 392 };
 
 const ACCENTS = {
   Revenue: "#2F5F73",
@@ -46,6 +48,108 @@ function litD(v) {
 function solid(hex) {
   return { solid: { color: { expr: { Literal: { Value: `'${hex}'` } } } } };
 }
+
+function pageDisplayMap(meta) {
+  const byDisplay = {};
+  for (const pageKey of meta.pageOrder) {
+    const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
+    if (!fs.existsSync(pagePath)) continue;
+    const pj = JSON.parse(fs.readFileSync(pagePath, "utf8"));
+    byDisplay[pj.displayName] = pageKey;
+  }
+  return byDisplay;
+}
+
+function createBlankPage(displayName) {
+  const pageKey = "ReportSection" + crypto.randomBytes(12).toString("hex");
+  const pageDir = path.join(REPORT, "definition/pages", pageKey);
+  fs.mkdirSync(path.join(pageDir, "visuals"), { recursive: true });
+  fs.writeFileSync(
+    path.join(pageDir, "page.json"),
+    JSON.stringify(
+      {
+        $schema: PAGE_SCHEMA,
+        name: pageKey,
+        displayName,
+        displayOption: "FitToPage",
+        height: 1080,
+        width: 1920,
+        objects: {
+          background: [
+            {
+              properties: {
+                color: { solid: { color: { expr: { Literal: { Value: "'#F7FAFC'" } } } } },
+                transparency: { expr: { Literal: { Value: "0D" } } },
+              },
+            },
+          ],
+        },
+      },
+      null,
+      2
+    )
+  );
+  return pageKey;
+}
+
+function writePagesMeta(meta) {
+  fs.writeFileSync(
+    path.join(REPORT, "definition/pages/pages.json"),
+    JSON.stringify(
+      {
+        $schema:
+          "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+        pageOrder: meta.pageOrder,
+        activePageName: meta.activePageName,
+      },
+      null,
+      2
+    )
+  );
+}
+
+function ensureLandingPage(meta) {
+  const byDisplay = pageDisplayMap(meta);
+  let landingKey = byDisplay["Landing"];
+  if (!landingKey) {
+    landingKey = createBlankPage("Landing");
+    meta.pageOrder = [landingKey, ...meta.pageOrder];
+  } else {
+    meta.pageOrder = [landingKey, ...meta.pageOrder.filter((k) => k !== landingKey)];
+  }
+  meta.activePageName = landingKey;
+  writePagesMeta(meta);
+  return meta;
+}
+
+function resolvePages() {
+  const pagesPath = path.join(REPORT, "definition/pages/pages.json");
+  let meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
+  meta = ensureLandingPage(meta);
+  const byDisplay = pageDisplayMap(meta);
+  const required = ["Landing", "Portfolio Pulse", "Performance Drivers", "Customer & Market"];
+  for (const name of required) {
+    if (!byDisplay[name]) throw new Error(`Page "${name}" not found`);
+  }
+  meta.pageOrder = [
+    byDisplay["Landing"],
+    byDisplay["Portfolio Pulse"],
+    byDisplay["Performance Drivers"],
+    byDisplay["Customer & Market"],
+  ];
+  meta.activePageName = byDisplay["Landing"];
+  writePagesMeta(meta);
+  return {
+    landing: byDisplay["Landing"],
+    pulse: byDisplay["Portfolio Pulse"],
+    drivers: byDisplay["Performance Drivers"],
+    market: byDisplay["Customer & Market"],
+    meta,
+  };
+}
+
+const PAGES = resolvePages();
+
 function measure(entity, name) {
   return {
     field: {
@@ -116,6 +220,50 @@ function textbox(name, pos, lines) {
                 horizontalTextAlignment: l.align || "left",
               })),
             },
+          },
+        ],
+      },
+      visualContainerObjects: {
+        background: [{ properties: { show: lit(false) } }],
+        border: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(0),
+              bottom: litD(0),
+              left: litD(0),
+              right: litD(0),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+      },
+    },
+  };
+}
+
+function shapeRect(name, pos, fillHex) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "shape",
+      objects: {
+        shape: [{ properties: { tileShape: lit("rectangle") } }],
+        fill: [
+          {
+            properties: {
+              fillColor: solid(fillHex),
+              transparency: litD(0),
+            },
+            selector: { id: "default" },
+          },
+        ],
+        outline: [
+          {
+            properties: { show: lit(false) },
+            selector: { id: "default" },
           },
         ],
       },
@@ -996,7 +1144,7 @@ function buildPulse() {
     PAGES.pulse,
       dropdownSlicer(
       id(),
-      { x: 980, y: 12, z: 2, height: 80, width: 170, tabOrder: 2 },
+      { x: 900, y: 12, z: 2, height: 80, width: 176, tabOrder: 2 },
       "DimDate",
       "Year",
       "Year",
@@ -1007,7 +1155,7 @@ function buildPulse() {
     PAGES.pulse,
     dropdownSlicer(
       id(),
-      { x: 1164, y: 12, z: 3, height: 80, width: 200, tabOrder: 3 },
+      { x: 1088, y: 12, z: 3, height: 80, width: 176, tabOrder: 3 },
       "DimCustomer",
       "Country",
       "Country",
@@ -1018,7 +1166,7 @@ function buildPulse() {
     PAGES.pulse,
     dropdownSlicer(
       id(),
-      { x: 1378, y: 12, z: 4, height: 80, width: 200, tabOrder: 4 },
+      { x: 1276, y: 12, z: 4, height: 80, width: 200, tabOrder: 4 },
       "DimProduct",
       "Category",
       "Category",
@@ -1027,14 +1175,7 @@ function buildPulse() {
   );
   writeVisual(
     PAGES.pulse,
-    pageNavigator(id(), {
-      x: 1592,
-      y: 12,
-      z: 5,
-      height: 80,
-      width: 296,
-      tabOrder: 5,
-    })
+    pageNavigator(id(), { ...NAV, z: 5, tabOrder: 5 })
   );
 
   kpis.forEach(([m, tag, accent, label], i) => {
@@ -1124,14 +1265,7 @@ function buildDrivers() {
   );
   writeVisual(
     PAGES.drivers,
-    pageNavigator(id(), {
-      x: 1592,
-      y: 12,
-      z: 2,
-      height: 80,
-      width: 296,
-      tabOrder: 2,
-    })
+    pageNavigator(id(), { ...NAV, z: 2, tabOrder: 2 })
   );
 
   const rail = [
@@ -1262,7 +1396,7 @@ function buildMarket() {
     PAGES.market,
     dropdownSlicer(
       id(),
-      { x: 980, y: 12, z: 2, height: 80, width: 170, tabOrder: 2 },
+      { x: 900, y: 12, z: 2, height: 80, width: 176, tabOrder: 2 },
       "DimDate",
       "Year",
       "Year",
@@ -1273,7 +1407,7 @@ function buildMarket() {
     PAGES.market,
     dropdownSlicer(
       id(),
-      { x: 1164, y: 12, z: 3, height: 80, width: 200, tabOrder: 3 },
+      { x: 1088, y: 12, z: 3, height: 80, width: 176, tabOrder: 3 },
       "DimProduct",
       "Category",
       "Category",
@@ -1284,7 +1418,7 @@ function buildMarket() {
     PAGES.market,
     dropdownSlicer(
       id(),
-      { x: 1378, y: 12, z: 4, height: 80, width: 200, tabOrder: 4 },
+      { x: 1276, y: 12, z: 4, height: 80, width: 200, tabOrder: 4 },
       "DimCustomer",
       "CustomerName",
       "Customer",
@@ -1293,14 +1427,7 @@ function buildMarket() {
   );
   writeVisual(
     PAGES.market,
-    pageNavigator(id(), {
-      x: 1592,
-      y: 12,
-      z: 5,
-      height: 80,
-      width: 296,
-      tabOrder: 5,
-    })
+    pageNavigator(id(), { ...NAV, z: 5, tabOrder: 5 })
   );
 
   writeVisual(
@@ -1399,6 +1526,93 @@ report.settings = {
 };
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
+// --- Landing ---
+function buildLanding() {
+  clearVisuals(PAGES.landing);
+  writePageMeta(PAGES.landing, "Landing");
+  let z = 0;
+  writeVisual(
+    PAGES.landing,
+    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 12, tabOrder: 0 }, "#2F5F73")
+  );
+  writeVisual(PAGES.landing, pageNavigator(id(), { ...NAV, z: z++, tabOrder: 1 }));
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 72, y: 220, z: z++, height: 72, width: 1200, tabOrder: 2 }, [
+      {
+        text: "Sales Executive",
+        font: "Segoe UI Semibold",
+        size: "32pt",
+        bold: true,
+      },
+    ])
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 72, y: 300, z: z++, height: 48, width: 1400, tabOrder: 3 }, [
+      {
+        text: "Portfolio health for the board in one glance — then self-serve into drivers and markets.",
+        font: "Segoe UI",
+        size: "16pt",
+        color: "#5A6B75",
+      },
+    ])
+  );
+  writeVisual(
+    PAGES.landing,
+    shapeRect(id(), { x: 72, y: 372, z: z++, height: 3, width: 420, tabOrder: 4 }, "#2F5F73")
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 72, y: 420, z: z++, height: 40, width: 1400, tabOrder: 5 }, [
+      {
+        text: "Audience · CEO / CFO / CRO / board",
+        font: "Segoe UI",
+        size: "13pt",
+        color: "#0F1C24",
+      },
+    ])
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 72, y: 480, z: z++, height: 160, width: 900, tabOrder: 6 }, [
+      {
+        text: "What you’ll see",
+        font: "Segoe UI Semibold",
+        size: "14pt",
+        bold: true,
+      },
+      { text: "Portfolio Pulse — revenue and growth at a glance", size: "13pt" },
+      { text: "Performance Drivers — category and product contribution", size: "13pt" },
+      { text: "Customer & Market — geography and concentration", size: "13pt" },
+    ])
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 1000, y: 480, z: z++, height: 160, width: 700, tabOrder: 7 }, [
+      {
+        text: "Signature",
+        font: "Segoe UI Semibold",
+        size: "14pt",
+        bold: true,
+      },
+      {
+        text: "Dual-channel YoY on Pulse cards — value plus direction in the same glance.",
+        font: "Segoe UI",
+        size: "13pt",
+        color: "#5A6B75",
+      },
+    ])
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 72, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+      { text: FOOTER, font: "Segoe UI", size: "9pt", color: "#6B7C86" },
+    ])
+  );
+}
+
+buildLanding();
 buildPulse();
 buildDrivers();
 buildMarket();
