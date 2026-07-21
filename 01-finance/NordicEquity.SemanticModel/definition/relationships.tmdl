@@ -1,0 +1,7 @@
+relationship FactPrices_DimDate
+	fromColumn: FactPrices.Date
+	toColumn: DimDate.Date
+
+relationship FactPrices_DimCompany
+	fromColumn: FactPrices.Ticker
+	toColumn: DimCompany.Ticker

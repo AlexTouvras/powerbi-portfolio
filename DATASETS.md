@@ -18,6 +18,15 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 | `02-ecommerce-churn` | KDNuggets #1 `ecommerce_churn.csv` | ML propensity + drivers — **featured** |
 | `05-bank-segmentation` | KDNuggets #4 simulated bank (customers · accounts · transactions) | **Featured** — RFM + k-means |
 | `06-healthcare-analytics` | UCI Diabetes 130-US Hospitals (~35k encounter sample) | **Featured** — 30d readmit propensity + pathway ribbon + heat |
+| `01-finance` | Yahoo Finance delayed Nordic large caps (~43 tickers · FI/SE/DK/NO) | **Featured** — live gold refresh + sector treemap + SMA/MACD/RSI/BB |
+
+### Nordic Equity (`01-finance`)
+
+Curated OMX-style large caps with daily OHLCV from Yahoo chart API:
+
+- Gold: `DimCompany`, `DimDate`, `FactPrices` (+ indicators)
+- Refresh: `node scripts/build-gold.mjs` then Desktop Refresh
+- Delayed quotes — not tick real-time; not investment advice
 
 ### Sales (`03-sales-executive`)
 

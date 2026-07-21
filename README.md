@@ -84,6 +84,23 @@ Details: [`05-bank-segmentation/README.md`](05-bank-segmentation/README.md)
 
 Details: [`06-healthcare-analytics/README.md`](06-healthcare-analytics/README.md)
 
+### Nordic Equity (Live Board)
+
+Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading indicators (SMA, MACD, RSI, Bollinger).
+
+| | |
+|---|---|
+| Audience | Investors / analysts / Nordic market watchers |
+| Theme | Nordic Boardroom |
+| Pages | Landing · Nordic Heatmap · Ticker Explorer · Context |
+| Open | [`01-finance/NordicEquity.pbip`](01-finance/NordicEquity.pbip) |
+
+![Landing](01-finance/screenshots/landing.png)
+
+![Nordic Heatmap](01-finance/screenshots/nordic-heatmap.png)
+
+Details: [`01-finance/README.md`](01-finance/README.md)
+
 ## Projects
 
 Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-portfolio) — see [`DATASETS.md`](DATASETS.md).
@@ -93,7 +110,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`03-sales-executive`](03-sales-executive/) | Sales executive (KDNuggets #3) | **Featured** — PBIP + screenshots |
 | [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
 | [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | **Featured** — RFM + map + drillthrough |
-| [`01-finance`](01-finance/) | Nordic stock treemap | Brief / theme WIP |
+| [`01-finance`](01-finance/) | Nordic Equity (live board) | **Featured** — Yahoo delayed + heatmap + indicators |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
 
 ## Design system
@@ -103,7 +120,7 @@ Review notes: [`_shared/themes/THEME-REVIEW.md`](_shared/themes/THEME-REVIEW.md)
 
 - Cool mist surfaces, fjord teal primary, copper categorical accent  
 - Segoe UI, sparse chrome, dual-channel YoY (arrow + %)  
-- FHD canvas, KPI-strip landing page
+- FHD canvas, poster Landing (mist atmosphere + one hero number)
 
 ## About
 

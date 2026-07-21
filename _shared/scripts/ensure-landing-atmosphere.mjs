@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ASSETS = path.join(__dirname, "../assets");
 
-/** @typedef {"fjord-dawn" | "alpine-mist" | "coastal-fog" | "valley-dusk"} AtmosphereVariant */
+/** @typedef {"fjord-dawn" | "alpine-mist" | "coastal-fog" | "valley-dusk" | "harbor-mist"} AtmosphereVariant */
 
 /** @type {Record<AtmosphereVariant, { source: string, display: string, file: string }>} */
 export const LANDING_ATMOSPHERES = {
@@ -32,6 +32,11 @@ export const LANDING_ATMOSPHERES = {
     source: "nordic-landing-valley-dusk.png",
     display: "nordic-landing-valley-dusk.png",
     file: "nordic-landing-valley-dusk17123456789012348.png",
+  },
+  "harbor-mist": {
+    source: "nordic-landing-harbor-mist.png",
+    display: "nordic-landing-harbor-mist.png",
+    file: "nordic-landing-harbor-mist17123456789012349.png",
   },
 };
 

@@ -1,0 +1,44 @@
+Ticker,YahooSymbol,CompanyName,Country,Sector,Industry,MarketCapEURm
+NOKIA,NOKIA.HE,Nokia,FI,Technology,Communications Equipment,5200
+SAMPO,SAMPO.HE,Sampo,FI,Financials,Insurance,22000
+KNEBV,KNEBV.HE,KONE,FI,Industrials,Machinery,28000
+NESTE,NESTE.HE,Neste,FI,Energy,Oil & Gas Refining,12000
+NDA-FI,NDA-FI.HE,Nordea Bank,FI,Financials,Banks,42000
+UPM,UPM.HE,UPM-Kymmene,FI,Materials,Paper & Forest,14000
+STERV,STERV.HE,Stora Enso,FI,Materials,Paper & Forest,8000
+FORTUM,FORTUM.HE,Fortum,FI,Utilities,Electric Utilities,15000
+ORNBV,ORNBV.HE,Orion,FI,Health Care,Pharmaceuticals,7000
+WRT1V,WRT1V.HE,Wärtsilä,FI,Industrials,Machinery,11000
+ELISA,ELISA.HE,Elisa,FI,Communication Services,Telecom,7000
+VOLV-B,VOLV-B.ST,Volvo B,SE,Industrials,Machinery,55000
+ATCO-A,ATCO-A.ST,Atlas Copco A,SE,Industrials,Machinery,70000
+INVE-B,INVE-B.ST,Investor B,SE,Financials,Diversified Financials,80000
+HEXA-B,HEXA-B.ST,Hexagon B,SE,Technology,Software,28000
+ERIC-B,ERIC-B.ST,Ericsson B,SE,Technology,Communications Equipment,25000
+SEB-A,SEB-A.ST,SEB A,SE,Financials,Banks,32000
+SWED-A,SWED-A.ST,Swedbank A,SE,Financials,Banks,25000
+SHB-A,SHB-A.ST,Handelsbanken A,SE,Financials,Banks,22000
+ASSA-B,ASSA-B.ST,ASSA ABLOY B,SE,Industrials,Building Products,30000
+SAND,SAND.ST,Sandvik,SE,Industrials,Machinery,25000
+ESSITY-B,ESSITY-B.ST,Essity B,SE,Consumer Staples,Household Products,18000
+HM-B,HM-B.ST,H&M B,SE,Consumer Discretionary,Apparel Retail,22000
+ALFA,ALFA.ST,Alfa Laval,SE,Industrials,Machinery,16000
+SKF-B,SKF-B.ST,SKF B,SE,Industrials,Machinery,9000
+TELIA,TELIA.ST,Telia,SE,Communication Services,Telecom,12000
+BOL,BOL.ST,Boliden,SE,Materials,Metals & Mining,10000
+NOVO-B,NOVO-B.CO,Novo Nordisk B,DK,Health Care,Pharmaceuticals,350000
+DSV,DSV.CO,DSV,DK,Industrials,Logistics,45000
+MAERSK-B,MAERSK-B.CO,A.P. Moller-Maersk B,DK,Industrials,Marine Shipping,28000
+ORSTED,ORSTED.CO,Ørsted,DK,Utilities,Renewable Electricity,20000
+CARL-B,CARL-B.CO,Carlsberg B,DK,Consumer Staples,Beverages,18000
+COLO-B,COLO-B.CO,Coloplast B,DK,Health Care,Health Care Equipment,22000
+VWS,VWS.CO,Vestas Wind,DK,Industrials,Electrical Equipment,22000
+DANSKE,DANSKE.CO,Danske Bank,DK,Financials,Banks,25000
+GMAB,GMAB.CO,Genmab,DK,Health Care,Biotechnology,18000
+EQNR,EQNR.OL,Equinor,NO,Energy,Integrated Oil & Gas,70000
+DNB,DNB.OL,DNB Bank,NO,Financials,Banks,30000
+TEL,TEL.OL,Telenor,NO,Communication Services,Telecom,18000
+MOWI,MOWI.OL,Mowi,NO,Consumer Staples,Food Products,10000
+YAR,YAR.OL,Yara International,NO,Materials,Fertilizers,9000
+NHY,NHY.OL,Norsk Hydro,NO,Materials,Aluminum,12000
+ORK,ORK.OL,Orkla,NO,Consumer Staples,Food Products,8000
