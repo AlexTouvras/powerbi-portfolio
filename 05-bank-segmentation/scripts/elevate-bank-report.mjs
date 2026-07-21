@@ -268,8 +268,10 @@ function pageChrome(pageKey, displayName, extras = {}) {
   fs.writeFileSync(pagePath, JSON.stringify(page, null, 2));
 }
 
+const LANDING_ATMOSPHERE = "coastal-fog";
+
 function landingChrome(pageKey) {
-  ensureLandingAtmosphere(REPORT);
+  ensureLandingAtmosphere(REPORT, LANDING_ATMOSPHERE);
   const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
   fs.writeFileSync(
     pagePath,
@@ -282,7 +284,7 @@ function landingChrome(pageKey) {
         height: 1080,
         width: 1920,
         objects: {
-          background: pageBackgroundWithAtmosphere("#F7FAFC", 22),
+          background: pageBackgroundWithAtmosphere("#F7FAFC", 22, LANDING_ATMOSPHERE),
           outspacePane: [{ properties: { width: { expr: { Literal: { Value: "0D" } } } } }],
         },
       },

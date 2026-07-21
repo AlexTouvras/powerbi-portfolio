@@ -1104,8 +1104,10 @@ function writePageMeta(pageName, displayName) {
   );
 }
 
+const LANDING_ATMOSPHERE = "fjord-dawn";
+
 function landingChrome(pageKey) {
-  ensureLandingAtmosphere(REPORT);
+  ensureLandingAtmosphere(REPORT, LANDING_ATMOSPHERE);
   fs.writeFileSync(
     path.join(REPORT, "definition/pages", pageKey, "page.json"),
     JSON.stringify(
@@ -1117,7 +1119,7 @@ function landingChrome(pageKey) {
         height: 1080,
         width: 1920,
         objects: {
-          background: pageBackgroundWithAtmosphere("#F7FAFC", 22),
+          background: pageBackgroundWithAtmosphere("#F7FAFC", 22, LANDING_ATMOSPHERE),
           outspacePane: [{ properties: { width: litD(0) } }],
         },
       },

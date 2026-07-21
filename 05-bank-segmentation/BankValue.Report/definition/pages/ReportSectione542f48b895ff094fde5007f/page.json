@@ -32,7 +32,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'nordic-landing-atmosphere.png'"
+                    "Value": "'nordic-landing-coastal-fog.png'"
                   }
                 }
               },
@@ -41,7 +41,7 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "nordic-landing-atmosphere17123456789012345.png"
+                    "ItemName": "nordic-landing-coastal-fog17123456789012347.png"
                   }
                 }
               },
