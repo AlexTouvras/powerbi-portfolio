@@ -8,6 +8,10 @@ import path from "path";
 import crypto from "crypto";
 import { execFileSync } from "child_process";
 import { fileURLToPath } from "url";
+import {
+  ensureLandingAtmosphere,
+  pageBackgroundWithAtmosphere,
+} from "../../_shared/scripts/ensure-landing-atmosphere.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -361,6 +365,92 @@ function pageChrome(pageKey, displayName, extras = {}) {
     ...extras,
   };
   fs.writeFileSync(pagePath, JSON.stringify(page, null, 2));
+}
+
+function landingChrome(pageKey) {
+  ensureLandingAtmosphere(REPORT);
+  const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
+  fs.writeFileSync(
+    pagePath,
+    JSON.stringify(
+      {
+        $schema: PAGE_SCHEMA,
+        name: pageKey,
+        displayName: "Landing",
+        displayOption: "FitToPage",
+        height: 1080,
+        width: 1920,
+        objects: {
+          background: pageBackgroundWithAtmosphere("#F7FAFC", 22),
+          outspacePane: [{ properties: { width: { expr: { Literal: { Value: "0D" } } } } }],
+        },
+      },
+      null,
+      2
+    )
+  );
+}
+
+function editorialHero(name, pos, entity, measureName, accent, caption) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "card",
+      query: {
+        queryState: {
+          Values: { projections: [measure(entity, measureName)] },
+        },
+      },
+      objects: {
+        labels: [
+          {
+            properties: {
+              fontSize: litD(64),
+              bold: lit(true),
+              color: solid(accent),
+            },
+          },
+        ],
+        categoryLabels: [{ properties: { show: lit(false) } }],
+      },
+      visualContainerObjects: {
+        background: [
+          {
+            properties: {
+              show: lit(true),
+              color: solid("#FFFFFF"),
+              transparency: litD(18),
+            },
+          },
+        ],
+        border: [{ properties: { show: lit(false) } }],
+        title: [
+          {
+            properties: {
+              show: lit(true),
+              text: lit(caption),
+              fontSize: litD(12),
+              fontColor: solid("#5A6B75"),
+              fontFamily: lit("Segoe UI Semibold"),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(16),
+              bottom: litD(16),
+              left: litD(20),
+              right: litD(20),
+            },
+          },
+        ],
+      },
+    },
+  };
 }
 
 function textbox(name, pos, lines) {
@@ -1285,63 +1375,67 @@ fs.writeFileSync(
   )
 );
 
-// --- Page 0: Landing (artistic cover, active on open) ---
+// --- Page 0: Landing (poster cover, active on open) ---
 {
   const p = PAGES.landing;
-  pageChrome(p, "Landing");
+  landingChrome(p);
   clearVisuals(p);
   let z = 0;
   const visuals = [
-    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 12, tabOrder: 0 }, "#2F5F73"),
-    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 1 }),
-    textbox(id(), { x: 72, y: 220, z: z++, height: 72, width: 1200, tabOrder: 2 }, [
+    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 14, tabOrder: 0 }, "#2F5F73"),
+    shapeRect(id(), { x: 48, y: 140, z: z++, height: 820, width: 1180, tabOrder: 1 }, "#FFFFFF"),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 2 }),
+    textbox(id(), { x: 88, y: 180, z: z++, height: 80, width: 1080, tabOrder: 3 }, [
       {
         text: "Care Pulse",
-        size: "32pt",
+        size: "40pt",
         font: "Segoe UI Semibold",
         bold: true,
       },
     ]),
-    textbox(id(), { x: 72, y: 300, z: z++, height: 48, width: 1400, tabOrder: 3 }, [
+    textbox(id(), { x: 88, y: 268, z: z++, height: 56, width: 1080, tabOrder: 4 }, [
       {
         text: "30-day readmit pulse for quality leads — volume, pathways, and discharge risk in one narrative.",
         size: "16pt",
         color: "#5A6B75",
       },
     ]),
-    shapeRect(id(), { x: 72, y: 372, z: z++, height: 3, width: 420, tabOrder: 4 }, "#2F5F73"),
-    textbox(id(), { x: 72, y: 420, z: z++, height: 40, width: 1400, tabOrder: 5 }, [
-      {
-        text: "Audience · Hospital CMO / quality & utilization lead",
-        size: "13pt",
-        color: "#0F1C24",
-      },
-    ]),
-    textbox(id(), { x: 72, y: 480, z: z++, height: 160, width: 900, tabOrder: 6 }, [
+    shapeRect(id(), { x: 88, y: 340, z: z++, height: 4, width: 280, tabOrder: 5 }, "#C17B3A"),
+    editorialHero(
+      id(),
+      { x: 88, y: 380, z: z++, height: 240, width: 520, tabOrder: 6 },
+      "FactEncounter",
+      "Readmit Rate",
+      ACCENTS.readmit,
+      "30-day readmit rate"
+    ),
+    textbox(id(), { x: 640, y: 400, z: z++, height: 200, width: 520, tabOrder: 7 }, [
       {
         text: "What you’ll see",
         size: "14pt",
         font: "Segoe UI Semibold",
         bold: true,
       },
-      { text: "Care Pulse — utilization and readmit KPIs", size: "13pt" },
-      { text: "Pathways & Drivers — Sankey flow and clinical heat", size: "13pt" },
-      { text: "Discharge Risk Queue — propensity-ranked encounters", size: "13pt" },
+      { text: "01  Care Pulse — utilization and KPIs", size: "13pt" },
+      { text: "02  Pathways & Drivers — Sankey and heat", size: "13pt" },
+      { text: "03  Discharge Risk Queue — propensity list", size: "13pt" },
+      { text: "04  Context — facts and model caveats", size: "13pt", color: "#5A6B75" },
     ]),
-    textbox(id(), { x: 1000, y: 480, z: z++, height: 160, width: 700, tabOrder: 7 }, [
+    textbox(id(), { x: 88, y: 660, z: z++, height: 40, width: 1080, tabOrder: 8 }, [
       {
-        text: "Signature",
-        size: "14pt",
-        font: "Segoe UI Semibold",
-        bold: true,
+        text: "Audience · Hospital CMO / quality & utilization lead",
+        size: "13pt",
+        color: "#0F1C24",
       },
+    ]),
+    textbox(id(), { x: 88, y: 720, z: z++, height: 80, width: 1080, tabOrder: 9 }, [
       {
-        text: "Admission→disposition pathways plus a discharge risk queue — story first, caveats on Context.",
+        text: "Signature · Admission→disposition pathways plus a discharge risk queue — story first, caveats on Context.",
         size: "13pt",
         color: "#5A6B75",
       },
     ]),
-    textbox(id(), { x: 72, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+    textbox(id(), { x: 88, y: 920, z: z++, height: 28, width: 1080, tabOrder: 10 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
   ];

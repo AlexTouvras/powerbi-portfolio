@@ -7,6 +7,10 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
+import {
+  ensureLandingAtmosphere,
+  pageBackgroundWithAtmosphere,
+} from "../../_shared/scripts/ensure-landing-atmosphere.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -1100,6 +1104,91 @@ function writePageMeta(pageName, displayName) {
   );
 }
 
+function landingChrome(pageKey) {
+  ensureLandingAtmosphere(REPORT);
+  fs.writeFileSync(
+    path.join(REPORT, "definition/pages", pageKey, "page.json"),
+    JSON.stringify(
+      {
+        $schema: PAGE_SCHEMA,
+        name: pageKey,
+        displayName: "Landing",
+        displayOption: "FitToPage",
+        height: 1080,
+        width: 1920,
+        objects: {
+          background: pageBackgroundWithAtmosphere("#F7FAFC", 22),
+          outspacePane: [{ properties: { width: litD(0) } }],
+        },
+      },
+      null,
+      2
+    )
+  );
+}
+
+function editorialHero(name, pos, measureName, accent, caption) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "card",
+      query: {
+        queryState: {
+          Values: { projections: [measure("FactSales", measureName)] },
+        },
+      },
+      objects: {
+        labels: [
+          {
+            properties: {
+              fontSize: litD(56),
+              bold: lit(true),
+              color: solid(accent),
+            },
+          },
+        ],
+        categoryLabels: [{ properties: { show: lit(false) } }],
+      },
+      visualContainerObjects: {
+        background: [
+          {
+            properties: {
+              show: lit(true),
+              color: solid("#FFFFFF"),
+              transparency: litD(18),
+            },
+          },
+        ],
+        border: [{ properties: { show: lit(false) } }],
+        title: [
+          {
+            properties: {
+              show: lit(true),
+              text: lit(caption),
+              fontSize: litD(12),
+              fontColor: solid("#5A6B75"),
+              fontFamily: lit("Segoe UI Semibold"),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(16),
+              bottom: litD(16),
+              left: litD(20),
+              right: litD(20),
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
 // --- Pulse ---
 function buildPulse() {
   clearVisuals(PAGES.pulse);
@@ -1529,67 +1618,81 @@ fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 // --- Landing ---
 function buildLanding() {
   clearVisuals(PAGES.landing);
-  writePageMeta(PAGES.landing, "Landing");
+  landingChrome(PAGES.landing);
   let z = 0;
   writeVisual(
     PAGES.landing,
-    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 12, tabOrder: 0 }, "#2F5F73")
+    shapeRect(id(), { x: 0, y: 0, z: z++, height: 1080, width: 14, tabOrder: 0 }, "#2F5F73")
   );
   writeVisual(PAGES.landing, pageNavigator(id(), { ...NAV, z: z++, tabOrder: 1 }));
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 72, y: 220, z: z++, height: 72, width: 1200, tabOrder: 2 }, [
+    shapeRect(id(), { x: 56, y: 112, z: z++, height: 900, width: 1808, tabOrder: 2 }, "#FFFFFF")
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 96, y: 160, z: z++, height: 88, width: 1100, tabOrder: 3 }, [
       {
         text: "Sales Executive",
         font: "Segoe UI Semibold",
-        size: "32pt",
+        size: "40pt",
         bold: true,
       },
     ])
   );
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 72, y: 300, z: z++, height: 48, width: 1400, tabOrder: 3 }, [
+    textbox(id(), { x: 96, y: 256, z: z++, height: 72, width: 1100, tabOrder: 4 }, [
       {
         text: "Portfolio health for the board in one glance — then self-serve into drivers and markets.",
         font: "Segoe UI",
-        size: "16pt",
+        size: "18pt",
         color: "#5A6B75",
       },
     ])
   );
   writeVisual(
     PAGES.landing,
-    shapeRect(id(), { x: 72, y: 372, z: z++, height: 3, width: 420, tabOrder: 4 }, "#2F5F73")
+    shapeRect(id(), { x: 96, y: 348, z: z++, height: 4, width: 280, tabOrder: 5 }, "#B87333")
   );
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 72, y: 420, z: z++, height: 40, width: 1400, tabOrder: 5 }, [
+    editorialHero(
+      id(),
+      { x: 1280, y: 180, z: z++, height: 220, width: 520, tabOrder: 6 },
+      "Revenue",
+      "#2F5F73",
+      "Revenue"
+    )
+  );
+  writeVisual(
+    PAGES.landing,
+    textbox(id(), { x: 96, y: 400, z: z++, height: 36, width: 1100, tabOrder: 7 }, [
       {
         text: "Audience · CEO / CFO / CRO / board",
         font: "Segoe UI",
-        size: "13pt",
+        size: "14pt",
         color: "#0F1C24",
       },
     ])
   );
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 72, y: 480, z: z++, height: 160, width: 900, tabOrder: 6 }, [
+    textbox(id(), { x: 96, y: 480, z: z++, height: 280, width: 1100, tabOrder: 8 }, [
       {
         text: "What you’ll see",
         font: "Segoe UI Semibold",
-        size: "14pt",
+        size: "16pt",
         bold: true,
       },
-      { text: "Portfolio Pulse — revenue and growth at a glance", size: "13pt" },
-      { text: "Performance Drivers — category and product contribution", size: "13pt" },
-      { text: "Customer & Market — geography and concentration", size: "13pt" },
+      { text: "01  Portfolio Pulse — revenue and growth at a glance", size: "15pt" },
+      { text: "02  Performance Drivers — category and product contribution", size: "15pt" },
+      { text: "03  Customer & Market — geography and concentration", size: "15pt" },
     ])
   );
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 1000, y: 480, z: z++, height: 160, width: 700, tabOrder: 7 }, [
+    textbox(id(), { x: 96, y: 800, z: z++, height: 100, width: 1100, tabOrder: 9 }, [
       {
         text: "Signature",
         font: "Segoe UI Semibold",
@@ -1599,14 +1702,14 @@ function buildLanding() {
       {
         text: "Dual-channel YoY on Pulse cards — value plus direction in the same glance.",
         font: "Segoe UI",
-        size: "13pt",
+        size: "14pt",
         color: "#5A6B75",
       },
     ])
   );
   writeVisual(
     PAGES.landing,
-    textbox(id(), { x: 72, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 8 }, [
+    textbox(id(), { x: 96, y: 960, z: z++, height: 28, width: 1700, tabOrder: 10 }, [
       { text: FOOTER, font: "Segoe UI", size: "9pt", color: "#6B7C86" },
     ])
   );

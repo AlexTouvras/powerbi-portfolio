@@ -55,6 +55,11 @@
           "name": "Nordic-Boardroom-a1b2c3d4.json",
           "path": "Nordic-Boardroom-a1b2c3d4.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "nordic-landing-atmosphere17123456789012345.png",
+          "path": "nordic-landing-atmosphere17123456789012345.png",
+          "type": "Image"
         }
       ]
     }
