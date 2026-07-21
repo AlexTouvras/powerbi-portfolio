@@ -256,7 +256,7 @@ const measures = [
   measure("Last Change %", `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`, "0.00"),
   measure("Last RSI", `CALCULATE( AVERAGE( FactPrices[RSI14] ), FactPrices[IsLatest] = 1 )`, "0.0"),
   measure("Last Volume", `CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )`, "#,0"),
-  measure("Close", `AVERAGE( FactPrices[Close] )`, "#,0.00"),
+  measure("Close Price", `AVERAGE( FactPrices[Close] )`, "#,0.00"),
   measure("SMA 20", `AVERAGE( FactPrices[SMA20] )`, "#,0.00"),
   measure("SMA 50", `AVERAGE( FactPrices[SMA50] )`, "#,0.00"),
   measure("BB Upper", `AVERAGE( FactPrices[BBUpper] )`, "#,0.00"),
@@ -265,7 +265,7 @@ const measures = [
   measure("MACD Signal", `AVERAGE( FactPrices[MACDSignal] )`, "0.0000"),
   measure("MACD Hist", `AVERAGE( FactPrices[MACDHist] )`, "0.0000"),
   measure("RSI 14", `AVERAGE( FactPrices[RSI14] )`, "0.0"),
-  measure("Volume", `SUM( FactPrices[Volume] )`, "#,0"),
+  measure("Volume Sum", `SUM( FactPrices[Volume] )`, "#,0"),
   measure(
     "Day Change % Latest",
     `CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )`,

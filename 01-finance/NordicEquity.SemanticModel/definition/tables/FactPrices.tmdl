@@ -142,7 +142,7 @@ table FactPrices
 	measure 'Last Volume' = CALCULATE( SUM( FactPrices[Volume] ), FactPrices[IsLatest] = 1 )
 		formatString: #,0
 
-	measure Close = AVERAGE( FactPrices[Close] )
+	measure 'Close Price' = AVERAGE( FactPrices[Close] )
 		formatString: #,0.00
 
 	measure 'SMA 20' = AVERAGE( FactPrices[SMA20] )
@@ -169,7 +169,7 @@ table FactPrices
 	measure 'RSI 14' = AVERAGE( FactPrices[RSI14] )
 		formatString: 0.0
 
-	measure Volume = SUM( FactPrices[Volume] )
+	measure 'Volume Sum' = SUM( FactPrices[Volume] )
 		formatString: #,0
 
 	measure 'Day Change % Latest' = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )

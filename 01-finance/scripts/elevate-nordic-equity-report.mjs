@@ -1177,7 +1177,7 @@ function buildExplorer() {
       DIM_DT,
       "Date",
       [
-        [FACT, "Close"],
+        [FACT, "Close Price"],
         [FACT, "SMA 20"],
         [FACT, "SMA 50"],
       ],
@@ -1189,7 +1189,7 @@ function buildExplorer() {
       DIM_DT,
       "Date",
       FACT,
-      "Volume",
+      "Volume Sum",
       "Volume by date"
     ),
     lineChart(
