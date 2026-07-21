@@ -18,9 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch powerbi-sync on Orbit
+        if: ${{ secrets.ORBIT_DISPATCH_TOKEN != '' }}
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.ORBIT_DISPATCH_TOKEN }}
           repository: AlexTouvras/Orbit
           event-type: powerbi-sync
           client-payload: '{"source":"powerbi-portfolio","sha":"${{ github.sha }}"}'
+
+      - name: ORBIT_DISPATCH_TOKEN not configured
+        if: ${{ secrets.ORBIT_DISPATCH_TOKEN == '' }}
+        run: |
+          echo "::warning::ORBIT_DISPATCH_TOKEN is not set on this repo."
+          echo "Add a fine-grained PAT (contents:write on AlexTouvras/Orbit) as repo secret ORBIT_DISPATCH_TOKEN,"
+          echo "or run the Sync Power BI portfolio workflow manually on AlexTouvras/Orbit."
