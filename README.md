@@ -92,12 +92,19 @@ Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading 
 |---|---|
 | Audience | Investors / analysts / Nordic market watchers |
 | Theme | Nordic Boardroom |
-| Pages | Landing · Nordic Heatmap · Ticker Explorer · Context |
+| Pages | Landing · Nordic Heatmap · Ticker Explorer · Signal Desk · Context |
 | Open | [`01-finance/NordicEquity.pbip`](01-finance/NordicEquity.pbip) |
+| Live board | [heatmap-web-five.vercel.app](https://heatmap-web-five.vercel.app) — TradingView-style sector tiles (logos · % · sectors) |
 
 ![Landing](01-finance/screenshots/landing.png)
 
 ![Nordic Heatmap](01-finance/screenshots/nordic-heatmap.png)
+
+![Ticker Explorer](01-finance/screenshots/ticker-explorer.png)
+
+![Signal Desk](01-finance/screenshots/signal-desk.png)
+
+![Context](01-finance/screenshots/context.png)
 
 Details: [`01-finance/README.md`](01-finance/README.md)
 
@@ -110,7 +117,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`03-sales-executive`](03-sales-executive/) | Sales executive (KDNuggets #3) | **Featured** — PBIP + screenshots |
 | [`02-ecommerce-churn`](02-ecommerce-churn/) | E-commerce churn (KDNuggets #1) | **Featured** — PBIP + ML propensity |
 | [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | **Featured** — RFM + map + drillthrough |
-| [`01-finance`](01-finance/) | Nordic Equity (live board) | **Featured** — Yahoo delayed + heatmap + indicators |
+| [`01-finance`](01-finance/) | Nordic Equity (live board) | **Featured** — Yahoo delayed + PBIP + [Vercel heatmap](https://heatmap-web-five.vercel.app) |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
 
 ## Design system

@@ -1,0 +1,66 @@
+name: Nordic Equity gold refresh
+
+# Yahoo → gold CSVs → heatmap board.json, then commit + optional Vercel redeploy.
+# Schedule: weekdays 17:00 UTC (after Nordic cash closes). Manual: workflow_dispatch.
+#
+# Optional repo secrets:
+#   VERCEL_DEPLOY_HOOK — Deploy Hook URL for heatmap-web (Settings → Git → Deploy Hooks)
+
+on:
+  schedule:
+    - cron: "0 17 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 01-finance
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Fetch Yahoo + build gold
+        run: node scripts/build-gold.mjs
+        env:
+          NORDIC_RANGE: 1y
+
+      - name: Snapshot Vercel board.json
+        run: node scripts/snapshot-board.mjs
+
+      - name: Commit gold + board if changed
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 01-finance/data/gold 01-finance/heatmap-web/public/board.json
+          if git diff --staged --quiet; then
+            echo "No data changes."
+            echo "changed=false" >> "$GITHUB_ENV"
+          else
+            git commit -m "chore(01-finance): refresh Yahoo gold + heatmap board"
+            git push
+            echo "changed=true" >> "$GITHUB_ENV"
+          fi
+
+      - name: Trigger Vercel Deploy Hook
+        if: ${{ env.changed == 'true' }}
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK not set — skip site redeploy."
+            echo "Add Deploy Hook secret to auto-redeploy https://heatmap-web-five.vercel.app"
+            exit 0
+          fi
+          curl -fsS -X POST "$VERCEL_DEPLOY_HOOK"
+          echo "Vercel deploy hook fired."

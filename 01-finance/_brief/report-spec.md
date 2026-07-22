@@ -12,7 +12,7 @@
 | Audience | Investors / analysts / Nordic market watchers |
 | Theme | Nordic Boardroom |
 | Delivery | Local PBIP — **first live / near-live** portfolio report |
-| Pages | Landing · Nordic Heatmap · Ticker Explorer · Context |
+| Pages | Landing · Nordic Heatmap · Ticker Explorer · Signal Desk · Context |
 
 ## Dataset
 
@@ -21,14 +21,16 @@
 | Universe | Curated OMXH / OMXS / OMXC / OBX large caps (`DimCompany`) |
 | Prices | Yahoo Finance chart API (delayed) → `FactPrices` |
 | Indicators | Computed in gold: SMA20/50, EMA12/26, MACD, RSI14, Bollinger(20,2), Volume |
+| Strategy | RSI mean-reversion: Long RSI≤30 / Short RSI≥70 + next-day return & hit |
 | Refresh | `node scripts/build-gold.mjs` (manual or scheduled) then Desktop refresh |
 
 ## Page plan
 
-1. **Landing** — poster cover; hero = Advancers (latest session) or Avg Day Change %  
-2. **Nordic Heatmap** — treemap Sector → Ticker; size = Market Cap; color = Day Change %  
-3. **Ticker Explorer** — ticker slicer; price + SMA/BB; MACD; RSI; volume  
-4. **Context** — delay, Yahoo source, indicator defs, not investment advice; **no ML forecast** (future project)
+1. **Landing** — poster cover; hero = EW cumulative return % (strategy backtest)  
+2. **Nordic Heatmap** — treemap by company; size = Market Cap; color = Day Change % (+ CTA to live Vercel board)  
+3. **Ticker Explorer** — **single-select** ticker; price + SMA; MACD; RSI; volume  
+4. **Signal Desk** — RSI long/short candidates for latest session + next-day hit rates + EW backtest charts  
+5. **Context** — delay, Yahoo source, indicator defs, not investment advice; **no ML forecast**
 
 ## Design
 
@@ -37,11 +39,11 @@
 
 ## Out of scope
 
-- Price forecast / ML next-day  
-- Strategy backtest / paper P&L  
+- ML / neural next-day price forecast (future project)  
 - Official Nasdaq paid Web API / tick streaming  
 - Fabric publish (unless later approved)  
 
 ## Approval
 
-Approved by user **go for it** after scope lock (indicators now; forecast later).
+Approved by user **go for it** after scope lock (indicators now; forecast later).  
+Signal Desk added 2026-07-21 on user request (rules-based RSI desk + single-ticker Explorer).

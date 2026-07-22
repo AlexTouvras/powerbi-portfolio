@@ -10,6 +10,8 @@ FORTUM,FORTUM.HE,Fortum,FI,Utilities,Electric Utilities,15000
 ORNBV,ORNBV.HE,Orion,FI,Health Care,Pharmaceuticals,7000
 WRT1V,WRT1V.HE,Wärtsilä,FI,Industrials,Machinery,11000
 ELISA,ELISA.HE,Elisa,FI,Communication Services,Telecom,7000
+KALMAR,KALMAR.HE,Kalmar,FI,Industrials,Machinery,2500
+HIAB,HIAB.HE,Hiab,FI,Industrials,Machinery,2500
 VOLV-B,VOLV-B.ST,Volvo B,SE,Industrials,Machinery,55000
 ATCO-A,ATCO-A.ST,Atlas Copco A,SE,Industrials,Machinery,70000
 INVE-B,INVE-B.ST,Investor B,SE,Financials,Diversified Financials,80000
@@ -42,3 +44,40 @@ MOWI,MOWI.OL,Mowi,NO,Consumer Staples,Food Products,10000
 YAR,YAR.OL,Yara International,NO,Materials,Fertilizers,9000
 NHY,NHY.OL,Norsk Hydro,NO,Materials,Aluminum,12000
 ORK,ORK.OL,Orkla,NO,Consumer Staples,Food Products,8000
+KESKOB,KESKOB.HE,Kesko B,FI,Consumer Staples,Food Retail,8000
+METSO,METSO.HE,Metso,FI,Industrials,Machinery,9000
+VALMT,VALMT.HE,Valmet,FI,Industrials,Machinery,5000
+OUT1V,OUT1V.HE,Outokumpu,FI,Materials,Steel,2000
+HUH1V,HUH1V.HE,Huhtamäki,FI,Materials,Packaging,3500
+TYRES,TYRES.HE,Nokian Tyres,FI,Consumer Discretionary,Auto Parts,1500
+QTCOM,QTCOM.HE,Qt Group,FI,Technology,Software,2500
+TIETO,TIETO.HE,Tietoevry,FI,Technology,IT Services,2000
+EQT,EQT.ST,EQT,SE,Financials,Private Equity,35000
+EPI-A,EPI-A.ST,Epiroc A,SE,Industrials,Machinery,22000
+SAAB-B,SAAB-B.ST,Saab B,SE,Industrials,Aerospace & Defense,12000
+NIBE-B,NIBE-B.ST,NIBE B,SE,Industrials,Building Products,10000
+SCA-B,SCA-B.ST,SCA B,SE,Materials,Paper & Forest,9000
+AZN,AZN.ST,AstraZeneca,SE,Health Care,Pharmaceuticals,200000
+GETI-B,GETI-B.ST,Getinge B,SE,Health Care,Health Care Equipment,7000
+TEL2-B,TEL2-B.ST,Tele2 B,SE,Communication Services,Telecom,8000
+SECU-B,SECU-B.ST,Securitas B,SE,Industrials,Security Services,5000
+ELUX-B,ELUX-B.ST,Electrolux B,SE,Consumer Discretionary,Household Durables,3000
+SINCH,SINCH.ST,Sinch,SE,Technology,Software,2500
+INDU-C,INDU-C.ST,Industrivärden C,SE,Financials,Diversified Financials,12000
+KINV-B,KINV-B.ST,Kinnevik B,SE,Financials,Diversified Financials,3000
+PNDORA,PNDORA.CO,Pandora,DK,Consumer Discretionary,Apparel & Luxury,12000
+ROCK-B,ROCK-B.CO,Rockwool B,DK,Materials,Building Materials,7000
+NSIS-B,NSIS-B.CO,Novonesis B,DK,Materials,Specialty Chemicals,30000
+DEMANT,DEMANT.CO,Demant,DK,Health Care,Health Care Equipment,8000
+GN,GN.CO,GN Store Nord,DK,Health Care,Health Care Equipment,4000
+TRYG,TRYG.CO,Tryg,DK,Financials,Insurance,12000
+BAVA,BAVA.CO,Bavarian Nordic,DK,Health Care,Biotechnology,2500
+AMBU-B,AMBU-B.CO,Ambu B,DK,Health Care,Health Care Equipment,4000
+AKRBP,AKRBP.OL,Aker BP,NO,Energy,Oil & Gas E&P,15000
+TOM,TOM.OL,Tomra Systems,NO,Industrials,Machinery,5000
+SALM,SALM.OL,SalMar,NO,Consumer Staples,Food Products,7000
+STB,STB.OL,Storebrand,NO,Financials,Insurance,5000
+GJF,GJF.OL,Gjensidige,NO,Financials,Insurance,10000
+BAKKA,BAKKA.OL,Bakkafrost,NO,Consumer Staples,Food Products,3000
+SUBC,SUBC.OL,Subsea 7,NO,Energy,Oil & Gas Equipment,5000
+AUTO,AUTO.OL,AutoStore,NO,Technology,Machinery / Automation,4000

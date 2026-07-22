@@ -30,6 +30,26 @@ table DimCompany
 		summarizeBy: sum
 		sourceColumn: MarketCapEURm
 
+	/// Latest session change % for TopN filters (Aggregation OrderBy cannot use measures).
+	column 'Latest Change %' = CALCULATE( AVERAGE( FactPrices[ChangePct] ), FactPrices[IsLatest] = 1 )
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+
+	/// TradingView-style tile label: TICKER + change % (single line — newlines break treemap hierarchy).
+	column HeatLabel =
+			VAR chg = DimCompany[Latest Change %]
+			VAR pct = IF( ISBLANK( chg ), "", FORMAT( chg, "+0.00;-0.00;0.00" ) )
+			RETURN DimCompany[Ticker] & " " & pct
+		dataType: string
+		summarizeBy: none
+
+	hierarchy 'Sector Heat'
+		level Sector
+			column: Sector
+		level Ticker
+			column: Ticker
+
 
 	partition DimCompany = m
 		mode: import

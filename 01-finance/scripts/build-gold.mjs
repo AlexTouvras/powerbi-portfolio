@@ -26,7 +26,8 @@ const UNIVERSE = [
   { Ticker: "ORNBV", YahooSymbol: "ORNBV.HE", Name: "Orion", Country: "FI", Sector: "Health Care", Industry: "Pharmaceuticals", MarketCapEURm: 7000 },
   { Ticker: "WRT1V", YahooSymbol: "WRT1V.HE", Name: "Wärtsilä", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 11000 },
   { Ticker: "ELISA", YahooSymbol: "ELISA.HE", Name: "Elisa", Country: "FI", Sector: "Communication Services", Industry: "Telecom", MarketCapEURm: 7000 },
-  { Ticker: "CGCBV", YahooSymbol: "CGCBV.HE", Name: "Cargotec", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 4000 },
+  { Ticker: "KALMAR", YahooSymbol: "KALMAR.HE", Name: "Kalmar", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 2500 },
+  { Ticker: "HIAB", YahooSymbol: "HIAB.HE", Name: "Hiab", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 2500 },
   // Sweden
   { Ticker: "VOLV-B", YahooSymbol: "VOLV-B.ST", Name: "Volvo B", Country: "SE", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 55000 },
   { Ticker: "ATCO-A", YahooSymbol: "ATCO-A.ST", Name: "Atlas Copco A", Country: "SE", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 70000 },
@@ -62,6 +63,47 @@ const UNIVERSE = [
   { Ticker: "YAR", YahooSymbol: "YAR.OL", Name: "Yara International", Country: "NO", Sector: "Materials", Industry: "Fertilizers", MarketCapEURm: 9000 },
   { Ticker: "NHY", YahooSymbol: "NHY.OL", Name: "Norsk Hydro", Country: "NO", Sector: "Materials", Industry: "Aluminum", MarketCapEURm: 12000 },
   { Ticker: "ORK", YahooSymbol: "ORK.OL", Name: "Orkla", Country: "NO", Sector: "Consumer Staples", Industry: "Food Products", MarketCapEURm: 8000 },
+  // Extra Finland
+  { Ticker: "KESKOB", YahooSymbol: "KESKOB.HE", Name: "Kesko B", Country: "FI", Sector: "Consumer Staples", Industry: "Food Retail", MarketCapEURm: 8000 },
+  { Ticker: "METSO", YahooSymbol: "METSO.HE", Name: "Metso", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 9000 },
+  { Ticker: "VALMT", YahooSymbol: "VALMT.HE", Name: "Valmet", Country: "FI", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 5000 },
+  { Ticker: "OUT1V", YahooSymbol: "OUT1V.HE", Name: "Outokumpu", Country: "FI", Sector: "Materials", Industry: "Steel", MarketCapEURm: 2000 },
+  { Ticker: "HUH1V", YahooSymbol: "HUH1V.HE", Name: "Huhtamäki", Country: "FI", Sector: "Materials", Industry: "Packaging", MarketCapEURm: 3500 },
+  { Ticker: "TYRES", YahooSymbol: "TYRES.HE", Name: "Nokian Tyres", Country: "FI", Sector: "Consumer Discretionary", Industry: "Auto Parts", MarketCapEURm: 1500 },
+  { Ticker: "QTCOM", YahooSymbol: "QTCOM.HE", Name: "Qt Group", Country: "FI", Sector: "Technology", Industry: "Software", MarketCapEURm: 2500 },
+  { Ticker: "TIETO", YahooSymbol: "TIETO.HE", Name: "Tietoevry", Country: "FI", Sector: "Technology", Industry: "IT Services", MarketCapEURm: 2000 },
+  // Extra Sweden
+  { Ticker: "EQT", YahooSymbol: "EQT.ST", Name: "EQT", Country: "SE", Sector: "Financials", Industry: "Private Equity", MarketCapEURm: 35000 },
+  { Ticker: "EPI-A", YahooSymbol: "EPI-A.ST", Name: "Epiroc A", Country: "SE", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 22000 },
+  { Ticker: "SAAB-B", YahooSymbol: "SAAB-B.ST", Name: "Saab B", Country: "SE", Sector: "Industrials", Industry: "Aerospace & Defense", MarketCapEURm: 12000 },
+  { Ticker: "NIBE-B", YahooSymbol: "NIBE-B.ST", Name: "NIBE B", Country: "SE", Sector: "Industrials", Industry: "Building Products", MarketCapEURm: 10000 },
+  { Ticker: "SCA-B", YahooSymbol: "SCA-B.ST", Name: "SCA B", Country: "SE", Sector: "Materials", Industry: "Paper & Forest", MarketCapEURm: 9000 },
+  { Ticker: "AZN", YahooSymbol: "AZN.ST", Name: "AstraZeneca", Country: "SE", Sector: "Health Care", Industry: "Pharmaceuticals", MarketCapEURm: 200000 },
+  { Ticker: "GETI-B", YahooSymbol: "GETI-B.ST", Name: "Getinge B", Country: "SE", Sector: "Health Care", Industry: "Health Care Equipment", MarketCapEURm: 7000 },
+  { Ticker: "TEL2-B", YahooSymbol: "TEL2-B.ST", Name: "Tele2 B", Country: "SE", Sector: "Communication Services", Industry: "Telecom", MarketCapEURm: 8000 },
+  { Ticker: "SECU-B", YahooSymbol: "SECU-B.ST", Name: "Securitas B", Country: "SE", Sector: "Industrials", Industry: "Security Services", MarketCapEURm: 5000 },
+  { Ticker: "ELUX-B", YahooSymbol: "ELUX-B.ST", Name: "Electrolux B", Country: "SE", Sector: "Consumer Discretionary", Industry: "Household Durables", MarketCapEURm: 3000 },
+  { Ticker: "SINCH", YahooSymbol: "SINCH.ST", Name: "Sinch", Country: "SE", Sector: "Technology", Industry: "Software", MarketCapEURm: 2500 },
+  { Ticker: "INDU-C", YahooSymbol: "INDU-C.ST", Name: "Industrivärden C", Country: "SE", Sector: "Financials", Industry: "Diversified Financials", MarketCapEURm: 12000 },
+  { Ticker: "KINV-B", YahooSymbol: "KINV-B.ST", Name: "Kinnevik B", Country: "SE", Sector: "Financials", Industry: "Diversified Financials", MarketCapEURm: 3000 },
+  // Extra Denmark
+  { Ticker: "PNDORA", YahooSymbol: "PNDORA.CO", Name: "Pandora", Country: "DK", Sector: "Consumer Discretionary", Industry: "Apparel & Luxury", MarketCapEURm: 12000 },
+  { Ticker: "ROCK-B", YahooSymbol: "ROCK-B.CO", Name: "Rockwool B", Country: "DK", Sector: "Materials", Industry: "Building Materials", MarketCapEURm: 7000 },
+  { Ticker: "NSIS-B", YahooSymbol: "NSIS-B.CO", Name: "Novonesis B", Country: "DK", Sector: "Materials", Industry: "Specialty Chemicals", MarketCapEURm: 30000 },
+  { Ticker: "DEMANT", YahooSymbol: "DEMANT.CO", Name: "Demant", Country: "DK", Sector: "Health Care", Industry: "Health Care Equipment", MarketCapEURm: 8000 },
+  { Ticker: "GN", YahooSymbol: "GN.CO", Name: "GN Store Nord", Country: "DK", Sector: "Health Care", Industry: "Health Care Equipment", MarketCapEURm: 4000 },
+  { Ticker: "TRYG", YahooSymbol: "TRYG.CO", Name: "Tryg", Country: "DK", Sector: "Financials", Industry: "Insurance", MarketCapEURm: 12000 },
+  { Ticker: "BAVA", YahooSymbol: "BAVA.CO", Name: "Bavarian Nordic", Country: "DK", Sector: "Health Care", Industry: "Biotechnology", MarketCapEURm: 2500 },
+  { Ticker: "AMBU-B", YahooSymbol: "AMBU-B.CO", Name: "Ambu B", Country: "DK", Sector: "Health Care", Industry: "Health Care Equipment", MarketCapEURm: 4000 },
+  // Extra Norway
+  { Ticker: "AKRBP", YahooSymbol: "AKRBP.OL", Name: "Aker BP", Country: "NO", Sector: "Energy", Industry: "Oil & Gas E&P", MarketCapEURm: 15000 },
+  { Ticker: "TOM", YahooSymbol: "TOM.OL", Name: "Tomra Systems", Country: "NO", Sector: "Industrials", Industry: "Machinery", MarketCapEURm: 5000 },
+  { Ticker: "SALM", YahooSymbol: "SALM.OL", Name: "SalMar", Country: "NO", Sector: "Consumer Staples", Industry: "Food Products", MarketCapEURm: 7000 },
+  { Ticker: "STB", YahooSymbol: "STB.OL", Name: "Storebrand", Country: "NO", Sector: "Financials", Industry: "Insurance", MarketCapEURm: 5000 },
+  { Ticker: "GJF", YahooSymbol: "GJF.OL", Name: "Gjensidige", Country: "NO", Sector: "Financials", Industry: "Insurance", MarketCapEURm: 10000 },
+  { Ticker: "BAKKA", YahooSymbol: "BAKKA.OL", Name: "Bakkafrost", Country: "NO", Sector: "Consumer Staples", Industry: "Food Products", MarketCapEURm: 3000 },
+  { Ticker: "SUBC", YahooSymbol: "SUBC.OL", Name: "Subsea 7", Country: "NO", Sector: "Energy", Industry: "Oil & Gas Equipment", MarketCapEURm: 5000 },
+  { Ticker: "AUTO", YahooSymbol: "AUTO.OL", Name: "AutoStore", Country: "NO", Sector: "Technology", Industry: "Machinery / Automation", MarketCapEURm: 4000 },
 ];
 
 function sleep(ms) {
@@ -267,6 +309,36 @@ async function main() {
       const raw = await fetchChart(u.YahooSymbol);
       if (raw.length < 60) throw new Error(`Too few bars (${raw.length})`);
       const enriched = enrich(raw);
+      // Per-ticker forward returns + RSI mean-reversion signals (Long ≤30 / Short ≥70).
+      for (let i = 0; i < enriched.length; i++) {
+        const r = enriched[i];
+        const rsi = r.RSI14;
+        let side = "Flat";
+        if (rsi != null && Number.isFinite(rsi)) {
+          if (rsi <= 30) side = "Long";
+          else if (rsi >= 70) side = "Short";
+        }
+        r.StrategySide = side;
+        r.IsSignal = side === "Flat" ? 0 : 1;
+        if (i + 1 < enriched.length) {
+          const cur = r.Close;
+          const next = enriched[i + 1].Close;
+          r.NextDayReturnPct =
+            cur && Number.isFinite(cur) && next != null
+              ? ((next - cur) / cur) * 100
+              : null;
+          if (side === "Long" && r.NextDayReturnPct != null) {
+            r.SignalHit = r.NextDayReturnPct > 0 ? 1 : 0;
+          } else if (side === "Short" && r.NextDayReturnPct != null) {
+            r.SignalHit = r.NextDayReturnPct < 0 ? 1 : 0;
+          } else {
+            r.SignalHit = null;
+          }
+        } else {
+          r.NextDayReturnPct = null;
+          r.SignalHit = null; // latest bar — awaiting next session
+        }
+      }
       for (const r of enriched) {
         factRows.push({
           Date: r.Date,
@@ -291,6 +363,10 @@ async function main() {
           BBMid: round(r.BBMid, 4),
           BBUpper: round(r.BBUpper, 4),
           BBLower: round(r.BBLower, 4),
+          StrategySide: r.StrategySide,
+          IsSignal: r.IsSignal,
+          NextDayReturnPct: round(r.NextDayReturnPct, 4),
+          SignalHit: r.SignalHit,
         });
       }
       ok.push(u.Ticker);
@@ -358,6 +434,10 @@ async function main() {
       "BBUpper",
       "BBLower",
       "IsLatest",
+      "StrategySide",
+      "IsSignal",
+      "NextDayReturnPct",
+      "SignalHit",
     ],
     factRows
   );

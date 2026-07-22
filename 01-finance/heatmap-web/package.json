@@ -1,0 +1,29 @@
+{
+  "name": "nordic-equity-heatmap",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "snapshot": "node ../scripts/snapshot-board.mjs",
+    "prebuild": "node -e \"const fs=require('fs');const p=require('path');const g=p.join('..','data','gold','DimCompany.csv');if(fs.existsSync(g)){require('child_process').execSync('npm run snapshot',{stdio:'inherit'})}else{console.log('skip snapshot (no gold CSV — using public/board.json)')}\"",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "d3-hierarchy": "^3.1.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/d3-hierarchy": "^3.1.7",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}

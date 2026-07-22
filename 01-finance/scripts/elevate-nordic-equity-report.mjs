@@ -23,8 +23,23 @@ const DIM_CO = "DimCompany";
 const DIM_DT = "DimDate";
 const FOOTER =
   "Source: Yahoo Finance delayed quotes · Local PBIP · Nordic Boardroom · Classic indicators (SMA/MACD/RSI/BB) · Not investment advice";
+/** TradingView-style board (logos + % + sectors). Override with HEATMAP_WEB_URL env if needed. */
+const HEATMAP_WEB_URL =
+  process.env.HEATMAP_WEB_URL || "https://heatmap-web-five.vercel.app";
+
+function latestSessionDate() {
+  const metaPath = path.join(root, "data/gold/build-meta.json");
+  try {
+    const meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
+    if (meta.latestDate) return String(meta.latestDate);
+  } catch {
+    /* fall through */
+  }
+  return null;
+}
+
 /** Four visible pages (Landing + 3 analysis). */
-const NAV = { x: 1496, y: 12, height: 80, width: 392 };
+const NAV = { x: 1392, y: 12, height: 80, width: 496 };
 const SL = {
   country: { x: 900, y: 12, height: 80, width: 176 },
   sector: { x: 1088, y: 12, height: 80, width: 176 },
@@ -91,13 +106,33 @@ function column(entity, name, active = true) {
 
 function pageDisplayMap(meta) {
   const byDisplay = {};
-  for (const pageKey of meta.pageOrder) {
-    const pagePath = path.join(REPORT, "definition/pages", pageKey, "page.json");
+  const pagesDir = path.join(REPORT, "definition/pages");
+  for (const ent of fs.readdirSync(pagesDir, { withFileTypes: true })) {
+    if (!ent.isDirectory() || !ent.name.startsWith("ReportSection")) continue;
+    const pagePath = path.join(pagesDir, ent.name, "page.json");
+    if (!fs.existsSync(pagePath)) continue;
+    const pj = JSON.parse(fs.readFileSync(pagePath, "utf8"));
+    byDisplay[pj.displayName] = ent.name;
+  }
+  // Prefer pageOrder keys when present
+  for (const pageKey of meta.pageOrder || []) {
+    const pagePath = path.join(pagesDir, pageKey, "page.json");
     if (!fs.existsSync(pagePath)) continue;
     const pj = JSON.parse(fs.readFileSync(pagePath, "utf8"));
     byDisplay[pj.displayName] = pageKey;
   }
   return byDisplay;
+}
+
+function ensureNamedPage(meta, displayName) {
+  const byDisplay = pageDisplayMap(meta);
+  if (byDisplay[displayName]) return byDisplay[displayName];
+  const key = "ReportSection" + crypto.randomBytes(12).toString("hex");
+  const dir = path.join(REPORT, "definition/pages", key);
+  fs.mkdirSync(path.join(dir, "visuals"), { recursive: true });
+  pageChrome(key, displayName);
+  if (!meta.pageOrder.includes(key)) meta.pageOrder.push(key);
+  return key;
 }
 
 function writePagesMeta(meta) {
@@ -122,8 +157,15 @@ function resolvePages() {
     throw new Error(`Missing ${pagesPath}`);
   }
   const meta = JSON.parse(fs.readFileSync(pagesPath, "utf8"));
+  ensureNamedPage(meta, "Signal Desk");
   const byDisplay = pageDisplayMap(meta);
-  const required = ["Landing", "Nordic Heatmap", "Ticker Explorer", "Context"];
+  const required = [
+    "Landing",
+    "Nordic Heatmap",
+    "Ticker Explorer",
+    "Signal Desk",
+    "Context",
+  ];
   for (const name of required) {
     if (!byDisplay[name]) {
       throw new Error(`Page "${name}" not found in pages.json / page.json`);
@@ -133,6 +175,7 @@ function resolvePages() {
     byDisplay["Landing"],
     byDisplay["Nordic Heatmap"],
     byDisplay["Ticker Explorer"],
+    byDisplay["Signal Desk"],
     byDisplay["Context"],
   ];
   meta.activePageName = byDisplay["Landing"];
@@ -141,6 +184,7 @@ function resolvePages() {
     landing: byDisplay["Landing"],
     heatmap: byDisplay["Nordic Heatmap"],
     explorer: byDisplay["Ticker Explorer"],
+    signals: byDisplay["Signal Desk"],
     context: byDisplay["Context"],
     meta,
   };
@@ -436,7 +480,8 @@ function pageNavigator(name, pos) {
   };
 }
 
-function editorialHero(name, pos, measureName, accent, caption) {
+function editorialHero(name, pos, measureName, accent, caption, opts = {}) {
+  const fontSize = opts.fontSize ?? 64;
   return {
     $schema: SCHEMA,
     name,
@@ -452,7 +497,7 @@ function editorialHero(name, pos, measureName, accent, caption) {
         labels: [
           {
             properties: {
-              fontSize: litD(64),
+              fontSize: litD(fontSize),
               bold: lit(true),
               color: solid(accent),
             },
@@ -498,79 +543,153 @@ function editorialHero(name, pos, measureName, accent, caption) {
   };
 }
 
-function simpleCard(name, pos, measureName, accent, label) {
+/** Opens the Vercel TradingView-style board. Text labels blank on this Desktop
+ *  build for actionButton — use icon + container title instead. */
+function webUrlButton(name, pos, label, url) {
   return {
     $schema: SCHEMA,
     name,
     position: pos,
     visual: {
-      visualType: "cardVisual",
-      query: {
-        queryState: {
-          Data: { projections: [measure(FACT, measureName)] },
-        },
-      },
+      visualType: "actionButton",
       objects: {
-        outline: [
+        icon: [
+          {
+            properties: {
+              show: lit(true),
+              shapeType: lit("rightArrow"),
+              lineColor: solid("#FFFFFF"),
+              lineWeight: litD(2),
+            },
+            selector: { id: "default" },
+          },
+        ],
+        text: [
           {
             properties: { show: lit(false) },
             selector: { id: "default" },
           },
         ],
-        accentBar: [
+        outline: [
+          {
+            properties: {
+              show: lit(false),
+              weight: litD(0),
+              lineColor: solid("#2F5F73"),
+            },
+            selector: { id: "default" },
+          },
+        ],
+        fill: [
           {
             properties: {
               show: lit(true),
-              position: lit("Left"),
-              width: litD(4),
-              color: solid(accent),
+              fillColor: solid("#2F5F73"),
+              transparency: litD(0),
             },
             selector: { id: "default" },
           },
-        ],
-        layout: [
           {
             properties: {
-              topOuterMargin: lit(0),
-              bottomOuterMargin: lit(0),
-              leftOuterMargin: lit(0),
-              rightOuterMargin: lit(0),
-              paddingUniform: lit(0),
+              show: lit(true),
+              fillColor: solid("#1E4556"),
+              transparency: litD(0),
             },
-            selector: { id: "default" },
+            selector: { id: "hover" },
           },
         ],
-        padding: [
+      },
+      visualContainerObjects: {
+        visualLink: [
           {
             properties: {
-              paddingIndividual: lit(true),
-              topMargin: lit(0),
-              bottomMargin: lit(0),
-              leftMargin: lit(12),
-              rightMargin: lit(8),
+              show: lit(true),
+              type: lit("WebUrl"),
+              webUrl: lit(url),
+              showDefaultTooltip: lit(true),
+              tooltip: lit(label),
             },
-            selector: { id: "default" },
           },
         ],
-        value: [
+        background: [
           {
             properties: {
-              fontSize: litD(22),
-              bold: lit(true),
-              fontColor: solid(accent),
+              show: lit(true),
+              color: solid("#2F5F73"),
+              transparency: litD(0),
             },
-            selector: { id: "default" },
           },
         ],
-        label: [
+        border: [
+          {
+            properties: {
+              show: lit(true),
+              color: solid("#2F5F73"),
+              radius: litD(8),
+            },
+          },
+        ],
+        title: [
           {
             properties: {
               show: lit(true),
               text: lit(label),
-              fontSize: litD(10),
-              fontColor: solid("#5A6B75"),
+              fontSize: litD(12),
+              fontColor: solid("#FFFFFF"),
+              fontFamily: lit("Segoe UI Semibold"),
+              alignment: lit("center"),
             },
-            selector: { id: "default" },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(4),
+              bottom: litD(4),
+              left: litD(8),
+              right: litD(8),
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
+function simpleCard(name, pos, measureName, accent, label, opts = {}) {
+  // Use legacy `card` (Values role) — cardVisual callouts render blank on this
+  // Desktop build for Nordic Equity; Landing hero already uses `card` successfully.
+  const fontSize = opts.fontSize ?? 28;
+  const showCategory = opts.hideCategory ? false : true;
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "card",
+      query: {
+        queryState: {
+          Values: { projections: [measure(FACT, measureName)] },
+        },
+      },
+      objects: {
+        labels: [
+          {
+            properties: {
+              fontSize: litD(fontSize),
+              bold: lit(true),
+              color: solid(accent),
+            },
+          },
+        ],
+        categoryLabels: [
+          {
+            properties: {
+              show: lit(showCategory),
+              color: solid("#5A6B75"),
+              fontSize: litD(10),
+            },
           },
         ],
       },
@@ -593,15 +712,25 @@ function simpleCard(name, pos, measureName, accent, label) {
             },
           },
         ],
-        title: [{ properties: { show: lit(false) } }],
+        title: [
+          {
+            properties: {
+              show: lit(true),
+              text: lit(label),
+              fontSize: litD(10),
+              fontColor: solid("#5A6B75"),
+              fontFamily: lit("Segoe UI Semibold"),
+            },
+          },
+        ],
         visualHeader: [{ properties: { show: lit(false) } }],
         padding: [
           {
             properties: {
-              top: litD(0),
-              bottom: litD(0),
-              left: litD(0),
-              right: litD(0),
+              top: litD(8),
+              bottom: litD(8),
+              left: litD(12),
+              right: litD(12),
             },
           },
         ],
@@ -610,7 +739,7 @@ function simpleCard(name, pos, measureName, accent, label) {
   };
 }
 
-function slicerDropdown(name, pos, entity, col, title, syncGroup) {
+function slicerDropdown(name, pos, entity, col, title, syncGroup, opts = {}) {
   const v = {
     $schema: SCHEMA,
     name,
@@ -624,6 +753,15 @@ function slicerDropdown(name, pos, entity, col, title, syncGroup) {
       },
       objects: {
         data: [{ properties: { mode: lit("Dropdown") } }],
+        selection: [
+          {
+            properties: {
+              strictSingleSelect: lit(!!opts.strictSingleSelect),
+              selectAllCheckboxEnabled: lit(false),
+              singleSelect: lit(true),
+            },
+          },
+        ],
       },
       visualContainerObjects: {
         background: [{ properties: { show: lit(true), color: solid("#FFFFFF") } }],
@@ -660,6 +798,40 @@ function slicerDropdown(name, pos, entity, col, title, syncGroup) {
       },
     },
   };
+  if (opts.defaultValue != null) {
+    const alias = "s";
+    v.visual.objects.general = [
+      {
+        properties: {
+          filter: {
+            filter: {
+              Version: 2,
+              From: [{ Name: alias, Entity: entity, Type: 0 }],
+              Where: [
+                {
+                  Condition: {
+                    In: {
+                      Expressions: [
+                        {
+                          Column: {
+                            Expression: { SourceRef: { Source: alias } },
+                            Property: col,
+                          },
+                        },
+                      ],
+                      Values: [
+                        [{ Literal: { Value: `'${String(opts.defaultValue).replace(/'/g, "''")}'` } }],
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ];
+  }
   if (syncGroup) {
     v.visual.syncGroup = {
       groupName: syncGroup,
@@ -668,6 +840,48 @@ function slicerDropdown(name, pos, entity, col, title, syncGroup) {
     };
   }
   return v;
+}
+
+function categoricalFilter(entity, colName, values, { numeric = false } = {}) {
+  const alias = "f";
+  return {
+    name: "Filter" + crypto.randomBytes(12).toString("hex"),
+    field: {
+      Column: {
+        Expression: { SourceRef: { Entity: entity } },
+        Property: colName,
+      },
+    },
+    type: "Categorical",
+    filter: {
+      Version: 2,
+      From: [{ Name: alias, Entity: entity, Type: 0 }],
+      Where: [
+        {
+          Condition: {
+            In: {
+              Expressions: [
+                {
+                  Column: {
+                    Expression: { SourceRef: { Source: alias } },
+                    Property: colName,
+                  },
+                },
+              ],
+              Values: values.map((v) => [
+                {
+                  Literal: {
+                    Value: numeric ? `${v}L` : `'${String(v).replace(/'/g, "''")}'`,
+                  },
+                },
+              ]),
+            },
+          },
+        },
+      ],
+    },
+    howCreated: "User",
+  };
 }
 
 function cardContainer(title) {
@@ -835,11 +1049,93 @@ function columnChart(name, pos, catEntity, catCol, measureEntity, measureName, t
   };
 }
 
-function tableEx(name, pos, cols, measuresList, title, sortMeasure) {
-  const projections = [
-    ...cols.map(([entity, colName]) => column(entity, colName)),
-    ...measuresList.map(([entity, mName]) => measure(entity, mName)),
-  ];
+/**
+ * Movers list: dim + measure must use pivotTable (not tableEx).
+ * Mixing Column + Measure in tableEx Values crashes Desktop PivotTableVisuals
+ * (getColumnIndexFromQueryName / queryName undefined).
+ */
+function topNFilter(entity, colName, orderCol, top, direction) {
+  // Direction: 2 = Top, 1 = Bottom. OrderBy must Aggregation(column), not Measure.
+  const alias = "t";
+  return {
+    name: "Filter" + crypto.randomBytes(12).toString("hex"),
+    field: {
+      Column: {
+        Expression: { SourceRef: { Entity: entity } },
+        Property: colName,
+      },
+    },
+    type: "TopN",
+    filter: {
+      Version: 2,
+      From: [
+        {
+          Name: "subquery",
+          Expression: {
+            Subquery: {
+              Query: {
+                Version: 2,
+                From: [{ Name: alias, Entity: entity, Type: 0 }],
+                Select: [
+                  {
+                    Column: {
+                      Expression: { SourceRef: { Source: alias } },
+                      Property: colName,
+                    },
+                    Name: "field",
+                  },
+                ],
+                OrderBy: [
+                  {
+                    Direction: direction,
+                    Expression: {
+                      Aggregation: {
+                        Expression: {
+                          Column: {
+                            Expression: { SourceRef: { Source: alias } },
+                            Property: orderCol,
+                          },
+                        },
+                        Function: 1,
+                      },
+                    },
+                  },
+                ],
+                Top: top,
+              },
+            },
+          },
+          Type: 2,
+        },
+        { Name: alias, Entity: entity, Type: 0 },
+      ],
+      Where: [
+        {
+          Condition: {
+            In: {
+              Expressions: [
+                {
+                  Column: {
+                    Expression: { SourceRef: { Source: alias } },
+                    Property: colName,
+                  },
+                },
+              ],
+              Table: { SourceRef: { Source: "subquery" } },
+            },
+          },
+        },
+      ],
+    },
+    howCreated: "User",
+  };
+}
+
+function moversMatrix(name, pos, rowCols, valueMeasures, title, sortMeasure, opts = {}) {
+  const measuresList = Array.isArray(valueMeasures[0])
+    ? valueMeasures
+    : [valueMeasures];
+  const sortDir = opts.sortDirection === "Ascending" ? "Ascending" : "Descending";
   const sortDef = sortMeasure
     ? {
         sortDefinition: {
@@ -851,21 +1147,34 @@ function tableEx(name, pos, cols, measuresList, title, sortMeasure) {
                   Property: sortMeasure[1],
                 },
               },
-              direction: "Descending",
+              direction: sortDir,
             },
           ],
         },
       }
     : {};
-  return {
+  const vco = cardContainer(title);
+  vco.stylePreset = [
+    { properties: { name: lit("None") } },
+  ];
+  const visual = {
     $schema: SCHEMA,
     name,
     position: pos,
     visual: {
-      visualType: "tableEx",
+      visualType: "pivotTable",
       query: {
         queryState: {
-          Values: { projections },
+          Rows: {
+            projections: rowCols.map(([entity, colName]) =>
+              column(entity, colName)
+            ),
+          },
+          Values: {
+            projections: measuresList.map(([entity, mName]) =>
+              measure(entity, mName)
+            ),
+          },
         },
         ...sortDef,
       },
@@ -874,26 +1183,79 @@ function tableEx(name, pos, cols, measuresList, title, sortMeasure) {
           {
             properties: {
               fontColor: solid("#0F1C24"),
-              fontSize: litD(10),
+              fontSize: litD(9),
               bold: lit(true),
+              autoSizeColumnWidth: lit(true),
+              columnAdjustment: lit("growToFit"),
+            },
+          },
+        ],
+        rowHeaders: [
+          {
+            properties: {
+              fontColor: solid("#0F1C24"),
+              fontSize: litD(9),
             },
           },
         ],
         values: [
           {
             properties: {
-              fontSize: litD(10),
-              fontColor: solid("#0F1C24"),
+              fontSize: litD(9),
+              fontColorPrimary: solid("#0F1C24"),
+              fontColorSecondary: solid("#0F1C24"),
+            },
+          },
+        ],
+        subTotals: [
+          {
+            properties: {
+              rowSubtotals: lit(false),
+              columnSubtotals: lit(false),
             },
           },
         ],
       },
-      visualContainerObjects: cardContainer(title),
+      visualContainerObjects: vco,
+    },
+  };
+  if (opts.filterConfig) {
+    visual.filterConfig = opts.filterConfig;
+  }
+  return visual;
+}
+
+function hierarchyRoot(entity, hierarchyName) {
+  return {
+    field: {
+      Hierarchy: {
+        Expression: { SourceRef: { Entity: entity } },
+        Hierarchy: hierarchyName,
+      },
+    },
+    queryRef: `${entity}.${hierarchyName}`,
+    nativeQueryRef: hierarchyName,
+    active: true,
+  };
+}
+
+function hierarchyLevelField(entity, hierarchyName, levelName) {
+  return {
+    HierarchyLevel: {
+      Expression: {
+        Hierarchy: {
+          Expression: { SourceRef: { Entity: entity } },
+          Hierarchy: hierarchyName,
+        },
+      },
+      Level: levelName,
     },
   };
 }
 
 function treemap(name, pos, title) {
+  // Flat Ticker group + color scale. Hierarchy Sector→Ticker often blanks on this
+  // Desktop build after model calc refreshes; Ticker alone stays reliable.
   return {
     $schema: SCHEMA,
     name,
@@ -902,13 +1264,26 @@ function treemap(name, pos, title) {
       visualType: "treemap",
       query: {
         queryState: {
-          Group: { projections: [column(DIM_CO, "Sector")] },
-          Details: { projections: [column(DIM_CO, "CompanyName")] },
+          Group: { projections: [column(DIM_CO, "Ticker")] },
           Values: { projections: [measure(FACT, "Market Cap Latest EURm")] },
-          Tooltips: { projections: [measure(FACT, "Day Change % Latest")] },
+          Tooltips: {
+            projections: [
+              measure(FACT, "Day Change % Latest"),
+              // Sector as tooltip needs Aggregation — use measure path only
+            ],
+          },
         },
       },
       objects: {
+        layout: [
+          {
+            properties: {
+              tilingMethod: lit("stableSquarified"),
+              innerPadding: litD(2),
+              outerPadding: litD(4),
+            },
+          },
+        ],
         dataPoint: [
           {
             properties: {
@@ -924,9 +1299,22 @@ function treemap(name, pos, title) {
                           },
                         },
                         FillRule: {
-                          linearGradient2: {
-                            min: { color: { Literal: { Value: "'#B42318'" } } },
-                            max: { color: { Literal: { Value: "'#1B7A4E'" } } },
+                          linearGradient3: {
+                            min: {
+                              color: { Literal: { Value: "'#B71C1C'" } },
+                              value: { Literal: { Value: "-4D" } },
+                            },
+                            mid: {
+                              color: { Literal: { Value: "'#607D8B'" } },
+                              value: { Literal: { Value: "0D" } },
+                            },
+                            max: {
+                              color: { Literal: { Value: "'#1B5E20'" } },
+                              value: { Literal: { Value: "4D" } },
+                            },
+                            nullColoringStrategy: {
+                              strategy: { Literal: { Value: "'asZero'" } },
+                            },
                           },
                         },
                       },
@@ -935,20 +1323,67 @@ function treemap(name, pos, title) {
                 },
               },
             },
+            selector: {
+              data: [{ dataViewWildcard: { matchingOption: 0 } }],
+            },
           },
         ],
-        labels: [
+        labels: [{ properties: { show: lit(false) } }],
+        categoryLabels: [
           {
             properties: {
               show: lit(true),
-              fontSize: litD(9),
-              color: solid("#0F1C24"),
+              fontSize: litD(11),
+              bold: lit(true),
+              fontFamily: lit("Segoe UI Semibold"),
+              color: solid("#FFFFFF"),
             },
           },
         ],
         legend: [{ properties: { show: lit(false) } }],
       },
-      visualContainerObjects: cardContainer(title),
+      visualContainerObjects: {
+        background: [
+          {
+            properties: {
+              show: lit(true),
+              color: solid("#FFFFFF"),
+              transparency: litD(0),
+            },
+          },
+        ],
+        border: [
+          {
+            properties: {
+              show: lit(true),
+              color: solid("#E8EEF2"),
+              radius: litD(8),
+            },
+          },
+        ],
+        title: [
+          {
+            properties: {
+              show: lit(true),
+              text: lit(title),
+              fontSize: litD(12),
+              fontColor: solid("#5A6B75"),
+              fontFamily: lit("Segoe UI Semibold"),
+            },
+          },
+        ],
+        visualHeader: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(8),
+              bottom: litD(8),
+              left: litD(8),
+              right: litD(8),
+            },
+          },
+        ],
+      },
     },
   };
 }
@@ -982,9 +1417,10 @@ function buildLanding() {
     editorialHero(
       id(),
       { x: 1280, y: 180, z: z++, height: 220, width: 520, tabOrder: 6 },
-      "Advancers",
-      ACCENTS.advancers,
-      "Advancers (latest)"
+      "Strategy Cumulative Card",
+      ACCENTS.volume,
+      "EW cumulative return %",
+      { fontSize: 36 }
     ),
     textbox(id(), { x: 96, y: 400, z: z++, height: 36, width: 1100, tabOrder: 7 }, [
       {
@@ -1002,8 +1438,9 @@ function buildLanding() {
         bold: true,
       },
       { text: "01  Nordic Heatmap — sector treemap sized by market cap", size: "15pt" },
-      { text: "02  Ticker Explorer — price, volume, and classic technicals", size: "15pt" },
-      { text: "03  Context — data delay, indicators, and caveats", size: "15pt", color: "#5A6B75" },
+      { text: "02  Ticker Explorer — single-ticker price, volume, and technicals", size: "15pt" },
+      { text: "03  Signal Desk — RSI long/short queue + next-day hit rate", size: "15pt" },
+      { text: "04  Context — data delay, indicators, and caveats", size: "15pt", color: "#5A6B75" },
     ]),
     textbox(id(), { x: 96, y: 760, z: z++, height: 100, width: 1100, tabOrder: 9 }, [
       {
@@ -1013,7 +1450,7 @@ function buildLanding() {
         bold: true,
       },
       {
-        text: "TradingView-style sector treemap plus classic SMA / MACD / RSI / Bollinger on the ticker page.",
+        text: "TradingView-style heatmap, single-ticker explorer, and an RSI mean-reversion signal desk (rules-based — not ML).",
         font: "Segoe UI",
         size: "14pt",
         color: "#5A6B75",
@@ -1035,7 +1472,7 @@ function buildHeatmap() {
   const w = 352;
   const x0 = 32;
   const yKpi = 104;
-  const hKpi = 100;
+  const hKpi = 112;
   const kpis = [
     ["Advancers", ACCENTS.advancers, "Advancers"],
     ["Decliners", ACCENTS.decliners, "Decliners"],
@@ -1053,9 +1490,9 @@ function buildHeatmap() {
         bold: true,
       },
     ]),
-    textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
+    textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 860, tabOrder: 1 }, [
       {
-        text: "Treemap sized by market cap, colored by latest day change. Filter by country or sector.",
+        text: "Fallback treemap below · Full logos / % / sector zoom → live board button",
         font: "Segoe UI",
         size: "11pt",
         color: "#5A6B75",
@@ -1063,7 +1500,7 @@ function buildHeatmap() {
     ]),
     slicerDropdown(
       id(),
-      { ...SL.country, z: z++, tabOrder: 2 },
+      { x: 720, y: 12, height: 80, width: 160, z: z++, tabOrder: 2 },
       DIM_CO,
       "Country",
       "Country",
@@ -1071,7 +1508,7 @@ function buildHeatmap() {
     ),
     slicerDropdown(
       id(),
-      { ...SL.sector, z: z++, tabOrder: 3 },
+      { x: 892, y: 12, height: 80, width: 160, z: z++, tabOrder: 3 },
       DIM_CO,
       "Sector",
       "Sector",
@@ -1094,21 +1531,60 @@ function buildHeatmap() {
         label
       )
     ),
+    webUrlButton(
+      id(),
+      { x: 32, y: 228, z: z++, height: 48, width: 420, tabOrder: 11 },
+      "Open live board →",
+      HEATMAP_WEB_URL
+    ),
+    textbox(id(), { x: 468, y: 236, z: z++, height: 32, width: 1040, tabOrder: 12 }, [
+      {
+        text: `${HEATMAP_WEB_URL}  ·  logos · % · click sector to zoom · All to reset`,
+        font: "Segoe UI Semibold",
+        size: "11pt",
+        color: "#2F5F73",
+      },
+    ]),
     treemap(
       id(),
-      { x: 32, y: 224, z: z++, height: 780, width: 1184, tabOrder: 10 },
-      "Sector treemap — size = market cap, color = day change %"
+      { x: 32, y: 288, z: z++, height: 716, width: 1488, tabOrder: 13 },
+      "Fallback board — size = market cap · color = day change % · ticker tiles"
     ),
-    tableEx(
+    moversMatrix(
       id(),
-      { x: 1232, y: 224, z: z++, height: 780, width: 656, tabOrder: 11 },
-      [[DIM_CO, "CompanyName"]],
-      [[FACT, "Day Change % Latest"]],
-      "Movers — ranked by day change %",
-      [FACT, "Day Change % Latest"]
+      { x: 1536, y: 288, z: z++, height: 348, width: 352, tabOrder: 14 },
+      [[DIM_CO, "Ticker"]],
+      [FACT, "Day Change % Latest"],
+      "Top 10 movers",
+      [FACT, "Day Change % Latest"],
+      {
+        sortDirection: "Descending",
+        filterConfig: {
+          filters: [topNFilter(DIM_CO, "Ticker", "Latest Change %", 10, 2)],
+        },
+      }
     ),
-    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 12 }, [
-      { text: FOOTER, font: "Segoe UI", size: "9pt", color: "#6B7C86" },
+    moversMatrix(
+      id(),
+      { x: 1536, y: 652, z: z++, height: 352, width: 352, tabOrder: 15 },
+      [[DIM_CO, "Ticker"]],
+      [FACT, "Day Change % Latest"],
+      "Worst 10 movers",
+      [FACT, "Day Change % Latest"],
+      {
+        sortDirection: "Ascending",
+        filterConfig: {
+          filters: [topNFilter(DIM_CO, "Ticker", "Latest Change %", 10, 1)],
+        },
+      }
+    ),
+    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 16 }, [
+      {
+        text: `${FOOTER} · Live board: ${HEATMAP_WEB_URL}`,
+        font: "Segoe UI",
+        size: "9pt",
+        color: "#6B7C86",
+      },
     ]),
   ];
   visuals.forEach((v) => writeVisual(p, v));
@@ -1140,7 +1616,7 @@ function buildExplorer() {
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
       {
-        text: "Pick a ticker — price with SMA overlays, volume, RSI, and MACD from gold-computed indicators.",
+        text: "Pick one ticker — charts require a single selection (not All).",
         font: "Segoe UI",
         size: "11pt",
         color: "#5A6B75",
@@ -1151,8 +1627,9 @@ function buildExplorer() {
       { ...SL.ticker, z: z++, tabOrder: 2 },
       DIM_CO,
       "Ticker",
-      "Ticker",
-      "NordicTicker"
+      "Ticker (single)",
+      "NordicTicker",
+      { strictSingleSelect: true, defaultValue: "NOKIA" }
     ),
     pageNavigator(id(), { ...NAV, z: z++, tabOrder: 3 }),
     ...cards.map(([m, accent, label], i) =>
@@ -1162,7 +1639,7 @@ function buildExplorer() {
           x: x0 + i * (w + gap),
           y: 104,
           z: z++,
-          height: 100,
+          height: 112,
           width: w,
           tabOrder: 4 + i,
         },
@@ -1206,6 +1683,136 @@ function buildExplorer() {
     ),
     textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 11 }, [
       { text: FOOTER, font: "Segoe UI", size: "9pt", color: "#6B7C86" },
+    ]),
+  ];
+  visuals.forEach((v) => writeVisual(p, v));
+}
+
+function buildSignalDesk() {
+  const p = PAGES.signals;
+  pageChrome(p, "Signal Desk");
+  clearVisuals(p);
+  let z = 0;
+  const gap = 16;
+  const w = 296;
+  const x0 = 32;
+  const asOf = latestSessionDate() || "latest session";
+  const kpis = [
+    ["Long Signals Card", ACCENTS.advancers, `Long signals · ${asOf}`, { fontSize: 18, hideCategory: true }],
+    ["Short Signals Card", ACCENTS.decliners, `Short signals · ${asOf}`, { fontSize: 18, hideCategory: true }],
+    ["Long Hit Rate %", ACCENTS.close, "Long hit rate %"],
+    ["Short Hit Rate %", ACCENTS.change, "Short hit rate %"],
+    ["Strategy EW Avg Return %", ACCENTS.marketCap, "EW avg return % / bet"],
+    ["Strategy Cumulative Card", ACCENTS.volume, "EW cumulative return %", { fontSize: 15, hideCategory: true }],
+  ];
+
+  const visuals = [
+    textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 900, tabOrder: 0 }, [
+      {
+        text: "Signal Desk — RSI mean-reversion long / short",
+        font: "Segoe UI Semibold",
+        size: "18pt",
+        bold: true,
+      },
+    ]),
+    textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 1400, tabOrder: 1 }, [
+      {
+        text: `Session ${asOf} · Long RSI≤30 · Short RSI≥70 · Equal-weight backtest (short P&L = −next-day %).`,
+        font: "Segoe UI",
+        size: "11pt",
+        color: "#5A6B75",
+      },
+    ]),
+    pageNavigator(id(), { ...NAV, z: z++, tabOrder: 2 }),
+    ...kpis.map(([m, accent, label, opts], i) =>
+      simpleCard(
+        id(),
+        {
+          x: x0 + i * (w + gap),
+          y: 104,
+          z: z++,
+          height: 112,
+          width: w,
+          tabOrder: 3 + i,
+        },
+        m,
+        accent,
+        label,
+        opts
+      )
+    ),
+    moversMatrix(
+      id(),
+      { x: 32, y: 240, z: z++, height: 380, width: 912, tabOrder: 10 },
+      [
+        [DIM_CO, "Ticker"],
+        [DIM_CO, "CompanyName"],
+      ],
+      [
+        [FACT, "Last RSI"],
+        [FACT, "Last Close"],
+        [FACT, "Last Change %"],
+      ],
+      `${asOf} — Long candidates (RSI ≤ 30)`,
+      [FACT, "Last RSI"],
+      {
+        sortDirection: "Ascending",
+        filterConfig: {
+          filters: [
+            categoricalFilter(FACT, "IsLatest", [1], { numeric: true }),
+            categoricalFilter(FACT, "StrategySide", ["Long"]),
+          ],
+        },
+      }
+    ),
+    moversMatrix(
+      id(),
+      { x: 960, y: 240, z: z++, height: 380, width: 928, tabOrder: 11 },
+      [
+        [DIM_CO, "Ticker"],
+        [DIM_CO, "CompanyName"],
+      ],
+      [
+        [FACT, "Last RSI"],
+        [FACT, "Last Close"],
+        [FACT, "Last Change %"],
+      ],
+      `${asOf} — Short candidates (RSI ≥ 70)`,
+      [FACT, "Last RSI"],
+      {
+        sortDirection: "Descending",
+        filterConfig: {
+          filters: [
+            categoricalFilter(FACT, "IsLatest", [1], { numeric: true }),
+            categoricalFilter(FACT, "StrategySide", ["Short"]),
+          ],
+        },
+      }
+    ),
+    lineChart(
+      id(),
+      { x: 32, y: 636, z: z++, height: 260, width: 920, tabOrder: 12 },
+      DIM_DT,
+      "Date",
+      [[FACT, "Strategy Day Return %"]],
+      "Equal-weight day return % (avg across that day’s bets)"
+    ),
+    lineChart(
+      id(),
+      { x: 968, y: 636, z: z++, height: 260, width: 920, tabOrder: 13 },
+      DIM_DT,
+      "Date",
+      [[FACT, "Strategy Cumulative Return %"]],
+      "Equal-weight cumulative return % (compounded)"
+    ),
+    textbox(id(), { x: 32, y: 912, z: z++, height: 28, width: 1856, tabOrder: 14 }, [
+      {
+        text:
+          "Candidates are for the latest session date above · Backtest = equal weight on every Long/Short · Cumulative card shows span in days · Not investment advice",
+        font: "Segoe UI",
+        size: "9pt",
+        color: "#6B7C86",
+      },
     ]),
   ];
   visuals.forEach((v) => writeVisual(p, v));
@@ -1271,7 +1878,7 @@ function buildContext() {
         bold: true,
       },
       {
-        text: "No price forecast, ML next-day model, or strategy backtest in this report.",
+        text: "RSI Signal Desk is rules-based (RSI ≤30 Long / ≥70 Short) with next-day hit rates — not an ML forecast.",
         size: "12pt",
       },
       {
@@ -1291,11 +1898,15 @@ function buildContext() {
         bold: true,
       },
       {
-        text: "Heatmap — treemap groups by sector; tile size = market cap; color = latest day change %.",
+        text: "Heatmap — tiles sized by market cap; color = day change % (red loss → green gain).",
         size: "12pt",
       },
       {
-        text: "Explorer — select a ticker; charts respect the slicer and show historical indicators.",
+        text: "Explorer — single ticker only; price / SMA / volume / RSI / MACD.",
+        size: "12pt",
+      },
+      {
+        text: "Signal Desk — today's long/short candidates from RSI extremes; hit rate vs next session close.",
         size: "12pt",
       },
     ]),
@@ -1319,6 +1930,7 @@ if (fs.existsSync(reportPath)) {
 buildLanding();
 buildHeatmap();
 buildExplorer();
+buildSignalDesk();
 buildContext();
 
 console.log(JSON.stringify({ ok: true, pages: PAGES }, null, 2));

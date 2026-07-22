@@ -98,8 +98,19 @@
           "show": false,
           "$id": "default"
         }],
+        "value": [{
+          "bold": true,
+          "$id": "default"
+        }],
         "label": [{
           "show": true,
+          "$id": "default"
+        }],
+        "cardCalloutArea": [{
+          "paddingUniform": 0
+        }],
+        "spacing": [{
+          "verticalSpacing": -6,
           "$id": "default"
         }],
         "title": [{
