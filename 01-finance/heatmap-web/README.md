@@ -2,6 +2,8 @@
 
 TradingView-style stock heatmap that native Power BI treemaps cannot do well: **sector groups**, **company logos**, **day-change % on tiles**, intentional market-board chrome.
 
+![Sector heatmap — live board](preview.png)
+
 ## Local
 
 ```bash
