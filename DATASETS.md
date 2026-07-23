@@ -19,6 +19,7 @@ Article: https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-
 | `05-bank-segmentation` | KDNuggets #4 simulated bank (customers · accounts · transactions) | **Featured** — RFM + k-means |
 | `06-healthcare-analytics` | UCI Diabetes 130-US Hospitals (~35k encounter sample) | **Featured** — 30d readmit propensity + pathway ribbon + heat |
 | `01-finance` | Yahoo Finance delayed Nordic large/mid caps (~82 tickers · FI/SE/DK/NO) | **Featured** — PBIP + [live Vercel board](https://heatmap-web-five.vercel.app) · weekday gold refresh Action |
+| `11-credit-risk` | **[Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk)** (~80k scored sample · OOT Gini ~55%) | **Featured** — LightGBM+Platt PD · cut-off frontier · PSI · steering |
 
 ### Nordic Equity (`01-finance`)
 
@@ -64,4 +65,39 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 - Raw: `diabetic_data.csv` (+ IDS mappings)
 - Gold: ~35k encounters with `Readmit30`, pathway bridge, heat bridge
 - ML: logistic **ReadmitProbability** / **RiskBand** / **RiskRank** (sample model, not clinical CDS)
+
+## Wave 2 — planned (folders scaffolded)
+
+| Project | Dataset | Status |
+|---------|---------|--------|
+| `12-investing-desk` | Local [`investing`](../investing) platform (capital.yaml + sims + price cache) | Prework |
+| `04-supply-chain` | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | Prework |
+| `07-helsinki-energy` | [Helsinki Nuuka open API](https://hri.fi/data/en/dataset/helsingin-kaupungin-palvelukiinteistojen-energiankulutustietoja) | Prework — API verified (~1.8k properties) |
+| `10-fpa-controllership` | Seeded Nordic multi-entity Actual + Budget + FX | Prework |
+
+### Credit risk / scorecards (`11-credit-risk`)
+
+**Featured:** Home Credit Default Risk — retail PD scorecard (LightGBM + Platt), grades G1–G8, EL @ LGD 0.45, acceptance-frontier cut-off vs `EXT_MEAN`, PSI + new-business monitoring + steering queue.
+
+- Gold sample: **80k** stratified apps · default **8.07%** · **OOT Gini ~55.3%** / AUC ~0.78
+- Operating cut-off (risk–reward @ 4% appetite): PD ≤ **7.5%** · OOT approval **~74%** · bad rate among approved **~4.0%**
+- Raw via Hugging Face mirror (`scripts/download-homecredit.py`) or Kaggle CLI — **gitignored**
+- Open [`11-credit-risk/CreditRisk.pbip`](11-credit-risk/CreditRisk.pbip)
+- Sample model only — not production IRB / IFRS 9
+
+### Investing desk (`12-investing-desk`)
+
+Gold exported from `C:\Users\kater\.cursor\projects\investing` — sleeve policy, TSMOM vs VWCE sims, risk gates. Complements Nordic Equity (market board) with allocation research.
+
+### Supply chain (`04-supply-chain`)
+
+Olist 9-CSV relational marketplace (orders, sellers, freight, geo) → OTIF + demand forecast gold.
+
+### Facility energy (`07-helsinki-energy`)
+
+Nuuka open API (no auth): property list + daily/hourly electricity/heat/water/cooling. Cohort sample first (not all properties hourly).
+
+### Controllership (`10-fpa-controllership`)
+
+Seeded P&L (Actual vs Budget, entities, CoA, FX) — public XBRL dumps skipped for clean BvA / what-if storytelling.
 

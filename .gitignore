@@ -429,3 +429,18 @@ FodyWeavers.xsd
 _tmp_sources/
 **/_tmp/
 
+# Large wave-2 raw downloads (commit SOURCE.md + gold only)
+11-credit-risk/data/raw/**/*.csv
+11-credit-risk/data/raw/**/*.zip
+11-credit-risk/data/raw/_hf/
+11-credit-risk/.venv/
+11-credit-risk/data/gold/models/
+04-supply-chain/data/raw/**/*.csv
+04-supply-chain/data/raw/**/*.zip
+07-helsinki-energy/data/raw/nuuka/
+12-investing-desk/data/raw/**/*.parquet
+12-investing-desk/data/raw/**/*.csv
+
+
+# Credit risk scoring intermediates
+11-credit-risk/data/gold/_full_features.parquet

@@ -1,0 +1,188 @@
+table ModelMetrics
+
+	measure 'OOT Gini' = MAX(ModelMetrics[OotGini])
+		formatString: 0.0%
+
+	measure 'Train Gini' = MAX(ModelMetrics[TrainGini])
+		formatString: 0.0%
+
+	measure 'Test Gini' = MAX(ModelMetrics[TestGini])
+		formatString: 0.0%
+
+	measure 'OOT AUC' = MAX(ModelMetrics[OotAUC])
+		formatString: 0.000
+
+	measure 'Test AUC' = MAX(ModelMetrics[TestAUC])
+		formatString: 0.000
+
+	measure 'OOT KS' = MAX(ModelMetrics[OotKS])
+		formatString: 0.000
+
+	measure 'Test KS' = MAX(ModelMetrics[TestKS])
+		formatString: 0.000
+
+	measure 'Champion Cutoff PD' = MAX(ModelMetrics[CutoffPD])
+		formatString: 0.0%
+
+	column SampleN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: SampleN
+
+	column FullN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: FullN
+
+	column DefaultRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: DefaultRate
+
+	column TrainN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: TrainN
+
+	column TestN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: TestN
+
+	column OotN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: OotN
+
+	column TrainAUC
+		dataType: double
+		formatString: 0.000
+		sourceColumn: TrainAUC
+
+	column TrainGini
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TrainGini
+
+	column TrainKS
+		dataType: double
+		formatString: 0.000
+		sourceColumn: TrainKS
+
+	column TestAUC
+		dataType: double
+		formatString: 0.000
+		sourceColumn: TestAUC
+
+	column TestGini
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TestGini
+
+	column TestKS
+		dataType: double
+		formatString: 0.000
+		sourceColumn: TestKS
+
+	column TestBrier
+		dataType: double
+		formatString: 0.000
+		sourceColumn: TestBrier
+
+	column OotAUC
+		dataType: double
+		formatString: 0.000
+		sourceColumn: OotAUC
+
+	column OotGini
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotGini
+
+	column OotKS
+		dataType: double
+		formatString: 0.000
+		sourceColumn: OotKS
+
+	column OotBrier
+		dataType: double
+		formatString: 0.000
+		sourceColumn: OotBrier
+
+	column CutoffPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CutoffPD
+
+	column BudgetedBadRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BudgetedBadRate
+
+	column YoudenCutoffPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: YoudenCutoffPD
+
+	column ScorecardGoLive
+		dataType: string
+		sourceColumn: ScorecardGoLive
+
+	column OotApprovalRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotApprovalRate
+
+	column OotBadRateApproved
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotBadRateApproved
+
+	column LGD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: LGD
+
+	column Champion
+		dataType: string
+		sourceColumn: Champion
+
+	column PsiBreachCount
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: PsiBreachCount
+
+	column PsiWatchCount
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: PsiWatchCount
+
+	column CalibMeanPredictedOOT
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CalibMeanPredictedOOT
+
+	column CalibMeanRealizedOOT
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CalibMeanRealizedOOT
+
+
+	partition ModelMetrics = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/ModelMetrics.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"SampleN", Int64.Type}, {"FullN", Int64.Type}, {"DefaultRate", type number}, {"TrainN", Int64.Type}, {"TestN", Int64.Type}, {"OotN", Int64.Type}, {"TrainAUC", type number}, {"TrainGini", type number}, {"TrainKS", type number}, {"TestAUC", type number}, {"TestGini", type number}, {"TestKS", type number}, {"TestBrier", type number}, {"OotAUC", type number}, {"OotGini", type number}, {"OotKS", type number}, {"OotBrier", type number}, {"CutoffPD", type number}, {"BudgetedBadRate", type number}, {"YoudenCutoffPD", type number}, {"ScorecardGoLive", type text}, {"OotApprovalRate", type number}, {"OotBadRateApproved", type number}, {"LGD", type number}, {"Champion", type text}, {"PsiBreachCount", Int64.Type}, {"PsiWatchCount", Int64.Type}, {"CalibMeanPredictedOOT", type number}, {"CalibMeanRealizedOOT", type number}})
+			in
+				Typed

@@ -1,0 +1,42 @@
+table FactRocCurve
+
+	measure 'True Positive Rate' = AVERAGE(FactRocCurve[TPR])
+		formatString: 0.0%
+
+	column Sample
+		dataType: string
+		sourceColumn: Sample
+
+	column FprSort
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: FprSort
+
+	column FprLabel
+		dataType: string
+		sortByColumn: FprSort
+		sourceColumn: FprLabel
+
+	column FPR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: FPR
+
+	column TPR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TPR
+
+
+	partition FactRocCurve = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactRocCurve.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Sample", type text}, {"FprSort", Int64.Type}, {"FprLabel", type text}, {"FPR", type number}, {"TPR", type number}})
+			in
+				Typed

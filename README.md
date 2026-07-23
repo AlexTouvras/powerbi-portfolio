@@ -84,6 +84,29 @@ Details: [`05-bank-segmentation/README.md`](05-bank-segmentation/README.md)
 
 Details: [`06-healthcare-analytics/README.md`](06-healthcare-analytics/README.md)
 
+### Credit Risk Pulse
+
+Retail PD scorecard with Train/Test/OOT validation, acceptance-frontier cut-off strategy, PSI monitoring, and a steering queue.
+
+| | |
+|---|---|
+| Audience | CRO / credit risk / model monitoring |
+| Theme | Nordic Boardroom |
+| Pages | Landing · Portfolio Risk Pulse · Scorecard & Validation · Cut-off Strategy · Monitoring & Steering · Context |
+| Open | [`11-credit-risk/CreditRisk.pbip`](11-credit-risk/CreditRisk.pbip) |
+
+![Landing](11-credit-risk/screenshots/landing.png)
+
+![Portfolio Risk Pulse](11-credit-risk/screenshots/portfolio-risk-pulse.png)
+
+![Scorecard & Validation](11-credit-risk/screenshots/scorecard-validation.png)
+
+![Cut-off Strategy](11-credit-risk/screenshots/cutoff-strategy.png)
+
+![Monitoring & Steering](11-credit-risk/screenshots/monitoring-steering.png)
+
+Details: [`11-credit-risk/README.md`](11-credit-risk/README.md)
+
 ### Nordic Equity (Live Board)
 
 Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading indicators (SMA, MACD, RSI, Bollinger).
@@ -119,6 +142,11 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`05-bank-segmentation`](05-bank-segmentation/) | Bank segmentation (KDNuggets #4) | **Featured** — RFM + map + drillthrough |
 | [`01-finance`](01-finance/) | Nordic Equity (live board) | **Featured** — Yahoo delayed + PBIP + [Vercel heatmap](https://heatmap-web-five.vercel.app) |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
+| [`11-credit-risk`](11-credit-risk/) | Credit Risk Pulse (Home Credit scorecard) | **Featured** — PD + OOT Gini ~55% + cut-off + steering |
+| [`12-investing-desk`](12-investing-desk/) | Investing Research Desk | **Planned** — prework |
+| [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Planned** — prework |
+| [`07-helsinki-energy`](07-helsinki-energy/) | Facility Energy (Nuuka API) | **Planned** — prework |
+| [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA / what-if) | **Planned** — prework |
 
 ## Design system
 

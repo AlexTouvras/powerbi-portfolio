@@ -1,0 +1,40 @@
+table FactVintage
+
+	column VintageMonth
+		dataType: string
+		sourceColumn: VintageMonth
+
+	column MOB
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: MOB
+
+	column DefaultRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: DefaultRate
+
+	column Applications
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Applications
+
+	column Exposure
+		dataType: double
+		formatString: #,0
+		sourceColumn: Exposure
+
+
+	partition FactVintage = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactVintage.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"VintageMonth", type text}, {"MOB", Int64.Type}, {"DefaultRate", type number}, {"Applications", Int64.Type}, {"Exposure", type number}})
+			in
+				Typed

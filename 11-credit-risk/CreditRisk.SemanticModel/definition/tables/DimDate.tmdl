@@ -1,0 +1,44 @@
+table DimDate
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		dataCategory: Time
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Month
+
+	column YearMonth
+		dataType: string
+		sourceColumn: YearMonth
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Quarter
+
+
+	partition DimDate = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimDate.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"YearMonth", type text}, {"Quarter", Int64.Type}})
+			in
+				Typed

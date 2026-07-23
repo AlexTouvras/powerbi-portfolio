@@ -1,0 +1,54 @@
+table FactNewBusinessTS
+
+	column OriginationMonth
+		dataType: string
+		sortByColumn: MonthSort
+		sourceColumn: OriginationMonth
+
+	column MonthSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: MonthSort
+
+	column PeriodFlag
+		dataType: string
+		sourceColumn: PeriodFlag
+
+	column GoLiveDate
+		dataType: string
+		sourceColumn: GoLiveDate
+
+	column Applications
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Applications
+
+	column AvgScorecardPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: AvgScorecardPD
+
+	column RealizedDefaultRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: RealizedDefaultRate
+
+	column Exposure
+		dataType: double
+		formatString: #,0
+		sourceColumn: Exposure
+
+
+	partition FactNewBusinessTS = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactNewBusinessTS.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"OriginationMonth", type text}, {"MonthSort", Int64.Type}, {"PeriodFlag", type text}, {"GoLiveDate", type text}, {"Applications", Int64.Type}, {"AvgScorecardPD", type number}, {"RealizedDefaultRate", type number}, {"Exposure", type number}})
+			in
+				Typed

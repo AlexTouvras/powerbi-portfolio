@@ -1,0 +1,11 @@
+Feature,PSI,StabilityFlag,Threshold,BaselineYear,RecentYear,RecentWindow
+EXT_SOURCE_3,1.1939,Breach,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+EXT_SOURCE_2,0.8192,Breach,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+PREV_REFUSED_RATE,0.2753,Breach,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+ORGANIZATION_TYPE,0.2217,Watch,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+AgeYears,0.196,Watch,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+AMT_CREDIT,0.1761,Watch,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+NAME_INCOME_TYPE,0.1501,Watch,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+NAME_EDUCATION_TYPE,0.0905,Stable,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+INST_DELAY_MEAN,0.0474,Stable,0.1,2018,2020,2020 adverse-mix (PD-weighted)
+BUR_CNT,0.0248,Stable,0.1,2018,2020,2020 adverse-mix (PD-weighted)

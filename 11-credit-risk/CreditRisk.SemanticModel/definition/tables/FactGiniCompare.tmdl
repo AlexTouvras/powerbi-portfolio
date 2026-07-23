@@ -1,0 +1,55 @@
+table FactGiniCompare
+
+	measure 'Sample Gini' = AVERAGE(FactGiniCompare[Gini])
+		formatString: 0.0%
+
+	measure 'Sample AUC' = AVERAGE(FactGiniCompare[AUC])
+		formatString: 0.000
+
+	measure 'Sample KS' = AVERAGE(FactGiniCompare[KS])
+		formatString: 0.000
+
+	column Sample
+		dataType: string
+		sortByColumn: SampleSort
+		sourceColumn: Sample
+
+	column SampleSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: SampleSort
+
+	column AUC
+		dataType: double
+		formatString: 0.000
+		sourceColumn: AUC
+
+	column Gini
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Gini
+
+	column KS
+		dataType: double
+		formatString: 0.000
+		sourceColumn: KS
+
+	column N
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: N
+
+
+	partition FactGiniCompare = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactGiniCompare.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Sample", type text}, {"SampleSort", Int64.Type}, {"AUC", type number}, {"Gini", type number}, {"KS", type number}, {"N", Int64.Type}})
+			in
+				Typed

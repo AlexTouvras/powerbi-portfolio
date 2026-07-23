@@ -1,0 +1,39 @@
+table FactCutoffLong
+
+	measure 'Frontier Bad Rate' = AVERAGE(FactCutoffLong[BadRateApproved])
+		formatString: 0.0%
+
+	column Scorecard
+		dataType: string
+		sourceColumn: Scorecard
+
+	column ApprovalRate
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: ApprovalRate
+
+	column BadRateApproved
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BadRateApproved
+
+	column PointSort
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: PointSort
+
+
+	partition FactCutoffLong = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactCutoffLong.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Scorecard", type text}, {"ApprovalRate", type number}, {"BadRateApproved", type number}, {"PointSort", Int64.Type}})
+			in
+				Typed

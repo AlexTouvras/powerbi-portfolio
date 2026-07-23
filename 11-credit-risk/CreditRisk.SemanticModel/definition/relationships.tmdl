@@ -1,0 +1,3 @@
+relationship DimApplication_DimDate
+	fromColumn: DimApplication.application_date
+	toColumn: DimDate.Date

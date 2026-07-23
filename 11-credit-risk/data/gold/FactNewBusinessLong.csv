@@ -1,0 +1,73 @@
+OriginationMonth,MonthSort,PeriodFlag,GoLiveDate,Applications,Metric,Rate
+2018-01,1,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08251803991288492
+2018-02,2,Pre scorecard go-live,2020-05-27,7864,Scorecard PD,0.08190924816979388
+2018-03,3,Pre scorecard go-live,2020-05-27,8705,Scorecard PD,0.08328470633326772
+2018-04,4,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.083167412775792
+2018-05,5,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08422296521809389
+2018-06,6,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08270681138306775
+2018-07,7,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08308023326179297
+2018-08,8,Pre scorecard go-live,2020-05-27,8705,Scorecard PD,0.08386754950854487
+2018-09,9,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08282360202057505
+2018-10,10,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08318184209000049
+2018-11,11,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08286093147767022
+2018-12,12,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08280519514302448
+2019-01,13,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08443683523910461
+2019-02,14,Pre scorecard go-live,2020-05-27,7863,Scorecard PD,0.08214244075758563
+2019-03,15,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08395788921020461
+2019-04,16,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08162092694702817
+2019-05,17,Pre scorecard go-live,2020-05-27,8705,Scorecard PD,0.08279809054550517
+2019-06,18,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08318789108914702
+2019-07,19,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08349266010336429
+2019-08,20,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08174319164173746
+2019-09,21,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08419284840651617
+2019-10,22,Pre scorecard go-live,2020-05-27,8705,Scorecard PD,0.08130955180658418
+2019-11,23,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08364320019789413
+2019-12,24,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.0833410585744963
+2020-01,25,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08514020850887519
+2020-02,26,Pre scorecard go-live,2020-05-27,8144,Scorecard PD,0.08123679427811692
+2020-03,27,Pre scorecard go-live,2020-05-27,8706,Scorecard PD,0.08229354695780382
+2020-04,28,Pre scorecard go-live,2020-05-27,8425,Scorecard PD,0.08063719656701986
+2020-05,29,Pre scorecard go-live,2020-05-27,8705,Scorecard PD,0.0831206802060993
+2020-06,30,Post scorecard go-live,2020-05-27,8425,Scorecard PD,0.0812992807112073
+2020-07,31,Post scorecard go-live,2020-05-27,8706,Scorecard PD,0.08085800553942529
+2020-08,32,Post scorecard go-live,2020-05-27,8706,Scorecard PD,0.0800864582600808
+2020-09,33,Post scorecard go-live,2020-05-27,8425,Scorecard PD,0.08176264699026901
+2020-10,34,Post scorecard go-live,2020-05-27,8706,Scorecard PD,0.08197428848403267
+2020-11,35,Post scorecard go-live,2020-05-27,8425,Scorecard PD,0.08237169059540482
+2020-12,36,Post scorecard go-live,2020-05-27,8425,Scorecard PD,0.0821207593894889
+2018-01,1,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.07764759935676545
+2018-02,2,Pre scorecard go-live,2020-05-27,7864,Realized default rate,0.07820447609359105
+2018-03,3,Pre scorecard go-live,2020-05-27,8705,Realized default rate,0.0832854681217691
+2018-04,4,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.08320474777448071
+2018-05,5,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08132322536181943
+2018-06,6,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.08094955489614243
+2018-07,7,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.0771881461061337
+2018-08,8,Pre scorecard go-live,2020-05-27,8705,Realized default rate,0.08087306145893165
+2018-09,9,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.07952522255192879
+2018-10,10,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08350562830232024
+2018-11,11,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.08427299703264095
+2018-12,12,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08396508155295199
+2019-01,13,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08672180105674247
+2019-02,14,Pre scorecard go-live,2020-05-27,7863,Realized default rate,0.080249268726949
+2019-03,15,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08097863542384562
+2019-04,16,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.0796439169139466
+2019-05,17,Pre scorecard go-live,2020-05-27,8705,Realized default rate,0.08317059161401494
+2019-06,18,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.08166172106824926
+2019-07,19,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.07960027567195038
+2019-08,20,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.082127268550425
+2019-09,21,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.07821958456973294
+2019-10,22,Pre scorecard go-live,2020-05-27,8705,Realized default rate,0.08064330844342332
+2019-11,23,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.0828486646884273
+2019-12,24,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.07822191592005513
+2020-01,25,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.08293131173903055
+2020-02,26,Pre scorecard go-live,2020-05-27,8144,Realized default rate,0.07969056974459725
+2020-03,27,Pre scorecard go-live,2020-05-27,8706,Realized default rate,0.07833677923271307
+2020-04,28,Pre scorecard go-live,2020-05-27,8425,Realized default rate,0.07572700296735906
+2020-05,29,Pre scorecard go-live,2020-05-27,8705,Realized default rate,0.08581275129236071
+2020-06,30,Post scorecard go-live,2020-05-27,8425,Realized default rate,0.08
+2020-07,31,Post scorecard go-live,2020-05-27,8706,Realized default rate,0.07833677923271307
+2020-08,32,Post scorecard go-live,2020-05-27,8706,Realized default rate,0.0812083620491615
+2020-09,33,Post scorecard go-live,2020-05-27,8425,Realized default rate,0.07667655786350148
+2020-10,34,Post scorecard go-live,2020-05-27,8706,Realized default rate,0.0812083620491615
+2020-11,35,Post scorecard go-live,2020-05-27,8425,Realized default rate,0.08071216617210683
+2020-12,36,Post scorecard go-live,2020-05-27,8425,Realized default rate,0.07691394658753709

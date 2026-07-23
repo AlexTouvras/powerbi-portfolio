@@ -1,0 +1,53 @@
+table FactCalibrationLong
+
+	measure 'Calibration Rate' = AVERAGE(FactCalibrationLong[Rate])
+		formatString: 0.0%
+
+	column Decile
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Decile]
+
+	column DecileLabel
+		dataType: string
+		sortByColumn: Decile
+		sourceColumn: [DecileLabel]
+
+	column N
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: [N]
+
+	column Metric
+		dataType: string
+		sourceColumn: [Metric]
+
+	column Rate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: [Rate]
+
+
+	partition FactCalibrationLong = calculated
+		mode: import
+		source =
+			UNION(
+							SELECTCOLUMNS(
+								FactCalibration,
+								"Decile", FactCalibration[Decile],
+								"DecileLabel", FactCalibration[DecileLabel],
+								"N", FactCalibration[N],
+								"Metric", "Predicted PD",
+								"Rate", FactCalibration[PredictedPD]
+							),
+							SELECTCOLUMNS(
+								FactCalibration,
+								"Decile", FactCalibration[Decile],
+								"DecileLabel", FactCalibration[DecileLabel],
+								"N", FactCalibration[N],
+								"Metric", "Realized default rate",
+								"Rate", FactCalibration[RealizedRate]
+							)
+						)

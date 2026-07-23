@@ -1,0 +1,69 @@
+table FactCutoffCurve
+
+	column CutoffPD
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: CutoffPD
+
+	column CutoffScore
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: CutoffScore
+
+	column ApprovalRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: ApprovalRate
+
+	column BadRateApproved
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BadRateApproved
+
+	column RejectRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: RejectRate
+
+	column ApprovedN
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: ApprovedN
+
+	column MarginalPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MarginalPD
+
+	column IsOperatingCutoff
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsOperatingCutoff
+
+	column IsYoudenCutoff
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsYoudenCutoff
+
+	column BudgetedBadRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BudgetedBadRate
+
+
+	partition FactCutoffCurve = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactCutoffCurve.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"CutoffPD", type number}, {"CutoffScore", Int64.Type}, {"ApprovalRate", type number}, {"BadRateApproved", type number}, {"RejectRate", type number}, {"ApprovedN", Int64.Type}, {"MarginalPD", type number}, {"IsOperatingCutoff", Int64.Type}, {"IsYoudenCutoff", Int64.Type}, {"BudgetedBadRate", type number}})
+			in
+				Typed

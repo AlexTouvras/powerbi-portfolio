@@ -1,0 +1,46 @@
+table FactCalibration
+
+	column Decile
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Decile
+
+	column PredictedPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: PredictedPD
+
+	column RealizedRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: RealizedRate
+
+	column N
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: N
+
+	column DecileLabel
+		dataType: string
+		sortByColumn: Decile
+		sourceColumn: DecileLabel
+
+	column Gap
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Gap
+
+
+	partition FactCalibration = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactCalibration.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Decile", Int64.Type}, {"PredictedPD", type number}, {"RealizedRate", type number}, {"N", Int64.Type}, {"DecileLabel", type text}, {"Gap", type number}})
+			in
+				Typed
