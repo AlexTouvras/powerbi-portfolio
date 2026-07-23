@@ -1,0 +1,65 @@
+table FactNewBusinessLong
+
+	measure 'New Business Rate' = AVERAGE(FactNewBusinessLong[Rate])
+		formatString: 0.0%
+
+	column OriginationMonth
+		dataType: string
+		sortByColumn: MonthSort
+		sourceColumn: [OriginationMonth]
+
+	column MonthSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: [MonthSort]
+
+	column PeriodFlag
+		dataType: string
+		sourceColumn: [PeriodFlag]
+
+	column GoLiveDate
+		dataType: string
+		sourceColumn: [GoLiveDate]
+
+	column Applications
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: [Applications]
+
+	column Metric
+		dataType: string
+		sourceColumn: [Metric]
+
+	column Rate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: [Rate]
+
+
+	partition FactNewBusinessLong = calculated
+		mode: import
+		source =
+			UNION(
+							SELECTCOLUMNS(
+								FactNewBusinessTS,
+								"OriginationMonth", FactNewBusinessTS[OriginationMonth],
+								"MonthSort", FactNewBusinessTS[MonthSort],
+								"PeriodFlag", FactNewBusinessTS[PeriodFlag],
+								"GoLiveDate", FactNewBusinessTS[GoLiveDate],
+								"Applications", FactNewBusinessTS[Applications],
+								"Metric", "Scorecard PD",
+								"Rate", FactNewBusinessTS[AvgScorecardPD]
+							),
+							SELECTCOLUMNS(
+								FactNewBusinessTS,
+								"OriginationMonth", FactNewBusinessTS[OriginationMonth],
+								"MonthSort", FactNewBusinessTS[MonthSort],
+								"PeriodFlag", FactNewBusinessTS[PeriodFlag],
+								"GoLiveDate", FactNewBusinessTS[GoLiveDate],
+								"Applications", FactNewBusinessTS[Applications],
+								"Metric", "Realized default rate",
+								"Rate", FactNewBusinessTS[RealizedDefaultRate]
+							)
+						)

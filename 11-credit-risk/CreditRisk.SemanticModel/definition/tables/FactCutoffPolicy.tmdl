@@ -1,0 +1,90 @@
+table FactCutoffPolicy
+
+	measure 'Operating Cutoff PD' = CALCULATE(MAX(FactCutoffPolicy[OperatingCutoffPD]), FactCutoffPolicy[IsOperating] = 1)
+		formatString: 0.0%
+
+	measure 'Operating Cutoff Score' = CALCULATE(MAX(FactCutoffPolicy[OperatingCutoffScore]), FactCutoffPolicy[IsOperating] = 1)
+		formatString: #,0
+
+	measure 'Policy Approval Rate' = CALCULATE(MAX(FactCutoffPolicy[OotApprovalRate]), FactCutoffPolicy[IsOperating] = 1)
+		formatString: 0.0%
+
+	measure 'Policy Bad Rate' = CALCULATE(MAX(FactCutoffPolicy[OotBadRateApproved]), FactCutoffPolicy[IsOperating] = 1)
+		formatString: 0.0%
+
+	measure 'Budgeted Bad Rate' = CALCULATE(MAX(FactCutoffPolicy[BudgetedBadRate]), FactCutoffPolicy[IsOperating] = 1)
+		formatString: 0.0%
+
+	column Method
+		dataType: string
+		sortByColumn: MethodSort
+		sourceColumn: Method
+
+	column Role
+		dataType: string
+		sourceColumn: Role
+
+	column MethodSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: MethodSort
+
+	column IsOperating
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsOperating
+
+	column OperatingCutoffPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OperatingCutoffPD
+
+	column OperatingCutoffScore
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: OperatingCutoffScore
+
+	column OotApprovalRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotApprovalRate
+
+	column OotBadRateApproved
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotBadRateApproved
+
+	column OotRejectRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: OotRejectRate
+
+	column BudgetedBadRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BudgetedBadRate
+
+	column MarginalPD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MarginalPD
+
+	column PolicyNote
+		dataType: string
+		sourceColumn: PolicyNote
+
+
+	partition FactCutoffPolicy = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactCutoffPolicy.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Method", type text}, {"Role", type text}, {"MethodSort", Int64.Type}, {"IsOperating", Int64.Type}, {"OperatingCutoffPD", type number}, {"OperatingCutoffScore", Int64.Type}, {"OotApprovalRate", type number}, {"OotBadRateApproved", type number}, {"OotRejectRate", type number}, {"BudgetedBadRate", type number}, {"MarginalPD", type number}, {"PolicyNote", type text}})
+			in
+				Typed

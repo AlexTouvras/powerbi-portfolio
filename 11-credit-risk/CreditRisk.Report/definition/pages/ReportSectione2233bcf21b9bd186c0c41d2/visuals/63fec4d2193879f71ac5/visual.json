@@ -1,0 +1,426 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "63fec4d2193879f71ac5",
+  "position": {
+    "x": 32,
+    "y": 248,
+    "z": 6,
+    "height": 756,
+    "width": 1856,
+    "tabOrder": 6
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "SK_ID_CURR"
+                }
+              },
+              "queryRef": "DimApplication.SK_ID_CURR",
+              "nativeQueryRef": "SK_ID_CURR",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "application_date"
+                }
+              },
+              "queryRef": "DimApplication.application_date",
+              "nativeQueryRef": "application_date",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "NAME_CONTRACT_TYPE"
+                }
+              },
+              "queryRef": "DimApplication.NAME_CONTRACT_TYPE",
+              "nativeQueryRef": "NAME_CONTRACT_TYPE",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "NAME_INCOME_TYPE"
+                }
+              },
+              "queryRef": "DimApplication.NAME_INCOME_TYPE",
+              "nativeQueryRef": "NAME_INCOME_TYPE",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "NAME_EDUCATION_TYPE"
+                }
+              },
+              "queryRef": "DimApplication.NAME_EDUCATION_TYPE",
+              "nativeQueryRef": "NAME_EDUCATION_TYPE",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "AMT_INCOME_TOTAL"
+                }
+              },
+              "queryRef": "DimApplication.AMT_INCOME_TOTAL",
+              "nativeQueryRef": "AMT_INCOME_TOTAL",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "AMT_CREDIT"
+                }
+              },
+              "queryRef": "DimApplication.AMT_CREDIT",
+              "nativeQueryRef": "AMT_CREDIT",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "Score"
+                }
+              },
+              "queryRef": "DimApplication.Score",
+              "nativeQueryRef": "Score",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "Grade"
+                }
+              },
+              "queryRef": "DimApplication.Grade",
+              "nativeQueryRef": "Grade",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "PD"
+                }
+              },
+              "queryRef": "DimApplication.PD",
+              "nativeQueryRef": "PD",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "LGD"
+                }
+              },
+              "queryRef": "DimApplication.LGD",
+              "nativeQueryRef": "LGD",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "EL"
+                }
+              },
+              "queryRef": "DimApplication.EL",
+              "nativeQueryRef": "EL",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "RiskBand"
+                }
+              },
+              "queryRef": "DimApplication.RiskBand",
+              "nativeQueryRef": "RiskBand",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "Stage"
+                }
+              },
+              "queryRef": "DimApplication.Stage",
+              "nativeQueryRef": "Stage",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimApplication"
+                    }
+                  },
+                  "Property": "RecommendedAction"
+                }
+              },
+              "queryRef": "DimApplication.RecommendedAction",
+              "nativeQueryRef": "RecommendedAction",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E8EEF2'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Application detail'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F1C24'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

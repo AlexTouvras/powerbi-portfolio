@@ -1,0 +1,8 @@
+pandas>=2.2
+scikit-learn>=1.5
+numpy>=2.0
+joblib>=1.4
+pyarrow>=14
+huggingface_hub>=0.23
+requests>=2.31
+lightgbm>=4.0

@@ -1,0 +1,52 @@
+table DimScorecard
+
+	measure 'Max IV' = MAX(DimScorecard[IV])
+		formatString: 0.000
+
+	column Feature
+		dataType: string
+		sourceColumn: Feature
+
+	column Bin
+		dataType: string
+		sourceColumn: Bin
+
+	column WoE
+		dataType: double
+		formatString: 0.00
+		sourceColumn: WoE
+
+	column IV
+		dataType: double
+		formatString: 0.000
+		sourceColumn: IV
+
+	column N
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: N
+
+	column BadRate
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: BadRate
+
+	column Points
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Points
+
+
+	partition DimScorecard = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimScorecard.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Feature", type text}, {"Bin", type text}, {"WoE", type number}, {"IV", type number}, {"N", Int64.Type}, {"BadRate", type number}, {"Points", Int64.Type}})
+			in
+				Typed

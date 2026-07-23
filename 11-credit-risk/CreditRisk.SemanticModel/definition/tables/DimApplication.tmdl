@@ -1,0 +1,273 @@
+table DimApplication
+
+	measure Applications = COUNTROWS(DimApplication)
+		formatString: #,0
+
+	measure Defaults = CALCULATE([Applications], DimApplication[TARGET] = 1)
+		formatString: #,0
+
+	measure 'Default Rate' = DIVIDE([Defaults], [Applications])
+		formatString: 0.0%
+
+	measure 'Avg PD' = AVERAGE(DimApplication[PD])
+		formatString: 0.0%
+
+	measure 'Sum EAD' = SUM(DimApplication[EAD])
+		formatString: #,0
+
+	measure 'Sum EL' = SUM(DimApplication[EL])
+		formatString: #,0
+
+	measure 'EL Rate' = DIVIDE([Sum EL], [Sum EAD])
+		formatString: 0.0%
+
+	measure 'High Risk Applications' = CALCULATE([Applications], DimApplication[RiskBand] = "High")
+		formatString: #,0
+
+	measure 'Avg Score' = AVERAGE(DimApplication[Score])
+		formatString: #,0
+
+	measure 'Approved Apps' = CALCULATE([Applications], DimApplication[Decision] = "Approve")
+		formatString: #,0
+
+	column SK_ID_CURR
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: SK_ID_CURR
+
+	column application_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: application_date
+
+	column TARGET
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: TARGET
+
+	column NAME_CONTRACT_TYPE
+		dataType: string
+		sourceColumn: NAME_CONTRACT_TYPE
+
+	column CODE_GENDER
+		dataType: string
+		sourceColumn: CODE_GENDER
+
+	column NAME_INCOME_TYPE
+		dataType: string
+		sourceColumn: NAME_INCOME_TYPE
+
+	column NAME_EDUCATION_TYPE
+		dataType: string
+		sourceColumn: NAME_EDUCATION_TYPE
+
+	column NAME_FAMILY_STATUS
+		dataType: string
+		sourceColumn: NAME_FAMILY_STATUS
+
+	column NAME_HOUSING_TYPE
+		dataType: string
+		sourceColumn: NAME_HOUSING_TYPE
+
+	column FLAG_OWN_CAR
+		dataType: string
+		sourceColumn: FLAG_OWN_CAR
+
+	column FLAG_OWN_REALTY
+		dataType: string
+		sourceColumn: FLAG_OWN_REALTY
+
+	column AMT_INCOME_TOTAL
+		dataType: double
+		formatString: #,0
+		sourceColumn: AMT_INCOME_TOTAL
+
+	column AMT_CREDIT
+		dataType: double
+		formatString: #,0
+		sourceColumn: AMT_CREDIT
+
+	column AMT_ANNUITY
+		dataType: double
+		formatString: #,0
+		sourceColumn: AMT_ANNUITY
+
+	column AgeYears
+		dataType: double
+		formatString: #,0.0
+		sourceColumn: AgeYears
+
+	column EmploymentYears
+		dataType: double
+		formatString: #,0.0
+		sourceColumn: EmploymentYears
+
+	column CreditIncomeRatio
+		dataType: double
+		formatString: #,0.00
+		sourceColumn: CreditIncomeRatio
+
+	column AnnuityIncomeRatio
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: AnnuityIncomeRatio
+
+	column REGION_RATING_CLIENT
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: REGION_RATING_CLIENT
+
+	column EXT_SOURCE_1
+		dataType: double
+		formatString: 0.000
+		sourceColumn: EXT_SOURCE_1
+
+	column EXT_SOURCE_2
+		dataType: double
+		formatString: 0.000
+		sourceColumn: EXT_SOURCE_2
+
+	column EXT_SOURCE_3
+		dataType: double
+		formatString: 0.000
+		sourceColumn: EXT_SOURCE_3
+
+	column EXT_MEAN
+		dataType: double
+		formatString: 0.000
+		sourceColumn: EXT_MEAN
+
+	column BUR_CNT
+		dataType: double
+		formatString: #,0
+		sourceColumn: BUR_CNT
+
+	column BUR_AMT_CREDIT_SUM
+		dataType: double
+		formatString: #,0
+		sourceColumn: BUR_AMT_CREDIT_SUM
+
+	column BUR_AMT_CREDIT_SUM_OVERDUE
+		dataType: double
+		formatString: #,0
+		sourceColumn: BUR_AMT_CREDIT_SUM_OVERDUE
+
+	column BUR_ACTIVE_CNT
+		dataType: double
+		formatString: #,0
+		sourceColumn: BUR_ACTIVE_CNT
+
+	column PREV_CNT
+		dataType: double
+		formatString: #,0
+		sourceColumn: PREV_CNT
+
+	column PREV_REFUSED_RATE
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: PREV_REFUSED_RATE
+
+	column PREV_APPROVED_RATE
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: PREV_APPROVED_RATE
+
+	column INST_CNT
+		dataType: double
+		formatString: #,0
+		sourceColumn: INST_CNT
+
+	column INST_DELAY_MEAN
+		dataType: double
+		formatString: #,0.0
+		sourceColumn: INST_DELAY_MEAN
+
+	column EAD
+		dataType: double
+		formatString: #,0
+		sourceColumn: EAD
+
+	column LGD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: LGD
+
+	column PD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: PD
+
+	column Score
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Score
+
+	column Grade
+		dataType: string
+		sortByColumn: GradeSort
+		sourceColumn: Grade
+
+	column GradeSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: GradeSort
+
+	column RiskBand
+		dataType: string
+		sourceColumn: RiskBand
+
+	column RiskRank
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: RiskRank
+
+	column EL
+		dataType: double
+		formatString: #,0
+		sourceColumn: EL
+
+	column Stage
+		dataType: string
+		sourceColumn: Stage
+
+	column Decision
+		dataType: string
+		sourceColumn: Decision
+
+	column RecommendedAction
+		dataType: string
+		sourceColumn: RecommendedAction
+
+	column IsOOT
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsOOT
+
+	column SampleSplit
+		dataType: string
+		sourceColumn: SampleSplit
+
+	column VintageMonth
+		dataType: string
+		sourceColumn: VintageMonth
+
+
+	partition DimApplication = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimApplication.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"SK_ID_CURR", Int64.Type}, {"application_date", type date}, {"TARGET", Int64.Type}, {"NAME_CONTRACT_TYPE", type text}, {"CODE_GENDER", type text}, {"NAME_INCOME_TYPE", type text}, {"NAME_EDUCATION_TYPE", type text}, {"NAME_FAMILY_STATUS", type text}, {"NAME_HOUSING_TYPE", type text}, {"FLAG_OWN_CAR", type text}, {"FLAG_OWN_REALTY", type text}, {"AMT_INCOME_TOTAL", type number}, {"AMT_CREDIT", type number}, {"AMT_ANNUITY", type number}, {"AgeYears", type number}, {"EmploymentYears", type number}, {"CreditIncomeRatio", type number}, {"AnnuityIncomeRatio", type number}, {"REGION_RATING_CLIENT", Int64.Type}, {"EXT_SOURCE_1", type number}, {"EXT_SOURCE_2", type number}, {"EXT_SOURCE_3", type number}, {"EXT_MEAN", type number}, {"BUR_CNT", type number}, {"BUR_AMT_CREDIT_SUM", type number}, {"BUR_AMT_CREDIT_SUM_OVERDUE", type number}, {"BUR_ACTIVE_CNT", type number}, {"PREV_CNT", type number}, {"PREV_REFUSED_RATE", type number}, {"PREV_APPROVED_RATE", type number}, {"INST_CNT", type number}, {"INST_DELAY_MEAN", type number}, {"EAD", type number}, {"LGD", type number}, {"PD", type number}, {"Score", Int64.Type}, {"Grade", type text}, {"GradeSort", Int64.Type}, {"RiskBand", type text}, {"RiskRank", Int64.Type}, {"EL", type number}, {"Stage", type text}, {"Decision", type text}, {"RecommendedAction", type text}, {"IsOOT", Int64.Type}, {"SampleSplit", type text}, {"VintageMonth", type text}})
+			in
+				Typed

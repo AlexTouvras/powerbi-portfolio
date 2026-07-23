@@ -1,0 +1,50 @@
+table FactPdDistribution
+
+	measure 'PD Density' = AVERAGE(FactPdDistribution[Density])
+		formatString: 0.00
+
+	measure 'PD Share' = AVERAGE(FactPdDistribution[Share])
+		formatString: 0.0%
+
+	column Class
+		dataType: string
+		sourceColumn: Class
+
+	column PdBinSort
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PdBinSort
+
+	column PdBinLabel
+		dataType: string
+		sortByColumn: PdBinSort
+		sourceColumn: PdBinLabel
+
+	column PdBinMid
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: PdBinMid
+
+	column Density
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Density
+
+	column Share
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Share
+
+
+	partition FactPdDistribution = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactPdDistribution.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Class", type text}, {"PdBinSort", Int64.Type}, {"PdBinLabel", type text}, {"PdBinMid", type number}, {"Density", type number}, {"Share", type number}})
+			in
+				Typed

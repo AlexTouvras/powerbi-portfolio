@@ -1,0 +1,57 @@
+table FactPsi
+
+	measure 'Max PSI' = MAX(FactPsi[PSI])
+		formatString: 0.000
+
+	measure 'PSI Breach Features' = CALCULATE(COUNTROWS(FactPsi), FactPsi[StabilityFlag] = "Breach")
+		formatString: #,0
+
+	measure 'PSI Watch Features' = CALCULATE(COUNTROWS(FactPsi), FactPsi[StabilityFlag] = "Watch")
+		formatString: #,0
+
+	column Feature
+		dataType: string
+		sourceColumn: Feature
+
+	column PSI
+		dataType: double
+		formatString: 0.000
+		sourceColumn: PSI
+
+	column StabilityFlag
+		dataType: string
+		sourceColumn: StabilityFlag
+
+	column Threshold
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Threshold
+
+	column BaselineYear
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: BaselineYear
+
+	column RecentYear
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: RecentYear
+
+	column RecentWindow
+		dataType: string
+		sourceColumn: RecentWindow
+
+
+	partition FactPsi = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactPsi.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Feature", type text}, {"PSI", type number}, {"StabilityFlag", type text}, {"Threshold", type number}, {"BaselineYear", Int64.Type}, {"RecentYear", Int64.Type}, {"RecentWindow", type text}})
+			in
+				Typed

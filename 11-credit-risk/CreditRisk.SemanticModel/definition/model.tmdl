@@ -1,0 +1,30 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["GoldDataFolder","DimApplication","DimDate","ModelMetrics","FactGradeBridge","DimScorecard","FactPsi","FactVintage","FactCalibration","FactCutoffCurve","FactCutoffPolicy","FactGiniCompare","FactRocCurve","FactPdDistribution","FactNewBusinessTS"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref expression GoldDataFolder
+ref table DimApplication
+ref table DimDate
+ref table ModelMetrics
+ref table FactGradeBridge
+ref table DimScorecard
+ref table FactPsi
+ref table FactVintage
+ref table FactCalibration
+ref table FactCalibrationLong
+ref table FactCutoffCurve
+ref table FactCutoffLong
+ref table FactCutoffPolicy
+ref table FactGiniCompare
+ref table FactRocCurve
+ref table FactPdDistribution
+ref table FactNewBusinessTS
+ref table FactNewBusinessLong

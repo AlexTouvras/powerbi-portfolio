@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/gold/models/
+data/gold/_full_features.parquet
+data/raw/**/*.csv
+data/raw/**/*.zip
+data/raw/_hf/
+scripts/_peek*.py
+scripts/_tmp*
