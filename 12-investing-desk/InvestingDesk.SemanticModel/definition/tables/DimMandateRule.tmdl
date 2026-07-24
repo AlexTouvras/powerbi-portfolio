@@ -1,0 +1,53 @@
+table DimMandateRule
+
+	measure 'Rules Total' = COUNTROWS(DimMandateRule)
+		formatString: #,0
+
+	measure 'Rules Met' = CALCULATE([Rules Total], DimMandateRule[StatusFlag] = 1)
+		formatString: #,0
+
+	measure 'Mandate Compliance' = DIVIDE([Rules Met], [Rules Total])
+		formatString: 0.0%
+
+	column RuleId
+		dataType: string
+		sourceColumn: RuleId
+
+	column Category
+		dataType: string
+		sortByColumn: CategorySort
+		sourceColumn: Category
+
+	column CategorySort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: CategorySort
+
+	column RuleSort
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: RuleSort
+
+	column Status
+		dataType: string
+		sourceColumn: Status
+
+	column StatusFlag
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: StatusFlag
+
+
+	partition DimMandateRule = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimMandateRule.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"RuleId", type text}, {"Category", type text}, {"CategorySort", Int64.Type}, {"RuleSort", Int64.Type}, {"Status", type text}, {"StatusFlag", Int64.Type}})
+			in
+				Typed

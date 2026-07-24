@@ -1,0 +1,9 @@
+RuleId,Category,CategorySort,RuleSort,Status,StatusFlag
+walk_forward_or_oos_evidence,Before any live EUR,1,1,Required,0
+all_in_costs_modeled_for_target_broker,Before any live EUR,1,2,Required,0
+max_drawdown_kill_rule_defined,Before any live EUR,1,3,Required,0
+underperformance_vs_benchmark_kill_rule,Before any live EUR,1,4,Required,0
+explicit_user_authorization_for_live,Before any live EUR,1,5,Required,0
+mid_sleeve_paper_period_completed,Short sleeve extra,2,1,Blocked,0
+daily_loss_limit_defined,Short sleeve extra,2,2,Blocked,0
+position_size_cap_defined,Short sleeve extra,2,3,Blocked,0

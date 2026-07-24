@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-07-24T06:44:12.922Z",
+  "investingRoot": "C:\\Users\\kater\\.cursor\\projects\\investing",
+  "nordicGold": "C:\\Users\\kater\\.cursor\\projects\\PowerBI\\01-finance\\data\\gold",
+  "simGeneratedAt": "2026-07-23T10:54:23.751805+00:00",
+  "holdingsAsOf": "2026-07-23",
+  "counts": {
+    "DimSleeve": 4,
+    "FactSimSummary": 2,
+    "FactEquityCurve": 4236,
+    "FactPolicyCompare": 7,
+    "FactHolding": 6,
+    "FactRebalanceAction": 10,
+    "DimMandateRule": 8,
+    "DimNordicCompany": 82,
+    "FactNordicPrices": 1582,
+    "DimDate": 1418
+  },
+  "hero": {
+    "ExcessCAGR": 0.15821663505603722,
+    "MidSharpe": 1.3552722128664874,
+    "CoreSharpe": 1.0100717832212565
+  }
+}

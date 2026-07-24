@@ -1,0 +1,95 @@
+table DimSleeve
+
+	measure 'Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] <> "ringfence")
+		formatString: €#,0
+
+	measure 'Sleeve Weight' = CALCULATE(SUM(DimSleeve[WeightPct]), DimSleeve[SleeveKey] <> "ringfence")
+		formatString: 0.0%
+
+	measure 'Core Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "core")
+		formatString: €#,0
+
+	measure 'Mid Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "mid")
+		formatString: €#,0
+
+	measure 'Short Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "short")
+		formatString: €#,0
+
+	measure 'Active Sleeve %' = DIVIDE(CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[IsActiveLoop] = 1), [Sleeve EUR])
+		formatString: 0.0%
+
+	measure 'Core Sleeve %' = DIVIDE([Core Sleeve EUR], [Sleeve EUR])
+		formatString: 0.0%
+
+	measure 'Mid Sleeve %' = DIVIDE([Mid Sleeve EUR], [Sleeve EUR])
+		formatString: 0.0%
+
+	measure 'Short Sleeve %' = DIVIDE([Short Sleeve EUR], [Sleeve EUR])
+		formatString: 0.0%
+
+	column SleeveKey
+		dataType: string
+		sourceColumn: SleeveKey
+
+	column SleeveName
+		dataType: string
+		sortByColumn: SleeveSort
+		sourceColumn: SleeveName
+
+	column Broker
+		dataType: string
+		sourceColumn: Broker
+
+	column ApproxEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: ApproxEUR
+
+	column Horizon
+		dataType: string
+		sourceColumn: Horizon
+
+	column DayTrading
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: DayTrading
+
+	column AssetClass
+		dataType: string
+		sourceColumn: AssetClass
+
+	column SleeveSort
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: SleeveSort
+
+	column IsActiveLoop
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsActiveLoop
+
+	column StatusNote
+		dataType: string
+		sourceColumn: StatusNote
+
+	column WeightPct
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: WeightPct
+
+
+	partition DimSleeve = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimSleeve.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"SleeveKey", type text}, {"SleeveName", type text}, {"Broker", type text}, {"ApproxEUR", type number}, {"Horizon", type text}, {"DayTrading", Int64.Type}, {"AssetClass", type text}, {"SleeveSort", Int64.Type}, {"IsActiveLoop", Int64.Type}, {"StatusNote", type text}, {"WeightPct", type number}})
+			in
+				Typed

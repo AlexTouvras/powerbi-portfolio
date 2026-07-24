@@ -70,7 +70,7 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 
 | Project | Dataset | Status |
 |---------|---------|--------|
-| `12-investing-desk` | Local [`investing`](../investing) platform (capital.yaml + sims + price cache) | Prework |
+| `12-investing-desk` | Local [`investing`](../investing) + `01-finance` Nordic gold | **Featured** — Investment Portfolio PBIP |
 | `04-supply-chain` | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | Prework |
 | `07-helsinki-energy` | [Helsinki Nuuka open API](https://hri.fi/data/en/dataset/helsingin-kaupungin-palvelukiinteistojen-energiankulutustietoja) | Prework — API verified (~1.8k properties) |
 | `10-fpa-controllership` | Seeded Nordic multi-entity Actual + Budget + FX | Prework |
@@ -87,7 +87,11 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 
 ### Investing desk (`12-investing-desk`)
 
-Gold exported from `C:\Users\kater\.cursor\projects\investing` — sleeve policy, TSMOM vs VWCE sims, risk gates. Complements Nordic Equity (market board) with allocation research.
+**Featured:** Investment Portfolio PBIP — gold from sibling `investing` (capital, sims, review actions, policy compare, mandate rules) plus Nordic Equity `DimCompany` / `FactPrices` for Regional Markets + live board CTA.
+
+- Open [`12-investing-desk/InvestingDesk.pbip`](12-investing-desk/InvestingDesk.pbip)
+- Refresh: `node scripts/export-from-sources.mjs` then Desktop Refresh
+- Research / engineering demo — not regulated financial advice
 
 ### Supply chain (`04-supply-chain`)
 

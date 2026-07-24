@@ -441,6 +441,8 @@ _tmp_sources/
 12-investing-desk/data/raw/**/*.parquet
 12-investing-desk/data/raw/**/*.csv
 
+# Agent working memory — daily task is local-only
+.state/CURRENT_TASK.md
 
 # Credit risk scoring intermediates
 11-credit-risk/data/gold/_full_features.parquet

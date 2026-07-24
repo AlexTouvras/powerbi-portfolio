@@ -1,0 +1,92 @@
+table FactRebalanceAction
+
+	measure 'Action Count' = COUNTROWS(FactRebalanceAction)
+		formatString: #,0
+
+	measure 'Net Delta Weight' = SUM(FactRebalanceAction[DeltaWeightPct])
+		formatString: +0.0%;-0.0%;0.0%
+
+	measure 'Abs Delta Weight' = SUM(FactRebalanceAction[AbsDeltaWeightPct])
+		formatString: 0.0%
+
+	column Action
+		dataType: string
+		sourceColumn: Action
+
+	column Name
+		dataType: string
+		sourceColumn: Name
+
+	column YahooSymbol
+		dataType: string
+		sourceColumn: YahooSymbol
+
+	column CurrentEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: CurrentEUR
+
+	column TargetEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: TargetEUR
+
+	column DeltaEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: DeltaEUR
+
+	column Mom12m
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Mom12m
+
+	column Rank
+		dataType: string
+		sourceColumn: Rank
+
+	column Explanation
+		dataType: string
+		sourceColumn: Explanation
+
+	column IsNordic
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsNordic
+
+	column Region
+		dataType: string
+		sourceColumn: Region
+
+	column AbsDeltaEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: AbsDeltaEUR
+
+	column DeltaWeightPct
+		dataType: double
+		formatString: +0.0%;-0.0%;0.0%
+		sourceColumn: DeltaWeightPct
+
+	column AbsDeltaWeightPct
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: AbsDeltaWeightPct
+
+
+	partition FactRebalanceAction = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactRebalanceAction.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Action", type text}, {"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Explanation", type text}, {"IsNordic", Int64.Type}, {"Region", type text}, {"AbsDeltaEUR", type number}, {"DeltaWeightPct", type number}, {"AbsDeltaWeightPct", type number}})
+			in
+				Typed

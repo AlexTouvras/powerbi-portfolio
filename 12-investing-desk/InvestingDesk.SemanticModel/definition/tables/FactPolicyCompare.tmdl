@@ -1,0 +1,116 @@
+table FactPolicyCompare
+
+	measure 'Policy CAGR' = AVERAGE(FactPolicyCompare[CAGR])
+		formatString: 0.0%
+
+	measure 'Policy Sharpe' = AVERAGE(FactPolicyCompare[Sharpe])
+		formatString: 0.00
+
+	measure 'Policy Sharpe vs BM' = AVERAGE(FactPolicyCompare[SharpeVsBenchmark])
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Policy Max DD' = AVERAGE(FactPolicyCompare[MaxDrawdown])
+		formatString: 0.0%
+
+	measure 'Policy Vol' = AVERAGE(FactPolicyCompare[AnnVol])
+		formatString: 0.0%
+
+	measure 'Policy Turnover' = AVERAGE(FactPolicyCompare[AnnOnewayTurnover])
+		formatString: 0.00
+
+	column Label
+		dataType: string
+		sourceColumn: Label
+
+	column ShortLabel
+		dataType: string
+		sourceColumn: ShortLabel
+
+	column Role
+		dataType: string
+		sourceColumn: Role
+
+	column FeeBps
+		dataType: double
+		formatString: 0.0
+		sourceColumn: FeeBps
+
+	column StartEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: StartEUR
+
+	column EndEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: EndEUR
+
+	column TotalReturn
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TotalReturn
+
+	column CAGR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CAGR
+
+	column AnnVol
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: AnnVol
+
+	column Sharpe
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Sharpe
+
+	column SharpeVsBenchmark
+		dataType: double
+		formatString: +0.00;-0.00;0.00
+		sourceColumn: SharpeVsBenchmark
+
+	column MaxDrawdown
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MaxDrawdown
+
+	column AnnOnewayTurnover
+		dataType: double
+		formatString: 0.00
+		sourceColumn: AnnOnewayTurnover
+
+	column AvgNamesChanged
+		dataType: double
+		formatString: 0.0
+		sourceColumn: AvgNamesChanged
+
+	column AvgHoldings
+		dataType: double
+		formatString: 0.0
+		sourceColumn: AvgHoldings
+
+	column Rebalances
+		dataType: double
+		formatString: 0
+		sourceColumn: Rebalances
+
+	column Days
+		dataType: double
+		formatString: 0
+		sourceColumn: Days
+
+
+	partition FactPolicyCompare = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactPolicyCompare.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Label", type text}, {"ShortLabel", type text}, {"Role", type text}, {"FeeBps", type number}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"SharpeVsBenchmark", type number}, {"MaxDrawdown", type number}, {"AnnOnewayTurnover", type number}, {"AvgNamesChanged", type number}, {"AvgHoldings", type number}, {"Rebalances", type number}, {"Days", type number}})
+			in
+				Typed

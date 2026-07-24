@@ -1,0 +1,11 @@
+relationship FactEquityCurve_DimDate
+	fromColumn: FactEquityCurve.Date
+	toColumn: DimDate.Date
+
+relationship FactNordicPrices_DimDate
+	fromColumn: FactNordicPrices.Date
+	toColumn: DimDate.Date
+
+relationship FactNordicPrices_DimNordicCompany
+	fromColumn: FactNordicPrices.Ticker
+	toColumn: DimNordicCompany.Ticker

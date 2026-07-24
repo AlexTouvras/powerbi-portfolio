@@ -107,6 +107,31 @@ Retail PD scorecard with Train/Test/OOT validation, acceptance-frontier cut-off 
 
 Details: [`11-credit-risk/README.md`](11-credit-risk/README.md)
 
+### Investment Portfolio
+
+CIO-style multi-sleeve book: allocation, excess return vs VWCE, holdings & rebalance, mandate compliance, Nordic regional tape (dual-source with Nordic Equity).
+
+| | |
+|---|---|
+| Audience | CIO / portfolio committee |
+| Theme | Nordic Boardroom |
+| Pages | Landing · Asset Allocation · Performance · Holdings & Rebalance · Risk & Mandate · Regional Markets · Notes |
+| Open | [`12-investing-desk/InvestingDesk.pbip`](12-investing-desk/InvestingDesk.pbip) |
+
+![Landing](12-investing-desk/screenshots/landing.png)
+
+![Asset Allocation](12-investing-desk/screenshots/asset-allocation.png)
+
+![Performance](12-investing-desk/screenshots/performance.png)
+
+![Holdings & Rebalance](12-investing-desk/screenshots/holdings-rebalance.png)
+
+![Risk & Mandate](12-investing-desk/screenshots/risk-mandate.png)
+
+![Regional Markets](12-investing-desk/screenshots/regional-markets.png)
+
+Details: [`12-investing-desk/README.md`](12-investing-desk/README.md)
+
 ### Nordic Equity (Live Board)
 
 Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading indicators (SMA, MACD, RSI, Bollinger).
@@ -143,7 +168,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`01-finance`](01-finance/) | Nordic Equity (live board) | **Featured** — Yahoo delayed + PBIP + [Vercel heatmap](https://heatmap-web-five.vercel.app) |
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
 | [`11-credit-risk`](11-credit-risk/) | Credit Risk Pulse (Home Credit scorecard) | **Featured** — PD + OOT Gini ~55% + cut-off + steering |
-| [`12-investing-desk`](12-investing-desk/) | Investing Research Desk | **Planned** — prework |
+| [`12-investing-desk`](12-investing-desk/) | Investment Portfolio | **Featured** — dual-source (investing + Nordic Equity) |
 | [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Planned** — prework |
 | [`07-helsinki-energy`](07-helsinki-energy/) | Facility Energy (Nuuka API) | **Planned** — prework |
 | [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA / what-if) | **Planned** — prework |
