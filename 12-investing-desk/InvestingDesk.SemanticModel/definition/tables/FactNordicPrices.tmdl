@@ -1,0 +1,72 @@
+table FactNordicPrices
+
+	measure 'Avg Day Change' = CALCULATE(AVERAGE(FactNordicPrices[ChangePct]), FactNordicPrices[IsLatest] = 1)
+		formatString: 0.00%
+
+	measure 'RSI Signal Count' = CALCULATE(SUM(FactNordicPrices[IsSignal]), FactNordicPrices[IsLatest] = 1)
+		formatString: #,0
+
+	measure 'Latest Close' = CALCULATE(AVERAGE(FactNordicPrices[Close]), FactNordicPrices[IsLatest] = 1)
+		formatString: #,0.00
+
+	measure 'Overlap Day Change' = CALCULATE([Avg Day Change], DimNordicCompany[InMidUniverse] = 1)
+		formatString: 0.00%
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Ticker
+		dataType: string
+		sourceColumn: Ticker
+
+	column Close
+		dataType: double
+		formatString: #,0.00
+		sourceColumn: Close
+
+	column ChangePct
+		dataType: double
+		formatString: 0.00%
+		sourceColumn: ChangePct
+
+	column RSI14
+		dataType: double
+		formatString: 0.0
+		sourceColumn: RSI14
+
+	column IsLatest
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsLatest
+
+	column StrategySide
+		dataType: string
+		sourceColumn: StrategySide
+
+	column IsSignal
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsSignal
+
+	column MarketCapEURm
+		dataType: double
+		formatString: #,0
+		sourceColumn: MarketCapEURm
+
+
+	partition FactNordicPrices = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactNordicPrices.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Ticker", type text}, {"Close", type number}, {"ChangePct", type number}, {"RSI14", type number}, {"IsLatest", Int64.Type}, {"StrategySide", type text}, {"IsSignal", Int64.Type}, {"MarketCapEURm", type number}})
+			in
+				Typed

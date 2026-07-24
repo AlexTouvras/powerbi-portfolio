@@ -1,0 +1,9 @@
+# Local / private
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Never commit live holdings dumps
+data/raw/**/*.yaml
+!data/raw/SOURCE.md

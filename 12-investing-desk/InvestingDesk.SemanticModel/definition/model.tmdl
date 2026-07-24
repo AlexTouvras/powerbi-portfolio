@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["GoldDataFolder","PortfolioMetrics","DimSleeve","DimDate","DimMandateRule","DimNordicCompany","FactSimSummary","FactEquityCurve","FactPolicyCompare","FactHolding","FactRebalanceAction","FactNordicPrices"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref expression GoldDataFolder
+ref table PortfolioMetrics
+ref table DimSleeve
+ref table DimDate
+ref table DimMandateRule
+ref table DimNordicCompany
+ref table FactSimSummary
+ref table FactEquityCurve
+ref table FactPolicyCompare
+ref table FactHolding
+ref table FactRebalanceAction
+ref table FactNordicPrices

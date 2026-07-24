@@ -1,0 +1,79 @@
+table FactSimSummary
+
+	measure 'Sim CAGR' = AVERAGE(FactSimSummary[CAGR])
+		formatString: 0.0%
+
+	measure 'Sim Sharpe' = AVERAGE(FactSimSummary[Sharpe])
+		formatString: 0.00
+
+	measure 'Sim Max DD' = AVERAGE(FactSimSummary[MaxDrawdown])
+		formatString: 0.0%
+
+	measure 'Sim Ann Vol' = AVERAGE(FactSimSummary[AnnVol])
+		formatString: 0.0%
+
+	column Strategy
+		dataType: string
+		sourceColumn: Strategy
+
+	column SeriesLabel
+		dataType: string
+		sourceColumn: SeriesLabel
+
+	column Role
+		dataType: string
+		sourceColumn: Role
+
+	column StartEUR
+		dataType: double
+		formatString: #,0
+		sourceColumn: StartEUR
+
+	column EndEUR
+		dataType: double
+		formatString: #,0
+		sourceColumn: EndEUR
+
+	column TotalReturn
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TotalReturn
+
+	column CAGR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CAGR
+
+	column AnnVol
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: AnnVol
+
+	column Sharpe
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Sharpe
+
+	column MaxDrawdown
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MaxDrawdown
+
+	column Days
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Days
+
+
+	partition FactSimSummary = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactSimSummary.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Strategy", type text}, {"SeriesLabel", type text}, {"Role", type text}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"MaxDrawdown", type number}, {"Days", Int64.Type}})
+			in
+				Typed

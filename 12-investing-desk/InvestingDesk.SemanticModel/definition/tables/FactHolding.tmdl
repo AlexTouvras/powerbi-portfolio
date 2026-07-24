@@ -1,0 +1,105 @@
+table FactHolding
+
+	measure 'Holding EUR' = SUM(FactHolding[CurrentEUR])
+		formatString: €#,0
+
+	measure 'Holding Weight' = SUM(FactHolding[WeightPct])
+		formatString: 0.0%
+
+	measure 'Target Weight' = SUM(FactHolding[TargetWeightPct])
+		formatString: 0.0%
+
+	measure 'Delta Weight' = SUM(FactHolding[DeltaWeightPct])
+		formatString: +0.0%;-0.0%;0.0%
+
+	measure 'Holding Count' = COUNTROWS(FactHolding)
+		formatString: #,0
+
+	measure 'Avg Mom 12m' = AVERAGE(FactHolding[Mom12m])
+		formatString: 0.0%
+
+	measure 'Nordic Holding Weight' = CALCULATE([Holding Weight], FactHolding[IsNordic] = 1)
+		formatString: 0.0%
+
+	column Name
+		dataType: string
+		sourceColumn: Name
+
+	column YahooSymbol
+		dataType: string
+		sourceColumn: YahooSymbol
+
+	column CurrentEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: CurrentEUR
+
+	column TargetEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: TargetEUR
+
+	column DeltaEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: DeltaEUR
+
+	column WeightPct
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: WeightPct
+
+	column TargetWeightPct
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: TargetWeightPct
+
+	column DeltaWeightPct
+		dataType: double
+		formatString: +0.0%;-0.0%;0.0%
+		sourceColumn: DeltaWeightPct
+
+	column Mom12m
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Mom12m
+
+	column Rank
+		dataType: string
+		sourceColumn: Rank
+
+	column Action
+		dataType: string
+		sourceColumn: Action
+
+	column InTargetBook
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: InTargetBook
+
+	column IsNordic
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsNordic
+
+	column Region
+		dataType: string
+		sourceColumn: Region
+
+
+	partition FactHolding = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactHolding.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"WeightPct", type number}, {"TargetWeightPct", type number}, {"DeltaWeightPct", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Action", type text}, {"InTargetBook", Int64.Type}, {"IsNordic", Int64.Type}, {"Region", type text}})
+			in
+				Typed

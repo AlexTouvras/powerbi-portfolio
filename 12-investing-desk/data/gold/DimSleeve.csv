@@ -1,0 +1,5 @@
+SleeveKey,SleeveName,Broker,ApproxEUR,Horizon,DayTrading,AssetClass,SleeveSort,IsActiveLoop,StatusNote,WeightPct
+core,Core ETF,saxo,6000,multi_year,0,etf,1,0,Strategic ETF — out of mid research loop,0.2857142857142857
+mid,Mid-term,nordnet,11000,6_to_12_months,0,stocks,2,1,Active equity research book,0.5238095238095238
+short,Short-term,nordnet,4000,days_to_weeks,1,stocks,3,1,Blocked until mandate gates pass,0.19047619047619047
+ringfence,Ring-fenced (OP),op,14000,multi_year,0,etf,99,0,Context only — out of active loop,0

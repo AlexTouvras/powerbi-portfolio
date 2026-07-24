@@ -1,0 +1,214 @@
+table PortfolioMetrics
+
+	measure 'Book EUR' = MAX(PortfolioMetrics[BookEUR])
+		formatString: €#,0
+
+	measure 'Equity EUR' = MAX(PortfolioMetrics[EquityEUR])
+		formatString: €#,0
+
+	measure 'Cash EUR' = MAX(PortfolioMetrics[CashEUR])
+		formatString: €#,0
+
+	measure 'Names Held' = MAX(PortfolioMetrics[NamesHeld])
+		formatString: #,0
+
+	measure 'Top N' = MAX(PortfolioMetrics[TopN])
+		formatString: 0
+
+	measure 'Core CAGR' = MAX(PortfolioMetrics[CoreCAGR])
+		formatString: 0.0%
+
+	measure 'Mid CAGR' = MAX(PortfolioMetrics[MidCAGR])
+		formatString: 0.0%
+
+	measure 'Excess CAGR' = MAX(PortfolioMetrics[ExcessCAGR])
+		formatString: 0.0%
+
+	measure 'Core Sharpe' = MAX(PortfolioMetrics[CoreSharpe])
+		formatString: 0.00
+
+	measure 'Mid Sharpe' = MAX(PortfolioMetrics[MidSharpe])
+		formatString: 0.00
+
+	measure 'Mid Max DD' = MAX(PortfolioMetrics[MidMaxDD])
+		formatString: 0.0%
+
+	measure 'Mid Ann Vol' = MAX(PortfolioMetrics[MidAnnVol])
+		formatString: 0.0%
+
+	measure 'Fee Bps' = MAX(PortfolioMetrics[FeeBps])
+		formatString: 0.0
+
+	measure 'Universe N' = MAX(PortfolioMetrics[UniverseN])
+		formatString: #,0
+
+	measure 'Ring-Fence EUR' = MAX(PortfolioMetrics[RingFenceEUR])
+		formatString: €#,0
+
+	measure 'Policy Book EUR' = MAX(PortfolioMetrics[PolicyBookEUR])
+		formatString: €#,0
+
+	measure 'Ring-Fence Weight' = MAX(PortfolioMetrics[RingFenceWeightPct])
+		formatString: 0.0%
+
+	measure 'Nordic In Book' = MAX(PortfolioMetrics[NordicNamesInBook])
+		formatString: #,0
+
+	measure 'Mandate Rule Count' = MAX(PortfolioMetrics[MandateRules])
+		formatString: #,0
+
+	measure 'Cash Weight' = DIVIDE([Cash EUR], [Book EUR])
+		formatString: 0.0%
+
+	measure 'Equity Weight' = DIVIDE([Equity EUR], [Book EUR])
+		formatString: 0.0%
+
+	column BookEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: BookEUR
+
+	column EquityEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: EquityEUR
+
+	column CashEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: CashEUR
+
+	column HoldingsAsOf
+		dataType: string
+		sourceColumn: HoldingsAsOf
+
+	column TopN
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: TopN
+
+	column NamesHeld
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: NamesHeld
+
+	column CoreCAGR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: CoreCAGR
+
+	column MidCAGR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MidCAGR
+
+	column ExcessCAGR
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: ExcessCAGR
+
+	column CoreSharpe
+		dataType: double
+		formatString: 0.00
+		sourceColumn: CoreSharpe
+
+	column MidSharpe
+		dataType: double
+		formatString: 0.00
+		sourceColumn: MidSharpe
+
+	column MidMaxDD
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MidMaxDD
+
+	column MidAnnVol
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: MidAnnVol
+
+	column FeeBps
+		dataType: double
+		formatString: 0.0
+		sourceColumn: FeeBps
+
+	column SampleStart
+		dataType: string
+		sourceColumn: SampleStart
+
+	column SampleEnd
+		dataType: string
+		sourceColumn: SampleEnd
+
+	column UniverseN
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: UniverseN
+
+	column WorkingPolicy
+		dataType: string
+		sourceColumn: WorkingPolicy
+
+	column ProposeBy
+		dataType: string
+		sourceColumn: ProposeBy
+
+	column ExecuteWindow
+		dataType: string
+		sourceColumn: ExecuteWindow
+
+	column RingFenceEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: RingFenceEUR
+
+	column PolicyBookEUR
+		dataType: double
+		formatString: #,0
+		isHidden
+		sourceColumn: PolicyBookEUR
+
+	column RingFenceWeightPct
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: RingFenceWeightPct
+
+	column NordicNamesInBook
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: NordicNamesInBook
+
+	column MandateRules
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: MandateRules
+
+	column SimGeneratedAt
+		dataType: string
+		sourceColumn: SimGeneratedAt
+
+	column Benchmark
+		dataType: string
+		sourceColumn: Benchmark
+
+
+	partition PortfolioMetrics = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/PortfolioMetrics.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"BookEUR", type number}, {"EquityEUR", type number}, {"CashEUR", type number}, {"HoldingsAsOf", type text}, {"TopN", Int64.Type}, {"NamesHeld", Int64.Type}, {"CoreCAGR", type number}, {"MidCAGR", type number}, {"ExcessCAGR", type number}, {"CoreSharpe", type number}, {"MidSharpe", type number}, {"MidMaxDD", type number}, {"MidAnnVol", type number}, {"FeeBps", type number}, {"SampleStart", type text}, {"SampleEnd", type text}, {"UniverseN", Int64.Type}, {"WorkingPolicy", type text}, {"ProposeBy", type text}, {"ExecuteWindow", type text}, {"RingFenceEUR", type number}, {"PolicyBookEUR", type number}, {"RingFenceWeightPct", type number}, {"NordicNamesInBook", Int64.Type}, {"MandateRules", Int64.Type}, {"SimGeneratedAt", type text}, {"Benchmark", type text}})
+			in
+				Typed

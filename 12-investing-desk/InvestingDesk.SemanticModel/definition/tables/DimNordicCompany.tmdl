@@ -1,0 +1,64 @@
+table DimNordicCompany
+
+	measure 'Nordic Companies' = COUNTROWS(DimNordicCompany)
+		formatString: #,0
+
+	measure 'Overlap Names' = CALCULATE([Nordic Companies], DimNordicCompany[InMidUniverse] = 1)
+		formatString: #,0
+
+	measure 'Book Nordic Names' = CALCULATE([Nordic Companies], DimNordicCompany[InBook] = 1)
+		formatString: #,0
+
+	column Ticker
+		dataType: string
+		sourceColumn: Ticker
+
+	column YahooSymbol
+		dataType: string
+		sourceColumn: YahooSymbol
+
+	column CompanyName
+		dataType: string
+		sourceColumn: CompanyName
+
+	column Country
+		dataType: string
+		sourceColumn: Country
+
+	column Sector
+		dataType: string
+		sourceColumn: Sector
+
+	column Industry
+		dataType: string
+		sourceColumn: Industry
+
+	column MarketCapEURm
+		dataType: double
+		formatString: #,0
+		sourceColumn: MarketCapEURm
+
+	column InMidUniverse
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: InMidUniverse
+
+	column InBook
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: InBook
+
+
+	partition DimNordicCompany = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/DimNordicCompany.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Ticker", type text}, {"YahooSymbol", type text}, {"CompanyName", type text}, {"Country", type text}, {"Sector", type text}, {"Industry", type text}, {"MarketCapEURm", type number}, {"InMidUniverse", Int64.Type}, {"InBook", Int64.Type}})
+			in
+				Typed

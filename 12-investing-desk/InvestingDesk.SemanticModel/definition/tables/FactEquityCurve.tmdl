@@ -1,0 +1,48 @@
+table FactEquityCurve
+
+	measure 'Equity Indexed' = AVERAGE(FactEquityCurve[EquityIndexed])
+		formatString: 0.00
+
+	measure 'Drawdown Pct' = AVERAGE(FactEquityCurve[Drawdown])
+		formatString: 0.0%
+
+	measure 'Equity EUR Curve' = AVERAGE(FactEquityCurve[EquityEUR])
+		formatString: €#,0
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Series
+		dataType: string
+		sourceColumn: Series
+
+	column EquityEUR
+		dataType: double
+		formatString: #,0
+		sourceColumn: EquityEUR
+
+	column EquityIndexed
+		dataType: double
+		formatString: 0.00
+		sourceColumn: EquityIndexed
+
+	column Drawdown
+		dataType: double
+		formatString: 0.0%
+		sourceColumn: Drawdown
+
+
+	partition FactEquityCurve = m
+		mode: import
+		source =
+			let
+				FolderPath = GoldDataFolder,
+				FilePath = FolderPath & "/FactEquityCurve.csv",
+				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Series", type text}, {"EquityEUR", type number}, {"EquityIndexed", type number}, {"Drawdown", type number}})
+			in
+				Typed
