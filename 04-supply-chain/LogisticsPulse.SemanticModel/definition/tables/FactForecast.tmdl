@@ -1,0 +1,84 @@
+table FactForecast
+
+	measure 'Forecast Horizon Orders' = CALCULATE(SUM(FactForecast[Forecast]), FactForecast[IsFuture] = 1)
+		formatString: #,0
+
+	measure 'Sum Actual' = SUM(FactForecast[Actual])
+		formatString: #,0
+
+	measure 'Sum Forecast' = SUM(FactForecast[Forecast])
+		formatString: #,0
+
+	measure 'Sum Lo80' = SUM(FactForecast[Lo80])
+		formatString: #,0
+
+	measure 'Sum Hi80' = SUM(FactForecast[Hi80])
+		formatString: #,0
+
+	measure 'Sum Band Width' = SUM(FactForecast[BandWidth])
+		formatString: #,0
+
+	column WeekStart
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: WeekStart
+
+	column Actual
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Actual
+
+	column Forecast
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Forecast
+
+	column Lo80
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Lo80
+
+	column Hi80
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Hi80
+
+	column Lo95
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Lo95
+
+	column Hi95
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Hi95
+
+	column BandWidth
+		dataType: double
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: BandWidth
+
+	column IsFuture
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsFuture
+
+
+	partition FactForecast = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(GoldDataFolder & "/FactForecast.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"WeekStart", type date}, {"Actual", type number}, {"Forecast", type number}, {"Lo80", type number}, {"Hi80", type number}, {"Lo95", type number}, {"Hi95", type number}, {"BandWidth", type number}, {"IsFuture", Int64.Type}})
+			in
+				#"Changed Type"
