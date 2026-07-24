@@ -71,7 +71,7 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 | Project | Dataset | Status |
 |---------|---------|--------|
 | `12-investing-desk` | Local [`investing`](../investing) + `01-finance` Nordic gold | **Featured** — Investment Portfolio PBIP |
-| `04-supply-chain` | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | Prework |
+| `04-supply-chain` | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | **Featured** — LogisticsPulse.pbip + gold + forecast |
 | `07-helsinki-energy` | [Helsinki Nuuka open API](https://hri.fi/data/en/dataset/helsingin-kaupungin-palvelukiinteistojen-energiankulutustietoja) | Prework — API verified (~1.8k properties) |
 | `10-fpa-controllership` | Seeded Nordic multi-entity Actual + Budget + FX | Prework |
 
@@ -95,7 +95,12 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 
 ### Supply chain (`04-supply-chain`)
 
-Olist 9-CSV relational marketplace (orders, sellers, freight, geo) → OTIF + demand forecast gold.
+**Featured:** Logistics Pulse — Olist delivered orders (~96k), on-time delivery %, seller risk queue, SARIMAX weekly demand forecast with 80%/95% prediction intervals (holdout MAPE ~19%).
+
+- Open [`04-supply-chain/LogisticsPulse.pbip`](04-supply-chain/LogisticsPulse.pbip)
+- Gold: `FactOrders`, `DimSeller`, `FactForecast`, `ModelMetrics`, …
+- Refresh: `.\.venv\Scripts\python scripts\build-gold.py` then `forecast-demand.py` then Desktop Refresh
+- Sample demo — not inventory policy advice; In-Full OTIF out of v1
 
 ### Facility energy (`07-helsinki-energy`)
 

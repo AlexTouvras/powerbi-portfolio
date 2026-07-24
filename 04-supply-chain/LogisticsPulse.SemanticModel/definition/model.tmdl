@@ -1,0 +1,22 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct","DimCustomer","FactOrders","FactDemandWeekly","FactForecast","FactCorridor","ModelMetrics"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref expression GoldDataFolder
+ref table DimDate
+ref table DimSeller
+ref table DimProduct
+ref table DimCustomer
+ref table FactOrders
+ref table FactDemandWeekly
+ref table FactForecast
+ref table FactCorridor
+ref table ModelMetrics

@@ -4,19 +4,22 @@
 
 ## Now
 
-- [x] **12-investing-desk** — dual-source **Investment Portfolio** (CIO framing; investing + Nordic Equity); PBIR validate OK
-- [ ] Desktop screenshots for `12-investing-desk` (Refresh + capture)
+- [x] **12-investing-desk** — dual-source **Investment Portfolio** shipped to main (PR #2)
+- [x] **04-supply-chain** — Logistics Pulse Featured (PBIP + screenshots + docs) — shipping
+- [x] Desktop screenshots for `12-investing-desk`
+- [x] README / DATASETS / Orbit notify path
 
 ## Next
 
-- [ ] `04-supply-chain` Logistics Pulse (Olist)
 - [ ] `07-helsinki-energy` Facility Energy (Nuuka)
 - [ ] `10-fpa-controllership` Controllership (BvA seed)
+- [ ] Logistics Pulse: optional dark PI fill after Desktop refresh (BandWidth stacked area)
 
 ## Later
 
 - [ ] Fabric publish for featured reports (only if requested)
 - [ ] Investing Desk: live broker holdings sync
+- [ ] Logistics Pulse: true In-Full OTIF definition (v2)
 
 ## Out of scope (strict)
 
@@ -25,9 +28,9 @@
 - Fabric composite model linking two PBIPs in v1
 - Regulated investment advice framing
 
-## Definition of done (current item)
+## Definition of done (12-investing-desk — complete)
 
-- [ ] Locked `_brief/report-spec.md` approved
-- [ ] Gold export from investing + Nordic Equity
-- [ ] `InvestingDesk.pbip` + PBIR validate + Desktop screenshots
-- [ ] Context disclaimer visible; README updated; portfolio README status → Featured when done
+- [x] Locked `_brief/report-spec.md` approved
+- [x] Gold export from investing + Nordic Equity
+- [x] `InvestingDesk.pbip` + PBIR validate + Desktop screenshots
+- [x] Context disclaimer visible; README updated; portfolio README status → Featured

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Logistics Pulse"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "0c26f5b2-2cab-46ff-8e28-57edcfcd01b0"
+  }
+}

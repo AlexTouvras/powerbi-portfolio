@@ -132,6 +132,27 @@ CIO-style multi-sleeve book: allocation, excess return vs VWCE, holdings & rebal
 
 Details: [`12-investing-desk/README.md`](12-investing-desk/README.md)
 
+### Logistics Pulse
+
+COO on-time delivery story with seller risk queues and the portfolio’s first **demand forecast** (SARIMAX) with dashed forecast + dotted 80% prediction-interval bounds.
+
+| | |
+|---|---|
+| Audience | COO / logistics lead |
+| Theme | Nordic Boardroom |
+| Pages | Landing · Delivery Pulse · Sellers & Routes · Demand Outlook · Context |
+| Open | [`04-supply-chain/LogisticsPulse.pbip`](04-supply-chain/LogisticsPulse.pbip) |
+
+![Landing](04-supply-chain/screenshots/landing.png)
+
+![Delivery Pulse](04-supply-chain/screenshots/delivery-pulse.png)
+
+![Sellers & Routes](04-supply-chain/screenshots/sellers-routes.png)
+
+![Demand Outlook](04-supply-chain/screenshots/demand-outlook.png)
+
+Details: [`04-supply-chain/README.md`](04-supply-chain/README.md)
+
 ### Nordic Equity (Live Board)
 
 Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading indicators (SMA, MACD, RSI, Bollinger).
@@ -169,7 +190,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`06-healthcare-analytics`](06-healthcare-analytics/) | Healthcare readmission | **Featured** — UCI + propensity + pathways |
 | [`11-credit-risk`](11-credit-risk/) | Credit Risk Pulse (Home Credit scorecard) | **Featured** — PD + OOT Gini ~55% + cut-off + steering |
 | [`12-investing-desk`](12-investing-desk/) | Investment Portfolio | **Featured** — dual-source (investing + Nordic Equity) |
-| [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Planned** — prework |
+| [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Featured** — on-time + SARIMAX demand forecast |
 | [`07-helsinki-energy`](07-helsinki-energy/) | Facility Energy (Nuuka API) | **Planned** — prework |
 | [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA / what-if) | **Planned** — prework |
 
