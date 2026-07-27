@@ -1,0 +1,75 @@
+table DimDate
+	lineageTag: d5241bbb-9c43-4cf6-bfe1-a31d5bdac969
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 31880fc2-8a8d-4bf7-a81c-b681b39e09dc
+		dataCategory: Time
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b1cb615-c570-4098-a503-541467bb8e92
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 626f889c-77d2-4768-8fc5-0e5711e2dc2d
+		summarizeBy: none
+		sourceColumn: Month
+
+	column MonthName
+		dataType: string
+		lineageTag: a36041c0-edee-4ab2-a6ae-7a7160f2ac10
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+	column YearMonth
+		dataType: string
+		lineageTag: 60caec7a-124c-4e75-a0f6-dc40663dc004
+		sourceColumn: YearMonth
+		sortByColumn: MonthYearSort
+
+	column Quarter
+		dataType: string
+		lineageTag: 84e4b764-5e93-43fa-8b3e-9b42f4b5b5fa
+		sourceColumn: Quarter
+
+	column YearQuarter
+		dataType: string
+		lineageTag: ba36df78-bc3d-4f86-9e4b-f9306ab207c2
+		sourceColumn: YearQuarter
+
+	column Day
+		dataType: int64
+		formatString: 0
+		lineageTag: 41b5c6c1-8834-496f-8447-be73eace041d
+		summarizeBy: none
+		sourceColumn: Day
+
+	column MonthYearSort
+		dataType: int64
+		isHidden
+		lineageTag: 9f0b3c9d-e350-44d3-b53f-caeb6d6ed298
+		summarizeBy: none
+		sourceColumn: MonthYearSort
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimDate.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"MonthName", type text}, {"YearMonth", type text}, {"Quarter", type text}, {"YearQuarter", type text}, {"Day", Int64.Type}, {"MonthYearSort", Int64.Type}})
+				in
+					#"Changed Type"
+

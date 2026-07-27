@@ -153,6 +153,27 @@ COO on-time delivery story with seller risk queues and the portfolio’s first *
 
 Details: [`04-supply-chain/README.md`](04-supply-chain/README.md)
 
+### Experience Pulse
+
+CX / VoC review-score story: detractor propensity, Key Influencers, **score erosion by delivery outcome**, and a probability-ranked recovery queue (Olist reviews × Logistics orders).
+
+| | |
+|---|---|
+| Audience | CX / VoC lead · seller ops · board skim |
+| Theme | Nordic Boardroom · `linen-mist` |
+| Pages | Landing · Experience Pulse · Drivers · Recovery Queue · Context |
+| Open | [`08-customer-experience/ExperiencePulse.pbip`](08-customer-experience/ExperiencePulse.pbip) |
+
+![Landing](08-customer-experience/screenshots/landing.png)
+
+![Experience Pulse](08-customer-experience/screenshots/experience-pulse.png)
+
+![Drivers](08-customer-experience/screenshots/drivers.png)
+
+![Recovery Queue](08-customer-experience/screenshots/recovery-queue.png)
+
+Details: [`08-customer-experience/README.md`](08-customer-experience/README.md)
+
 ### Nordic Equity (Live Board)
 
 Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading indicators (SMA, MACD, RSI, Bollinger).
@@ -191,6 +212,7 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`11-credit-risk`](11-credit-risk/) | Credit Risk Pulse (Home Credit scorecard) | **Featured** — PD + OOT Gini ~55% + cut-off + steering |
 | [`12-investing-desk`](12-investing-desk/) | Investment Portfolio | **Featured** — dual-source (investing + Nordic Equity) |
 | [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Featured** — on-time + SARIMAX demand forecast |
+| [`08-customer-experience`](08-customer-experience/) | Experience Pulse (Olist reviews) | **Featured** — propensity + Key Influencers + recovery queue |
 | [`07-helsinki-energy`](07-helsinki-energy/) | Facility Energy (Nuuka API) | **Planned** — prework |
 | [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA / what-if) | **Planned** — prework |
 

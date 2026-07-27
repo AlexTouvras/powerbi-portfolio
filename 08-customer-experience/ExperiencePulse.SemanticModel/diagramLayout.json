@@ -1,0 +1,126 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 50,
+            "y": 482.11953898326516
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "d5241bbb-9c43-4cf6-bfe1-a31d5bdac969",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 858.12262149419473,
+            "y": 793.31891866926253
+          },
+          "nodeIndex": "DimProduct",
+          "nodeLineageTag": "57d63d67-a43e-45cf-8d00-dc19d553ab11",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 797.145485442791,
+            "y": -50
+          },
+          "nodeIndex": "DimSeller",
+          "nodeLineageTag": "7fee69f4-9890-4eb5-b1e2-1067b158b61e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 343.42655701972046,
+            "y": 512.94067737486876
+          },
+          "nodeIndex": "DimTheme",
+          "nodeLineageTag": "c4ddbee8-6e7d-4bef-b4c4-11b2b13e5bcb",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1218.730305186227,
+            "y": 359.65945933463126
+          },
+          "nodeIndex": "FactOrders",
+          "nodeLineageTag": "d4db6736-499d-49a6-b5b1-728c4fcf93cc",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 984.73030518622693,
+            "y": 440.45830703695015
+          },
+          "nodeIndex": "FactReviews",
+          "nodeLineageTag": "bd3228b2-3303-4937-897a-1b5e042d57a5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 635.78030989847082,
+            "y": 584.93533775743492
+          },
+          "nodeIndex": "FactReviewTheme",
+          "nodeLineageTag": "1de70d97-750b-42ab-8077-f5717b67c0dc",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 694.34705804478244,
+            "y": 305.09390718338045
+          },
+          "nodeIndex": "FactThemeQuotes",
+          "nodeLineageTag": "96ece539-ee38-49d0-a850-e2803981374b",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

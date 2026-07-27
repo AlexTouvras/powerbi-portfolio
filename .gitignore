@@ -438,6 +438,10 @@ _tmp_sources/
 04-supply-chain/data/raw/**/*.csv
 04-supply-chain/data/raw/**/*.zip
 04-supply-chain/.venv/
+08-customer-experience/.venv/
+08-customer-experience/data/raw/**/*.csv
+08-customer-experience/data/gold/translate_cache.json
+08-customer-experience/data/gold/models/
 07-helsinki-energy/data/raw/nuuka/
 12-investing-desk/data/raw/**/*.parquet
 12-investing-desk/data/raw/**/*.csv

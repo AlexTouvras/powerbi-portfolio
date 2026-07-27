@@ -1,0 +1,101 @@
+table FactOrders
+	lineageTag: d4db6736-499d-49a6-b5b1-728c4fcf93cc
+
+	measure Orders = COUNTROWS(FactOrders)
+		formatString: #,0
+		lineageTag: 8c3cf719-3282-43e2-bd2a-5410481f01d3
+
+	column OrderID
+		dataType: string
+		lineageTag: d5eb460c-a2da-4de5-8d92-268c8ba5d516
+		summarizeBy: none
+		sourceColumn: OrderID
+
+	column CustomerID
+		dataType: string
+		lineageTag: 1d566df2-4556-42a0-a463-2971300256b7
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 7ba270bb-a8bb-4277-ade8-900977b2d8d1
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SellerID
+		dataType: string
+		lineageTag: cfc9e5d5-46d2-4ec1-a3fc-afd4754ae758
+		summarizeBy: none
+		sourceColumn: SellerID
+
+	column CustomerState
+		dataType: string
+		lineageTag: 13b06bcc-d26d-48e8-9055-508447dbf43d
+		sourceColumn: CustomerState
+
+	column SellerState
+		dataType: string
+		lineageTag: cb49f0fe-94b8-4380-b3de-87250a9835ab
+		sourceColumn: SellerState
+
+	column Category
+		dataType: string
+		lineageTag: bc749544-fc27-4393-a015-110e95a90566
+		sourceColumn: Category
+
+	column OnTime
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a93f266-6afb-46db-9536-adeade42c6cc
+		summarizeBy: none
+		sourceColumn: OnTime
+
+	column LateFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: 88862b42-905e-42f4-9ea4-f3433bbc1766
+		summarizeBy: none
+		sourceColumn: LateFlag
+
+	column LeadTimeDays
+		dataType: int64
+		formatString: 0
+		lineageTag: d8729924-ebfe-4b4f-b4a3-87dd1e9a516f
+		summarizeBy: none
+		sourceColumn: LeadTimeDays
+
+	column Freight
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 36bbe569-8982-4f00-8c42-ed6004326140
+		summarizeBy: none
+		sourceColumn: Freight
+
+	column ItemCount
+		dataType: int64
+		formatString: 0
+		lineageTag: d117d8e4-c1e6-43df-a9f9-ddf7dedfe34a
+		summarizeBy: none
+		sourceColumn: ItemCount
+
+	column SellerCount
+		dataType: int64
+		formatString: 0
+		lineageTag: f6ef4445-80b1-4cc7-84da-8128bd9750fd
+		summarizeBy: none
+		sourceColumn: SellerCount
+
+	partition FactOrders = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactOrders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"OrderID", type text}, {"CustomerID", type text}, {"OrderDate", type date}, {"SellerID", type text}, {"CustomerState", type text}, {"SellerState", type text}, {"Category", type text}, {"OnTime", Int64.Type}, {"LateFlag", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"Freight", type number}, {"ItemCount", Int64.Type}, {"SellerCount", Int64.Type}})
+				in
+					#"Changed Type"
+

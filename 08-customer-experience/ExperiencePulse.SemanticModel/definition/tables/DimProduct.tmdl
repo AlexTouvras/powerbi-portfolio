@@ -1,0 +1,40 @@
+table DimProduct
+	lineageTag: 57d63d67-a43e-45cf-8d00-dc19d553ab11
+
+	column Category
+		dataType: string
+		lineageTag: f1f8dc0b-c1c0-4d07-8356-8f685d44c427
+		summarizeBy: none
+		sourceColumn: Category
+
+	column OrderN
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7be7c896-03cc-4ab7-8bd3-38f719ce79cc
+		summarizeBy: none
+		sourceColumn: OrderN
+
+	column LateRate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: c46aab3d-e2d7-4f25-8015-53ca1f369968
+		summarizeBy: none
+		sourceColumn: LateRate
+
+	column AvgLeadTime
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 3cab99a9-8008-4b62-9338-27ab6e212bb6
+		summarizeBy: none
+		sourceColumn: AvgLeadTime
+
+	partition DimProduct = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimProduct.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Category", type text}, {"OrderN", Int64.Type}, {"LateRate", type number}, {"AvgLeadTime", type number}})
+				in
+					#"Changed Type"
+

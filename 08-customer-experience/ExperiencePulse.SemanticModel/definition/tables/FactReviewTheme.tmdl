@@ -1,0 +1,28 @@
+table FactReviewTheme
+	lineageTag: 1de70d97-750b-42ab-8077-f5717b67c0dc
+
+	measure 'Theme Reviews' = COUNTROWS(FactReviewTheme)
+		formatString: #,0
+		lineageTag: a613a7e7-0c4a-4285-9e56-9d913373e324
+
+	column ReviewID
+		dataType: string
+		lineageTag: d6c35736-91ad-42ae-b4a0-32c3b5611593
+		summarizeBy: none
+		sourceColumn: ReviewID
+
+	column Theme
+		dataType: string
+		lineageTag: c1b90cc5-fbf0-45d8-8c56-1dd00bac47eb
+		sourceColumn: Theme
+
+	partition FactReviewTheme = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactReviewTheme.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"ReviewID", type text}, {"Theme", type text}})
+				in
+					#"Changed Type"
+

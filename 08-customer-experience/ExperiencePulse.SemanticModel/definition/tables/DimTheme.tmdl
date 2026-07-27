@@ -1,0 +1,35 @@
+table DimTheme
+	lineageTag: c4ddbee8-6e7d-4bef-b4c4-11b2b13e5bcb
+
+	column Theme
+		dataType: string
+		lineageTag: 98ad8a9a-67af-4833-b116-d2181ac143e4
+		summarizeBy: none
+		sourceColumn: Theme
+		sortByColumn: ThemeSort
+
+	column ThemeSort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0f259aa5-6150-46d1-b91b-cda969b29558
+		summarizeBy: none
+		sourceColumn: ThemeSort
+
+	column PrimaryReviewN
+		dataType: int64
+		formatString: #,0
+		lineageTag: 172ef343-3928-4882-a7b3-4d47723f1246
+		summarizeBy: none
+		sourceColumn: PrimaryReviewN
+
+	partition DimTheme = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimTheme.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Theme", type text}, {"ThemeSort", Int64.Type}, {"PrimaryReviewN", Int64.Type}})
+				in
+					#"Changed Type"
+

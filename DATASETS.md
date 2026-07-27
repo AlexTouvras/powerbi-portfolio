@@ -72,6 +72,7 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 |---------|---------|--------|
 | `12-investing-desk` | Local [`investing`](../investing) + `01-finance` Nordic gold | **Featured** — Investment Portfolio PBIP |
 | `04-supply-chain` | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | **Featured** — LogisticsPulse.pbip + gold + forecast |
+| `08-customer-experience` | Olist reviews × Logistics `FactOrders` | **Featured** — ExperiencePulse.pbip + propensity + screenshots |
 | `07-helsinki-energy` | [Helsinki Nuuka open API](https://hri.fi/data/en/dataset/helsingin-kaupungin-palvelukiinteistojen-energiankulutustietoja) | Prework — API verified (~1.8k properties) |
 | `10-fpa-controllership` | Seeded Nordic multi-entity Actual + Budget + FX | Prework |
 
@@ -101,6 +102,15 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 - Gold: `FactOrders`, `DimSeller`, `FactForecast`, `ModelMetrics`, …
 - Refresh: `.\.venv\Scripts\python scripts\build-gold.py` then `forecast-demand.py` then Desktop Refresh
 - Sample demo — not inventory policy advice; In-Full OTIF out of v1
+
+### Customer experience (`08-customer-experience`)
+
+**Featured:** Experience Pulse — Olist reviews (~96k unique ReviewID) joined to Logistics `FactOrders`; CSAT / proxy NPS; logistic `DetractorProbability` (holdout ROC-AUC ~0.82); Key Influencers + decomposition; score erosion by delivery; recovery queue.
+
+- Open [`08-customer-experience/ExperiencePulse.pbip`](08-customer-experience/ExperiencePulse.pbip)
+- Gold: `FactReviews`, `FactReviewTheme`, `DimTheme`, synced Logistics dims
+- Refresh: `enrich-reviews.py` → `score-detractor.py` then Desktop Refresh
+- Sample model — not production CX / survey science
 
 ### Facility energy (`07-helsinki-energy`)
 
