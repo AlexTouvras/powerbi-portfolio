@@ -1,0 +1,48 @@
+table FactThemeQuotes
+	lineageTag: 96ece539-ee38-49d0-a850-e2803981374b
+
+	column Theme
+		dataType: string
+		lineageTag: 97dfc0a9-9a28-47e3-80f2-8c6b0e543347
+		sourceColumn: Theme
+
+	column ProxyNPSClass
+		dataType: string
+		lineageTag: 293d4d91-c932-42d3-a7d5-ca0d682e596d
+		sourceColumn: ProxyNPSClass
+
+	column ReviewScore
+		dataType: int64
+		formatString: 0
+		lineageTag: f585d511-cb36-4066-b509-0e4ff0072a4e
+		summarizeBy: none
+		sourceColumn: ReviewScore
+
+	column QuoteEN
+		dataType: string
+		lineageTag: 838b2456-3e43-47d8-a992-c6ac4508299a
+		sourceColumn: QuoteEN
+
+	column OrderID
+		dataType: string
+		lineageTag: c171466a-1dd5-44c9-b907-a8426eacb8fb
+		summarizeBy: none
+		sourceColumn: OrderID
+
+	column LateFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c95ff26-6956-43a3-9ff6-f3fb7c93aa92
+		summarizeBy: none
+		sourceColumn: LateFlag
+
+	partition FactThemeQuotes = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactThemeQuotes.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Theme", type text}, {"ProxyNPSClass", type text}, {"ReviewScore", Int64.Type}, {"QuoteEN", type text}, {"OrderID", type text}, {"LateFlag", Int64.Type}})
+				in
+					#"Changed Type"
+

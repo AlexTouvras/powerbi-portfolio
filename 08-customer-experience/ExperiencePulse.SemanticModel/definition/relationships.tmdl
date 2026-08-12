@@ -1,0 +1,24 @@
+relationship FactReviews_DimDate
+	fromColumn: FactReviews.ReviewDate
+	toColumn: DimDate.Date
+
+relationship FactReviews_DimSeller
+	fromColumn: FactReviews.SellerID
+	toColumn: DimSeller.SellerID
+
+relationship FactReviews_DimProduct
+	fromColumn: FactReviews.Category
+	toColumn: DimProduct.Category
+
+relationship FactReviewTheme_FactReviews
+	fromColumn: FactReviewTheme.ReviewID
+	toColumn: FactReviews.ReviewID
+
+relationship FactReviewTheme_DimTheme
+	fromColumn: FactReviewTheme.Theme
+	toColumn: DimTheme.Theme
+
+relationship FactThemeQuotes_DimTheme
+	fromColumn: FactThemeQuotes.Theme
+	toColumn: DimTheme.Theme
+

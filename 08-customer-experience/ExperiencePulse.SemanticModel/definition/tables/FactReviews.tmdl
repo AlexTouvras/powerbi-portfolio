@@ -1,0 +1,270 @@
+table FactReviews
+	lineageTag: bd3228b2-3303-4937-897a-1b5e042d57a5
+
+	measure Reviews = COUNTROWS(FactReviews)
+		formatString: #,0
+		lineageTag: 55d67898-9eb7-4705-abf3-1f0c01c6c336
+
+	measure 'Avg Review Score' = AVERAGE(FactReviews[ReviewScore])
+		formatString: 0.00
+		lineageTag: 4d0a2911-3c1c-4128-8491-dcd39492eaf3
+
+	measure 'CSAT %' = DIVIDE(CALCULATE(COUNTROWS(FactReviews), FactReviews[ReviewScore] >= 4), [Reviews])
+		formatString: 0.0%
+		lineageTag: 151de1cc-bdda-44e0-a896-67dd125a86bf
+
+	measure 'Proxy NPS' = DIVIDE(CALCULATE(COUNTROWS(FactReviews), FactReviews[ProxyNPSClass] = "Promoter"), [Reviews]) - DIVIDE(CALCULATE(COUNTROWS(FactReviews), FactReviews[ProxyNPSClass] = "Detractor"), [Reviews])
+		formatString: 0.0%
+		lineageTag: 5719c6a3-9ba5-406e-b4dd-5b06885e2db4
+
+	measure 'Detractor %' = DIVIDE(CALCULATE(COUNTROWS(FactReviews), FactReviews[ProxyNPSClass] = "Detractor"), [Reviews])
+		formatString: 0.0%
+		lineageTag: ea90b91d-b1fe-4c58-81bd-ec8c1ffbd362
+
+	measure 'Detractor Reviews' = CALCULATE(COUNTROWS(FactReviews), FactReviews[ProxyNPSClass] = "Detractor")
+		formatString: #,0
+		lineageTag: 69dbd93b-45ae-4c33-94cb-a23d4b186085
+
+	measure 'On-time Avg Score' = CALCULATE(AVERAGE(FactReviews[ReviewScore]), FactReviews[LateFlag] = 0)
+		formatString: 0.00
+		lineageTag: 7a9f9f39-6724-4750-9c10-480f7a11108b
+
+	measure 'Late Avg Score' = CALCULATE(AVERAGE(FactReviews[ReviewScore]), FactReviews[LateFlag] = 1)
+		formatString: 0.00
+		lineageTag: ffebadf4-e3d6-43de-93d0-10325dcc0e1e
+
+	measure 'Score Gap' = [On-time Avg Score] - [Late Avg Score]
+		formatString: 0.00
+		lineageTag: 187295e2-8f7e-4bcd-9bf8-3147880f08cd
+
+	measure 'Late Share of Detractors' = DIVIDE(CALCULATE(COUNTROWS(FactReviews), FactReviews[ProxyNPSClass] = "Detractor", FactReviews[LateFlag] = 1), [Detractor Reviews])
+		formatString: 0.0%
+		lineageTag: 78d970cd-7548-4fbe-a2e0-69d547856f2b
+
+	measure 'Top Detractor Theme' =
+			VAR _themes =
+				CALCULATETABLE(
+					VALUES(FactReviews[ThemePrimary]),
+					FactReviews[ProxyNPSClass] = "Detractor"
+				)
+			RETURN
+				CALCULATE(
+					FIRSTNONBLANK(FactReviews[ThemePrimary], 0),
+					TOPN(1, _themes, CALCULATE(COUNTROWS(FactReviews)), DESC),
+					FactReviews[ProxyNPSClass] = "Detractor"
+				)
+		lineageTag: 558b3a45-9799-484a-9967-0cf16c84f0c4
+
+	measure 'Coverage %' = DIVIDE(DISTINCTCOUNT(FactReviews[OrderID]), COUNTROWS(FactOrders))
+		formatString: 0.0%
+		lineageTag: 430b1239-8d5c-4c15-8004-db26ba67e99f
+
+	measure 'Avg Detractor Probability' = AVERAGE(FactReviews[DetractorProbability])
+		formatString: 0.0%
+		lineageTag: 322733d7-8693-4fc1-aa2a-5b08fb029bff
+
+	measure 'High Risk Reviews' = CALCULATE(COUNTROWS(FactReviews), FactReviews[RiskBand] = "High")
+		formatString: #,0
+		lineageTag: 2e9519da-c971-4887-9a97-5f864331a392
+
+	measure 'Avg Lead Time' = AVERAGE(FactReviews[LeadTimeDays])
+		formatString: 0.0
+		lineageTag: d656f3d7-cbc1-4e27-9d49-7e89e49d928c
+
+	column ReviewID
+		dataType: string
+		lineageTag: 854fac12-44db-4bc3-b3ed-0eda1f7112cf
+		summarizeBy: none
+		sourceColumn: ReviewID
+
+	column OrderID
+		dataType: string
+		lineageTag: 213a8561-9ded-4d83-8c8b-7e469825ff92
+		summarizeBy: none
+		sourceColumn: OrderID
+
+	column CustomerID
+		dataType: string
+		lineageTag: 29dc6474-27ba-42ed-be4e-aa5ab46c32d4
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column SellerID
+		dataType: string
+		lineageTag: f1e29219-a72b-454e-bbe1-e5bf831e9d58
+		summarizeBy: none
+		sourceColumn: SellerID
+
+	column Category
+		dataType: string
+		lineageTag: 4c9d2f38-bcab-403a-9103-29f9f41474c9
+		sourceColumn: Category
+
+	column CustomerState
+		dataType: string
+		lineageTag: 813d6a8a-3e01-41e0-881d-d50914574098
+		sourceColumn: CustomerState
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: e5ec8fdc-85a4-4217-8b25-b76d1310bee4
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ReviewDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 25807112-bcf9-4f8c-b4ee-8b651510cfc8
+		summarizeBy: none
+		sourceColumn: ReviewDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ReviewScore
+		dataType: int64
+		formatString: 0
+		lineageTag: ab4aa42a-5bd0-4fce-87ad-fa7d77d8827d
+		summarizeBy: none
+		sourceColumn: ReviewScore
+
+	column ScoreBand
+		dataType: string
+		lineageTag: 19790b49-1c19-4c06-8db9-ddc54711dbb6
+		sourceColumn: ScoreBand
+
+	column ProxyNPSClass
+		dataType: string
+		lineageTag: 0f958fa5-51c5-4863-a7b1-5772e2e3e238
+		sourceColumn: ProxyNPSClass
+
+	column DeliveryOutcome
+		dataType: string
+		lineageTag: c44ec959-779e-4edb-adbf-d79249f68289
+		sourceColumn: DeliveryOutcome
+		sortByColumn: DeliveryOutcomeSort
+
+	column DeliveryOutcomeSort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6818beda-ccfc-4458-b715-e06e7198a186
+		summarizeBy: none
+		sourceColumn: DeliveryOutcomeSort
+
+	column OnTime
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e9c9db4-adb5-4c72-9cb2-11d291cf92e3
+		summarizeBy: none
+		sourceColumn: OnTime
+
+	column LateFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: d5d863e4-3fff-4a21-954d-481ae361bde2
+		summarizeBy: none
+		sourceColumn: LateFlag
+
+	column LeadTimeDays
+		dataType: int64
+		formatString: 0
+		lineageTag: b84c5bbb-3e76-4923-adfd-789430ea56ed
+		summarizeBy: none
+		sourceColumn: LeadTimeDays
+
+	column LeadTimeBand
+		dataType: string
+		lineageTag: 218401d1-abc4-40f0-8f10-f71b72958217
+		sourceColumn: LeadTimeBand
+
+	column Freight
+		dataType: double
+		formatString: #,0.00
+		lineageTag: efe6d75e-a1aa-416b-b4fd-50e4307a072b
+		summarizeBy: none
+		sourceColumn: Freight
+
+	column HasComment
+		dataType: int64
+		formatString: 0
+		lineageTag: 3de6b765-0626-43a7-9bbd-9182979abc74
+		summarizeBy: none
+		sourceColumn: HasComment
+
+	column CommentPT
+		dataType: string
+		lineageTag: 22912d7e-2336-4721-bd6b-8816b9dd7d49
+		sourceColumn: CommentPT
+
+	column CommentEN
+		dataType: string
+		lineageTag: 81b37b0d-b582-43cb-9450-010250a9998d
+		sourceColumn: CommentEN
+
+	column ThemePrimary
+		dataType: string
+		lineageTag: 3ea4b3e3-1be7-4b00-8c6e-a547044a9e08
+		sourceColumn: ThemePrimary
+
+	column ThemeCount
+		dataType: int64
+		formatString: 0
+		lineageTag: 1cb7ed47-a62c-4ad7-ace1-8f592c3c471f
+		summarizeBy: none
+		sourceColumn: ThemeCount
+
+	column IsDetractor
+		dataType: int64
+		formatString: 0
+		lineageTag: 1109698e-86e8-4f92-8595-d7830d37d127
+		summarizeBy: none
+		sourceColumn: IsDetractor
+
+	column DetractorProbability
+		dataType: double
+		formatString: 0.00%
+		lineageTag: f5217cac-174f-48ca-8f88-48257039db26
+		summarizeBy: none
+		sourceColumn: DetractorProbability
+
+	column PredictedDetractor
+		dataType: int64
+		formatString: 0
+		lineageTag: 5157945e-4a1f-4eea-bf60-7ebd48b5b352
+		summarizeBy: none
+		sourceColumn: PredictedDetractor
+
+	column RiskBand
+		dataType: string
+		lineageTag: 484a4937-aad2-4f9a-b97a-866dd7d96468
+		sourceColumn: RiskBand
+		sortByColumn: RiskBandSort
+
+	column RiskBandSort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b38dbdbe-0b71-4f31-8b53-b295827b5685
+		summarizeBy: none
+		sourceColumn: RiskBandSort
+
+	column RiskRank
+		dataType: int64
+		formatString: #,0
+		lineageTag: c48b4c11-4cf6-4d80-ac09-39ff8e2a0ba4
+		summarizeBy: none
+		sourceColumn: RiskRank
+
+	partition FactReviews = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactReviews.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"ReviewID", type text}, {"OrderID", type text}, {"CustomerID", type text}, {"SellerID", type text}, {"Category", type text}, {"CustomerState", type text}, {"OrderDate", type date}, {"ReviewDate", type date}, {"ReviewScore", Int64.Type}, {"ScoreBand", type text}, {"ProxyNPSClass", type text}, {"DeliveryOutcome", type text}, {"DeliveryOutcomeSort", Int64.Type}, {"OnTime", Int64.Type}, {"LateFlag", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"Freight", type number}, {"HasComment", Int64.Type}, {"CommentPT", type text}, {"CommentEN", type text}, {"ThemePrimary", type text}, {"ThemeCount", Int64.Type}, {"IsDetractor", Int64.Type}, {"LeadTimeBand", type text}, {"DetractorProbability", type number}, {"PredictedDetractor", Int64.Type}, {"RiskBand", type text}, {"RiskBandSort", Int64.Type}, {"RiskRank", Int64.Type}})
+				in
+					#"Changed Type"
+

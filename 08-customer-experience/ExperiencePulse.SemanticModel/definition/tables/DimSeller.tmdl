@@ -1,0 +1,81 @@
+table DimSeller
+	lineageTag: 7fee69f4-9890-4eb5-b1e2-1067b158b61e
+
+	column SellerID
+		dataType: string
+		lineageTag: 7b8679b7-e579-4717-bbec-883d6d563797
+		summarizeBy: none
+		sourceColumn: SellerID
+
+	column OrderN
+		dataType: int64
+		formatString: #,0
+		lineageTag: 81f68acf-2502-41c2-b026-b192c2a59136
+		summarizeBy: none
+		sourceColumn: OrderN
+
+	column LateRate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: ea128b20-4e4c-4fd7-bc77-4bd93603c6a9
+		summarizeBy: none
+		sourceColumn: LateRate
+
+	column AvgFreight
+		dataType: double
+		formatString: #,0.00
+		lineageTag: bce5aaa2-6860-47c9-9916-6c33088a5563
+		summarizeBy: none
+		sourceColumn: AvgFreight
+
+	column AvgLeadTime
+		dataType: double
+		formatString: #,0.0
+		lineageTag: a8c91a9e-bb72-4a31-a118-fb55c0c6e88b
+		summarizeBy: none
+		sourceColumn: AvgLeadTime
+
+	column CustomerStateN
+		dataType: int64
+		formatString: #,0
+		lineageTag: d9d3865f-024e-4724-babe-b001d8640678
+		summarizeBy: none
+		sourceColumn: CustomerStateN
+
+	column City
+		dataType: string
+		lineageTag: a3860ba7-51b4-479e-bcc6-d3e0c4a6bb67
+		sourceColumn: City
+
+	column State
+		dataType: string
+		lineageTag: 111e7b8b-4a74-48f4-a292-14bb1958b4ff
+		sourceColumn: State
+
+	column RiskBand
+		dataType: string
+		lineageTag: c1407060-9dba-4f67-9f42-b5a01405d30e
+		sourceColumn: RiskBand
+
+	column RecommendedAction
+		dataType: string
+		lineageTag: b91b87b8-b9f9-4c64-987f-22f41aa39bd1
+		sourceColumn: RecommendedAction
+
+	column RiskRank
+		dataType: int64
+		formatString: #,0
+		lineageTag: ebb56f09-c217-4532-be0c-2226c025e074
+		summarizeBy: none
+		sourceColumn: RiskRank
+
+	partition DimSeller = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimSeller.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"SellerID", type text}, {"OrderN", Int64.Type}, {"LateRate", type number}, {"AvgFreight", type number}, {"AvgLeadTime", type number}, {"CustomerStateN", Int64.Type}, {"City", type text}, {"State", type text}, {"RiskBand", type text}, {"RecommendedAction", type text}, {"RiskRank", Int64.Type}})
+				in
+					#"Changed Type"
+
