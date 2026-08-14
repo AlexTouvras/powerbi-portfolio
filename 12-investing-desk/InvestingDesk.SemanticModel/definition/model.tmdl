@@ -6,11 +6,12 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","PortfolioMetrics","DimSleeve","DimDate","DimMandateRule","DimNordicCompany","FactSimSummary","FactEquityCurve","FactPolicyCompare","FactHolding","FactRebalanceAction","FactNordicPrices"]
+annotation PBI_QueryOrder = ["GoldDataFolder","PortfolioMetrics","DimSleeve","DimDate","DimMandateRule","DimNordicCompany","FactSimSummary","FactEquityCurve","FactPolicyCompare","FactHolding","FactRebalanceAction","FactNordicPrices","FactRiskWeight","FactRiskSnapshot"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-ref expression GoldDataFolder
+annotation PBI_ProTooling = ["DevMode"]
+
 ref table PortfolioMetrics
 ref table DimSleeve
 ref table DimDate
@@ -22,3 +23,6 @@ ref table FactPolicyCompare
 ref table FactHolding
 ref table FactRebalanceAction
 ref table FactNordicPrices
+ref table FactRiskWeight
+ref table FactRiskSnapshot
+

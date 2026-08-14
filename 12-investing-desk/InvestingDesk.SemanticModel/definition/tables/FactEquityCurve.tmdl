@@ -1,48 +1,59 @@
 table FactEquityCurve
+	lineageTag: 05da0b49-6f12-4a4c-8941-3a3c665b46dc
 
 	measure 'Equity Indexed' = AVERAGE(FactEquityCurve[EquityIndexed])
 		formatString: 0.00
+		lineageTag: a10db0dc-1a7c-41f8-8b52-8ae9216362cb
 
 	measure 'Drawdown Pct' = AVERAGE(FactEquityCurve[Drawdown])
 		formatString: 0.0%
+		lineageTag: 634d07dc-4d56-4172-bfc9-2436c108211f
 
 	measure 'Equity EUR Curve' = AVERAGE(FactEquityCurve[EquityEUR])
 		formatString: €#,0
+		lineageTag: f4b23462-f96d-4bce-b76c-863df8bcfb3e
 
 	column Date
 		dataType: dateTime
 		formatString: yyyy-mm-dd
+		lineageTag: b21e7598-4084-41e6-9082-14c989557f41
 		summarizeBy: none
 		sourceColumn: Date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column Series
 		dataType: string
+		lineageTag: 4a99651b-8030-48fa-b8cb-5006d4017f30
 		sourceColumn: Series
 
 	column EquityEUR
 		dataType: double
 		formatString: #,0
+		lineageTag: 65486b0a-9895-424f-aac3-b360e6ab9bcb
 		sourceColumn: EquityEUR
 
 	column EquityIndexed
 		dataType: double
 		formatString: 0.00
+		lineageTag: a9d25b1c-4e1b-449e-ae55-df314642588b
 		sourceColumn: EquityIndexed
 
 	column Drawdown
 		dataType: double
 		formatString: 0.0%
+		lineageTag: c95cd0ca-3c86-4b8b-810c-1092d2a1da76
 		sourceColumn: Drawdown
-
 
 	partition FactEquityCurve = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactEquityCurve.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Series", type text}, {"EquityEUR", type number}, {"EquityIndexed", type number}, {"Drawdown", type number}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactEquityCurve.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Series", type text}, {"EquityEUR", type number}, {"EquityIndexed", type number}, {"Drawdown", type number}})
+				in
+					Typed
+

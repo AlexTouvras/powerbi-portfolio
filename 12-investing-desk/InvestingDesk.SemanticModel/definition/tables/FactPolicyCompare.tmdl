@@ -1,116 +1,140 @@
 table FactPolicyCompare
+	lineageTag: d60e739d-bd93-422f-9490-5fddc990a046
 
 	measure 'Policy CAGR' = AVERAGE(FactPolicyCompare[CAGR])
 		formatString: 0.0%
+		lineageTag: 9d682446-204a-4548-a8e1-05071a45c9da
 
 	measure 'Policy Sharpe' = AVERAGE(FactPolicyCompare[Sharpe])
 		formatString: 0.00
+		lineageTag: 143f0948-9890-4a3b-8bb7-b960e9c76600
 
 	measure 'Policy Sharpe vs BM' = AVERAGE(FactPolicyCompare[SharpeVsBenchmark])
 		formatString: +0.00;-0.00;0.00
+		lineageTag: 67fc94d7-9f65-4eab-8c75-19e6ea2fe94d
 
 	measure 'Policy Max DD' = AVERAGE(FactPolicyCompare[MaxDrawdown])
 		formatString: 0.0%
+		lineageTag: 6ee863af-0054-4a8e-840d-874ff374b8c4
 
 	measure 'Policy Vol' = AVERAGE(FactPolicyCompare[AnnVol])
 		formatString: 0.0%
+		lineageTag: 568e558b-06a0-481e-ac46-999af09b94e2
 
 	measure 'Policy Turnover' = AVERAGE(FactPolicyCompare[AnnOnewayTurnover])
 		formatString: 0.00
+		lineageTag: c46512a1-3187-4069-8fe1-84a537779147
 
 	column Label
 		dataType: string
+		lineageTag: 051041c7-fd73-4209-9d60-68618c2e6a05
 		sourceColumn: Label
 
 	column ShortLabel
 		dataType: string
+		lineageTag: af1ec864-e934-465e-a546-d9389cfa014d
 		sourceColumn: ShortLabel
 
 	column Role
 		dataType: string
+		lineageTag: 1d66b8d4-07df-4a25-bc9d-21385aee4d4d
 		sourceColumn: Role
 
 	column FeeBps
 		dataType: double
 		formatString: 0.0
+		lineageTag: 6bd83e1a-be1d-446c-9613-87ae71c4c7d9
 		sourceColumn: FeeBps
 
 	column StartEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 325b1603-437f-4e1d-9f2d-2db2580f10cf
 		sourceColumn: StartEUR
 
 	column EndEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 097e20b3-ba93-4f79-931b-a9ce1324ea26
 		sourceColumn: EndEUR
 
 	column TotalReturn
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 20560eae-4b6e-40ff-b0c0-63762e5c2346
 		sourceColumn: TotalReturn
 
 	column CAGR
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 871dea41-3881-40d2-bf27-f3dc78e491e8
 		sourceColumn: CAGR
 
 	column AnnVol
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 363cf8b3-ba79-4296-9cda-8567b5d8c1c5
 		sourceColumn: AnnVol
 
 	column Sharpe
 		dataType: double
 		formatString: 0.00
+		lineageTag: 6a21ced2-8cad-42a1-9703-8f313a643096
 		sourceColumn: Sharpe
 
 	column SharpeVsBenchmark
 		dataType: double
 		formatString: +0.00;-0.00;0.00
+		lineageTag: 9f3bde74-b0bb-40f6-a6a7-213d8cd490e0
 		sourceColumn: SharpeVsBenchmark
 
 	column MaxDrawdown
 		dataType: double
 		formatString: 0.0%
+		lineageTag: c4264ce4-1f9e-4b1f-81ee-1edddf09c25c
 		sourceColumn: MaxDrawdown
 
 	column AnnOnewayTurnover
 		dataType: double
 		formatString: 0.00
+		lineageTag: 0e644b62-4087-455e-a7b0-966a1cfb4322
 		sourceColumn: AnnOnewayTurnover
 
 	column AvgNamesChanged
 		dataType: double
 		formatString: 0.0
+		lineageTag: 964ab808-622b-41e9-9104-00b7acd0c4dc
 		sourceColumn: AvgNamesChanged
 
 	column AvgHoldings
 		dataType: double
 		formatString: 0.0
+		lineageTag: a60c659b-d0a8-4b0b-bafd-26645bf44af8
 		sourceColumn: AvgHoldings
 
 	column Rebalances
 		dataType: double
 		formatString: 0
+		lineageTag: 77bacea5-c182-4157-b941-6e1518c977c7
 		sourceColumn: Rebalances
 
 	column Days
 		dataType: double
 		formatString: 0
+		lineageTag: 0ab37f09-5926-4f60-addf-d955b00bf3c2
 		sourceColumn: Days
-
 
 	partition FactPolicyCompare = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactPolicyCompare.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Label", type text}, {"ShortLabel", type text}, {"Role", type text}, {"FeeBps", type number}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"SharpeVsBenchmark", type number}, {"MaxDrawdown", type number}, {"AnnOnewayTurnover", type number}, {"AvgNamesChanged", type number}, {"AvgHoldings", type number}, {"Rebalances", type number}, {"Days", type number}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactPolicyCompare.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Label", type text}, {"ShortLabel", type text}, {"Role", type text}, {"FeeBps", type number}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"SharpeVsBenchmark", type number}, {"MaxDrawdown", type number}, {"AnnOnewayTurnover", type number}, {"AvgNamesChanged", type number}, {"AvgHoldings", type number}, {"Rebalances", type number}, {"Days", type number}})
+				in
+					Typed
+

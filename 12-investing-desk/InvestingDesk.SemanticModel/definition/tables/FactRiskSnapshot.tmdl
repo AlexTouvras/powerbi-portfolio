@@ -1,0 +1,79 @@
+table FactRiskSnapshot
+	lineageTag: 55129875-c207-4fb1-bd63-1b9681027012
+
+	measure 'VaR 95 Hist' = MAX(FactRiskSnapshot[VaR95HistPct])
+		formatString: 0.00%
+		lineageTag: f188752d-9690-474d-b772-a2c3c7b621af
+
+	measure 'VaR 95 Param' = MAX(FactRiskSnapshot[VaR95ParamPct])
+		formatString: 0.00%
+		lineageTag: 88dea378-5cc3-40c8-b08a-c3f535a0f71b
+
+	measure 'Risk Names Used' = MAX(FactRiskSnapshot[NamesUsed])
+		formatString: 0
+		lineageTag: 9f96895f-7932-4ec2-b9e0-973b15be70d0
+
+	measure 'Risk Return Days' = MAX(FactRiskSnapshot[NObs])
+		formatString: #,0
+		lineageTag: a9d1c940-3f08-4c49-b633-933b7991fd01
+
+	column AsOf
+		dataType: string
+		lineageTag: 71b6b4f5-18c5-4a3e-a25d-0c6c8cdfe664
+		sourceColumn: AsOf
+
+	column NObs
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4de73e0c-d305-4123-b7a5-03f8936973ea
+		summarizeBy: none
+		sourceColumn: NObs
+
+	column NamesUsed
+		dataType: int64
+		formatString: 0
+		lineageTag: 7d014eb5-03d3-4cb9-a84f-c3f79712f581
+		summarizeBy: none
+		sourceColumn: NamesUsed
+
+	column VaR95HistPct
+		dataType: double
+		formatString: 0.00%
+		lineageTag: 8a88c139-0ac7-4825-9e7a-dd8c35882786
+		sourceColumn: VaR95HistPct
+
+	column VaR95ParamPct
+		dataType: double
+		formatString: 0.00%
+		lineageTag: 45b7dfd0-eab0-40f4-8225-5869f587d9a5
+		sourceColumn: VaR95ParamPct
+
+	column MinVolAnn
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 3ec36daf-d2b7-4888-958b-c73acb75b55f
+		sourceColumn: MinVolAnn
+
+	column MaxSharpeAnn
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9667b85a-1cb2-414c-bc3a-b322396f1169
+		sourceColumn: MaxSharpeAnn
+
+	column DroppedTickers
+		dataType: string
+		lineageTag: dbc26e08-4690-4641-903b-394bdc529ef7
+		sourceColumn: DroppedTickers
+
+	partition FactRiskSnapshot = m
+		mode: import
+		source =
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactRiskSnapshot.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"AsOf", type text}, {"NObs", Int64.Type}, {"NamesUsed", Int64.Type}, {"VaR95HistPct", type number}, {"VaR95ParamPct", type number}, {"MinVolAnn", type number}, {"MaxSharpeAnn", type number}, {"DroppedTickers", type text}})
+				in
+					Typed
+

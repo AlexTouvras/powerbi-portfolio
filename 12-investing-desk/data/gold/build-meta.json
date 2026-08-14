@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T06:44:12.922Z",
+  "generatedAt": "2026-08-14T07:57:32.312Z",
   "investingRoot": "C:\\Users\\kater\\.cursor\\projects\\investing",
   "nordicGold": "C:\\Users\\kater\\.cursor\\projects\\PowerBI\\01-finance\\data\\gold",
   "simGeneratedAt": "2026-07-23T10:54:23.751805+00:00",
@@ -14,11 +14,14 @@
     "DimMandateRule": 8,
     "DimNordicCompany": 82,
     "FactNordicPrices": 1582,
-    "DimDate": 1418
+    "DimDate": 1420,
+    "FactRiskWeight": 21,
+    "FactRiskSnapshot": 1
   },
   "hero": {
     "ExcessCAGR": 0.15821663505603722,
     "MidSharpe": 1.3552722128664874,
-    "CoreSharpe": 1.0100717832212565
+    "CoreSharpe": 1.0100717832212565,
+    "VaR95HistPct": 0.02124971271735914
   }
 }

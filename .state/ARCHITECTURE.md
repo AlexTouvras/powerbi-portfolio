@@ -12,7 +12,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 |------|------------------|-------|
 | Nordic Equity gold | `01-finance/data/gold/` — DimCompany, DimDate, FactPrices | Yahoo delayed · ~82 Nordic caps · indicators + RSI signals |
 | Investing research | `../investing` — capital.yaml, sim_latest.json, research_selection_kpis.csv | Sleeve policy · Core vs Mid sims · risk gates |
-| Investing Desk gold | `12-investing-desk/data/gold/` | Export merges both sources |
+| Investing Desk gold | `12-investing-desk/data/gold/` | Export merges both sources + risk layer |
 | Experience Pulse gold | `08-customer-experience/data/gold/` | FactReviews + themes; join to Logistics FactOrders |
 
 ## Design patterns
@@ -75,3 +75,4 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | 2026-07-23 | Report framed as **Investment Portfolio** (CIO) | User: JPMorgan-level+ |
 | 2026-07-24 | Logistics Pulse signature = demand forecast PI ribbon; KPI = On-time % (not true OTIF) | Portfolio gap = forecasting; In-Full deferred; avoid Bank Icon Map hero |
 | 2026-07-24 | Trim Olist early ramp + trailing stub week before SARIMAX holdout | Raw end-of-sample wind-down inflated MAPE to >100% |
+| 2026-08-14 | Investing Desk Risk & Mandate shows live-sleeve 95% VaR + book vs min-vol vs max-Sharpe | User: risk as extra layer, not Ledger 2.0; first cycle gold + one visual |

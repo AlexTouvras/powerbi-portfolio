@@ -9,3 +9,4 @@ relationship FactNordicPrices_DimDate
 relationship FactNordicPrices_DimNordicCompany
 	fromColumn: FactNordicPrices.Ticker
 	toColumn: DimNordicCompany.Ticker
+

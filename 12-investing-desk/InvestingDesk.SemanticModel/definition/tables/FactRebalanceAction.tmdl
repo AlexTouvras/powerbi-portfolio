@@ -1,92 +1,110 @@
 table FactRebalanceAction
+	lineageTag: 6bb22d0e-9aab-4ada-9913-2d6c8dc4299e
 
 	measure 'Action Count' = COUNTROWS(FactRebalanceAction)
 		formatString: #,0
+		lineageTag: cd4cea91-9798-45e3-9d68-17a9ea122978
 
 	measure 'Net Delta Weight' = SUM(FactRebalanceAction[DeltaWeightPct])
 		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: d7dab755-2347-4914-b2d5-36b6c1589075
 
 	measure 'Abs Delta Weight' = SUM(FactRebalanceAction[AbsDeltaWeightPct])
 		formatString: 0.0%
+		lineageTag: 19059d10-d128-4989-81d5-5895bf1f0678
 
 	column Action
 		dataType: string
+		lineageTag: b6377237-0286-4ec8-9afc-26ac80985175
 		sourceColumn: Action
 
 	column Name
 		dataType: string
+		lineageTag: 3ac724e7-9f36-487d-b84c-0732f941c44c
 		sourceColumn: Name
 
 	column YahooSymbol
 		dataType: string
+		lineageTag: db5b3eee-c5a9-4ef6-8cdc-a10262012394
 		sourceColumn: YahooSymbol
 
 	column CurrentEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 770d66ec-4fbf-4a7c-90e4-5d1d52e52bcf
 		sourceColumn: CurrentEUR
 
 	column TargetEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 92db970f-d7a1-4a89-9781-6b48e6c7e6c5
 		sourceColumn: TargetEUR
 
 	column DeltaEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 6a525c8a-441d-4b43-b7c5-c0051937ecee
 		sourceColumn: DeltaEUR
 
 	column Mom12m
 		dataType: double
 		formatString: 0.0%
+		lineageTag: b7470940-683f-47d5-bf29-c15b80b90a55
 		sourceColumn: Mom12m
 
 	column Rank
 		dataType: string
+		lineageTag: 98d02b77-fb2c-4b23-a0b1-ee091aea8597
 		sourceColumn: Rank
 
 	column Explanation
 		dataType: string
+		lineageTag: 13a27739-db44-4f2a-83fe-bd198e9d1407
 		sourceColumn: Explanation
 
 	column IsNordic
 		dataType: int64
 		formatString: 0
+		lineageTag: 5b1b58b8-e378-495c-86d7-b0c08e488c1d
 		summarizeBy: none
 		sourceColumn: IsNordic
 
 	column Region
 		dataType: string
+		lineageTag: 19ac5b48-f57d-4ac9-8b2b-e2e684fbb310
 		sourceColumn: Region
 
 	column AbsDeltaEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: fb770cea-43ca-4c39-81e2-e560fb1204b4
 		sourceColumn: AbsDeltaEUR
 
 	column DeltaWeightPct
 		dataType: double
 		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 2cb06a4a-2552-4c09-8acd-24a88753cc15
 		sourceColumn: DeltaWeightPct
 
 	column AbsDeltaWeightPct
 		dataType: double
 		formatString: 0.0%
+		lineageTag: fa77f682-1ee3-42fa-8756-033ee00d60cd
 		sourceColumn: AbsDeltaWeightPct
-
 
 	partition FactRebalanceAction = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactRebalanceAction.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Action", type text}, {"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Explanation", type text}, {"IsNordic", Int64.Type}, {"Region", type text}, {"AbsDeltaEUR", type number}, {"DeltaWeightPct", type number}, {"AbsDeltaWeightPct", type number}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactRebalanceAction.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Action", type text}, {"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Explanation", type text}, {"IsNordic", Int64.Type}, {"Region", type text}, {"AbsDeltaEUR", type number}, {"DeltaWeightPct", type number}, {"AbsDeltaWeightPct", type number}})
+				in
+					Typed
+

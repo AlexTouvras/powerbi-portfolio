@@ -699,6 +699,53 @@ writeCsv(
   dimDates
 );
 
+const riskWeightsSrc = path.join(investingRoot, "reports/risk_layer_weights.csv");
+const riskSnapSrc = path.join(investingRoot, "reports/risk_layer_snapshot.csv");
+let riskWeightRows = [];
+let riskSnapRows = [];
+if (fs.existsSync(riskWeightsSrc) && fs.existsSync(riskSnapSrc)) {
+  riskWeightRows = readCsv(riskWeightsSrc).map((r) => ({
+    Name: r.Name,
+    YahooSymbol: r.YahooSymbol,
+    BookLabel: r.BookLabel,
+    BookLabelSort: Number(r.BookLabelSort),
+    WeightPct: Number(r.WeightPct),
+  }));
+  riskSnapRows = readCsv(riskSnapSrc).map((r) => ({
+    AsOf: r.AsOf,
+    NObs: Number(r.NObs),
+    NamesUsed: Number(r.NamesUsed),
+    VaR95HistPct: Number(r.VaR95HistPct),
+    VaR95ParamPct: Number(r.VaR95ParamPct),
+    MinVolAnn: Number(r.MinVolAnn),
+    MaxSharpeAnn: Number(r.MaxSharpeAnn),
+    DroppedTickers: r.DroppedTickers || "",
+  }));
+} else {
+  console.warn(
+    "Missing investing reports/risk_layer_*.csv — run: invest risk-layer"
+  );
+}
+writeCsv(
+  "FactRiskWeight.csv",
+  ["Name", "YahooSymbol", "BookLabel", "BookLabelSort", "WeightPct"],
+  riskWeightRows
+);
+writeCsv(
+  "FactRiskSnapshot.csv",
+  [
+    "AsOf",
+    "NObs",
+    "NamesUsed",
+    "VaR95HistPct",
+    "VaR95ParamPct",
+    "MinVolAnn",
+    "MaxSharpeAnn",
+    "DroppedTickers",
+  ],
+  riskSnapRows
+);
+
 const meta = {
   generatedAt: new Date().toISOString(),
   investingRoot,
@@ -716,11 +763,14 @@ const meta = {
     DimNordicCompany: nordicCompanies.length,
     FactNordicPrices: nordicPriceRows.length,
     DimDate: dimDates.length,
+    FactRiskWeight: riskWeightRows.length,
+    FactRiskSnapshot: riskSnapRows.length,
   },
   hero: {
     ExcessCAGR: excessCagr,
     MidSharpe: mid?.Sharpe,
     CoreSharpe: core?.Sharpe,
+    VaR95HistPct: riskSnapRows[0]?.VaR95HistPct ?? null,
   },
 };
 fs.writeFileSync(path.join(gold, "build-meta.json"), JSON.stringify(meta, null, 2));

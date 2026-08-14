@@ -1,72 +1,88 @@
 table FactNordicPrices
+	lineageTag: 1d4ee8a9-332f-4dcb-81bf-706c20a716ce
 
 	measure 'Avg Day Change' = CALCULATE(AVERAGE(FactNordicPrices[ChangePct]), FactNordicPrices[IsLatest] = 1)
 		formatString: 0.00%
+		lineageTag: 3d5aa2fd-e7e7-4eb5-a84b-7797f2a43e88
 
 	measure 'RSI Signal Count' = CALCULATE(SUM(FactNordicPrices[IsSignal]), FactNordicPrices[IsLatest] = 1)
 		formatString: #,0
+		lineageTag: 3697af11-c933-4e59-b3b0-f3a10e2195ec
 
 	measure 'Latest Close' = CALCULATE(AVERAGE(FactNordicPrices[Close]), FactNordicPrices[IsLatest] = 1)
 		formatString: #,0.00
+		lineageTag: 55e6b181-a13f-48ba-adcb-f991968f271f
 
 	measure 'Overlap Day Change' = CALCULATE([Avg Day Change], DimNordicCompany[InMidUniverse] = 1)
 		formatString: 0.00%
+		lineageTag: 5e23908c-c05e-4a39-9359-bcd54e8adc29
 
 	column Date
 		dataType: dateTime
 		formatString: yyyy-mm-dd
+		lineageTag: e22d44fe-1a57-41ee-8505-0f637a31a46c
 		summarizeBy: none
 		sourceColumn: Date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column Ticker
 		dataType: string
+		lineageTag: 6e6e3cbb-fbdd-4b88-b2b2-3ec6b37694bc
 		sourceColumn: Ticker
 
 	column Close
 		dataType: double
 		formatString: #,0.00
+		lineageTag: ec792615-dbea-4dfc-8f95-8f3a10be4a13
 		sourceColumn: Close
 
 	column ChangePct
 		dataType: double
 		formatString: 0.00%
+		lineageTag: c112d4e0-25e9-4b69-ae83-84af7688da44
 		sourceColumn: ChangePct
 
 	column RSI14
 		dataType: double
 		formatString: 0.0
+		lineageTag: cf75db46-fea3-49e1-96c4-10662be9be28
 		sourceColumn: RSI14
 
 	column IsLatest
 		dataType: int64
 		formatString: 0
+		lineageTag: 76a0a598-43a1-4764-90be-0c83d392f066
 		summarizeBy: none
 		sourceColumn: IsLatest
 
 	column StrategySide
 		dataType: string
+		lineageTag: 374e9c9a-3cdd-4037-98be-3f0dc8ecce78
 		sourceColumn: StrategySide
 
 	column IsSignal
 		dataType: int64
 		formatString: 0
+		lineageTag: 798674d8-04c7-4dd2-b927-af6bacbd6539
 		summarizeBy: none
 		sourceColumn: IsSignal
 
 	column MarketCapEURm
 		dataType: double
 		formatString: #,0
+		lineageTag: 5592e252-8a79-46ee-b45c-981600b0160c
 		sourceColumn: MarketCapEURm
-
 
 	partition FactNordicPrices = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactNordicPrices.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Ticker", type text}, {"Close", type number}, {"ChangePct", type number}, {"RSI14", type number}, {"IsLatest", Int64.Type}, {"StrategySide", type text}, {"IsSignal", Int64.Type}, {"MarketCapEURm", type number}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactNordicPrices.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Ticker", type text}, {"Close", type number}, {"ChangePct", type number}, {"RSI14", type number}, {"IsLatest", Int64.Type}, {"StrategySide", type text}, {"IsSignal", Int64.Type}, {"MarketCapEURm", type number}})
+				in
+					Typed
+

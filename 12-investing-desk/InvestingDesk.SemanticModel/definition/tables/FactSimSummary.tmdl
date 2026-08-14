@@ -1,79 +1,95 @@
 table FactSimSummary
+	lineageTag: 1662cc94-4e9b-426b-be27-71e2a2b0ba58
 
 	measure 'Sim CAGR' = AVERAGE(FactSimSummary[CAGR])
 		formatString: 0.0%
+		lineageTag: 58e8101c-22bd-4a00-8ee7-29268e234ecd
 
 	measure 'Sim Sharpe' = AVERAGE(FactSimSummary[Sharpe])
 		formatString: 0.00
+		lineageTag: 107fb34c-d2b4-4db9-b463-343711fe673d
 
 	measure 'Sim Max DD' = AVERAGE(FactSimSummary[MaxDrawdown])
 		formatString: 0.0%
+		lineageTag: a94674f5-d75c-4d18-bb42-127ed829b84a
 
 	measure 'Sim Ann Vol' = AVERAGE(FactSimSummary[AnnVol])
 		formatString: 0.0%
+		lineageTag: 3bfed65a-577e-454c-9f1b-0c7d9f8341b2
 
 	column Strategy
 		dataType: string
+		lineageTag: fc5c048a-3206-438c-ad3e-699e3e80a376
 		sourceColumn: Strategy
 
 	column SeriesLabel
 		dataType: string
+		lineageTag: 21fd6033-bdd0-41bb-b72a-e3eb624e2bf3
 		sourceColumn: SeriesLabel
 
 	column Role
 		dataType: string
+		lineageTag: a878e3f7-cf07-4d9d-8cd0-fec79837c678
 		sourceColumn: Role
 
 	column StartEUR
 		dataType: double
 		formatString: #,0
+		lineageTag: 1fea7a50-e2dc-44cf-80fc-af22291f99af
 		sourceColumn: StartEUR
 
 	column EndEUR
 		dataType: double
 		formatString: #,0
+		lineageTag: 654dad13-b52f-4a6f-ab24-6d63ffeca38d
 		sourceColumn: EndEUR
 
 	column TotalReturn
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 7b684709-8e8c-4a5c-87f9-528a4faf327e
 		sourceColumn: TotalReturn
 
 	column CAGR
 		dataType: double
 		formatString: 0.0%
+		lineageTag: b6e6d6bb-15d2-4459-9aa0-84723b69e4d9
 		sourceColumn: CAGR
 
 	column AnnVol
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 18b969eb-deeb-49be-9234-e8a747cf767a
 		sourceColumn: AnnVol
 
 	column Sharpe
 		dataType: double
 		formatString: 0.00
+		lineageTag: 81d48d39-07af-4749-ad2d-5d6d370037b4
 		sourceColumn: Sharpe
 
 	column MaxDrawdown
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 7dbe826c-dad6-4495-aeff-42d02a554db3
 		sourceColumn: MaxDrawdown
 
 	column Days
 		dataType: int64
 		formatString: 0
+		lineageTag: 991ca3aa-2f05-42df-a968-52890dedf76f
 		summarizeBy: none
 		sourceColumn: Days
-
 
 	partition FactSimSummary = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactSimSummary.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Strategy", type text}, {"SeriesLabel", type text}, {"Role", type text}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"MaxDrawdown", type number}, {"Days", Int64.Type}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactSimSummary.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Strategy", type text}, {"SeriesLabel", type text}, {"Role", type text}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"MaxDrawdown", type number}, {"Days", Int64.Type}})
+				in
+					Typed
+

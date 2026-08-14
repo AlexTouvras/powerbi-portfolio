@@ -1,95 +1,116 @@
 table DimSleeve
+	lineageTag: 8cddcf2a-f817-447d-b2a6-24fc24f21e18
 
 	measure 'Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] <> "ringfence")
 		formatString: €#,0
+		lineageTag: 73bb60c5-d4a7-4a38-a0b4-b0313dfa12ac
 
 	measure 'Sleeve Weight' = CALCULATE(SUM(DimSleeve[WeightPct]), DimSleeve[SleeveKey] <> "ringfence")
 		formatString: 0.0%
+		lineageTag: bd19874f-697d-4057-9c42-59763dae0c4e
 
 	measure 'Core Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "core")
 		formatString: €#,0
+		lineageTag: bbb82d49-d4bc-4fca-965e-f3d6871f014d
 
 	measure 'Mid Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "mid")
 		formatString: €#,0
+		lineageTag: 0ab4db93-4b42-428e-9772-56b997019732
 
 	measure 'Short Sleeve EUR' = CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[SleeveKey] = "short")
 		formatString: €#,0
+		lineageTag: 6d2df9b7-c26b-4715-b2ed-08f738c56824
 
 	measure 'Active Sleeve %' = DIVIDE(CALCULATE(SUM(DimSleeve[ApproxEUR]), DimSleeve[IsActiveLoop] = 1), [Sleeve EUR])
 		formatString: 0.0%
+		lineageTag: f5c8847f-3dd8-460b-a27a-e43edf3ea2cc
 
 	measure 'Core Sleeve %' = DIVIDE([Core Sleeve EUR], [Sleeve EUR])
 		formatString: 0.0%
+		lineageTag: 99558eab-8bfc-4112-8fb6-8705f58630fd
 
 	measure 'Mid Sleeve %' = DIVIDE([Mid Sleeve EUR], [Sleeve EUR])
 		formatString: 0.0%
+		lineageTag: f4230d03-3788-4ef6-90d6-3acf279629bb
 
 	measure 'Short Sleeve %' = DIVIDE([Short Sleeve EUR], [Sleeve EUR])
 		formatString: 0.0%
+		lineageTag: db25ac98-140a-4ec6-8375-d3e8cf6346d0
 
 	column SleeveKey
 		dataType: string
+		lineageTag: 13210e46-5177-4cc3-864a-11b8dbcfd109
 		sourceColumn: SleeveKey
 
 	column SleeveName
 		dataType: string
-		sortByColumn: SleeveSort
+		lineageTag: 9a12d87f-d492-44d1-ab5b-3cab3b645d4c
 		sourceColumn: SleeveName
+		sortByColumn: SleeveSort
 
 	column Broker
 		dataType: string
+		lineageTag: 200274f1-967d-459c-b754-2304e937c46d
 		sourceColumn: Broker
 
 	column ApproxEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: ce2777db-cee5-417b-aca8-dbf8d01dffb4
 		sourceColumn: ApproxEUR
 
 	column Horizon
 		dataType: string
+		lineageTag: 3d1a8b61-7acc-4dab-960a-a986c4cf6d63
 		sourceColumn: Horizon
 
 	column DayTrading
 		dataType: int64
 		formatString: 0
+		lineageTag: 6a49a903-386f-4990-afa0-df78960efbf3
 		summarizeBy: none
 		sourceColumn: DayTrading
 
 	column AssetClass
 		dataType: string
+		lineageTag: bcd4e7c2-9da3-4e3a-b052-641a07cc6187
 		sourceColumn: AssetClass
 
 	column SleeveSort
 		dataType: int64
 		isHidden
+		lineageTag: a9375067-4692-49f1-85d2-3e98b92676f4
 		summarizeBy: none
 		sourceColumn: SleeveSort
 
 	column IsActiveLoop
 		dataType: int64
 		formatString: 0
+		lineageTag: 71e47dfb-ff3a-4802-87ae-6c7ff348186f
 		summarizeBy: none
 		sourceColumn: IsActiveLoop
 
 	column StatusNote
 		dataType: string
+		lineageTag: 416989bb-c972-40db-89e8-76d5abf1ccae
 		sourceColumn: StatusNote
 
 	column WeightPct
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 7dc5a1ff-2022-4a52-a38b-4a0ceca82dc5
 		sourceColumn: WeightPct
-
 
 	partition DimSleeve = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/DimSleeve.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"SleeveKey", type text}, {"SleeveName", type text}, {"Broker", type text}, {"ApproxEUR", type number}, {"Horizon", type text}, {"DayTrading", Int64.Type}, {"AssetClass", type text}, {"SleeveSort", Int64.Type}, {"IsActiveLoop", Int64.Type}, {"StatusNote", type text}, {"WeightPct", type number}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/DimSleeve.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"SleeveKey", type text}, {"SleeveName", type text}, {"Broker", type text}, {"ApproxEUR", type number}, {"Horizon", type text}, {"DayTrading", Int64.Type}, {"AssetClass", type text}, {"SleeveSort", Int64.Type}, {"IsActiveLoop", Int64.Type}, {"StatusNote", type text}, {"WeightPct", type number}})
+				in
+					Typed
+

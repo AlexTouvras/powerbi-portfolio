@@ -1,64 +1,77 @@
 table DimNordicCompany
+	lineageTag: 848be66e-a966-4edb-9351-4e4b03f78483
 
 	measure 'Nordic Companies' = COUNTROWS(DimNordicCompany)
 		formatString: #,0
+		lineageTag: c67ab02e-d597-4e3c-a443-582f9c5ee66e
 
 	measure 'Overlap Names' = CALCULATE([Nordic Companies], DimNordicCompany[InMidUniverse] = 1)
 		formatString: #,0
+		lineageTag: 04efcb04-20dc-466c-ac8e-d16a7dc46afc
 
 	measure 'Book Nordic Names' = CALCULATE([Nordic Companies], DimNordicCompany[InBook] = 1)
 		formatString: #,0
+		lineageTag: 7afd4de8-f3d8-45e6-919f-e8c02d9f5d15
 
 	column Ticker
 		dataType: string
+		lineageTag: ebe526f7-6a9f-483d-bf77-9e16d6171aa4
 		sourceColumn: Ticker
 
 	column YahooSymbol
 		dataType: string
+		lineageTag: bee06513-d5d9-4bc7-bd2d-5efe8fcca26f
 		sourceColumn: YahooSymbol
 
 	column CompanyName
 		dataType: string
+		lineageTag: b427fafa-3a54-44cd-b213-7b7c7eb25546
 		sourceColumn: CompanyName
 
 	column Country
 		dataType: string
+		lineageTag: 416af062-09e3-470e-a850-af366921be54
 		sourceColumn: Country
 
 	column Sector
 		dataType: string
+		lineageTag: 12707835-9384-432b-a59d-be827e656a0d
 		sourceColumn: Sector
 
 	column Industry
 		dataType: string
+		lineageTag: 9ee2201d-4f42-43c8-83bf-7612ec656aad
 		sourceColumn: Industry
 
 	column MarketCapEURm
 		dataType: double
 		formatString: #,0
+		lineageTag: cf8bece8-9c97-4235-9512-c1aaed09d5fb
 		sourceColumn: MarketCapEURm
 
 	column InMidUniverse
 		dataType: int64
 		formatString: 0
+		lineageTag: 0d925092-4bde-49c2-8616-e8d4e336055f
 		summarizeBy: none
 		sourceColumn: InMidUniverse
 
 	column InBook
 		dataType: int64
 		formatString: 0
+		lineageTag: 0836dd32-e2a1-420d-87d6-4ca980a38789
 		summarizeBy: none
 		sourceColumn: InBook
-
 
 	partition DimNordicCompany = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/DimNordicCompany.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Ticker", type text}, {"YahooSymbol", type text}, {"CompanyName", type text}, {"Country", type text}, {"Sector", type text}, {"Industry", type text}, {"MarketCapEURm", type number}, {"InMidUniverse", Int64.Type}, {"InBook", Int64.Type}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/DimNordicCompany.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Ticker", type text}, {"YahooSymbol", type text}, {"CompanyName", type text}, {"Country", type text}, {"Sector", type text}, {"Industry", type text}, {"MarketCapEURm", type number}, {"InMidUniverse", Int64.Type}, {"InBook", Int64.Type}})
+				in
+					Typed
+

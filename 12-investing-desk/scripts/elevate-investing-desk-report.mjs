@@ -540,6 +540,65 @@ function clusteredColumn(name, pos, entity, catCol, measureName, title, opts = {
   };
 }
 
+function clusteredColumnSeries(name, pos, entity, catCol, seriesCol, measureName, title, seriesColors = {}) {
+  const dataPoint = Object.entries(seriesColors).map(([val, hex]) =>
+    scopeColor(entity, seriesCol, val, hex)
+  );
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "clusteredColumnChart",
+      query: {
+        queryState: {
+          Category: { projections: [column(entity, catCol)] },
+          Series: { projections: [column(entity, seriesCol)] },
+          Y: { projections: [measure(entity, measureName)] },
+        },
+        sortDefinition: { sort: [sortByMeasureField(entity, measureName, "Descending")] },
+      },
+      objects: {
+        labels: [
+          {
+            properties: {
+              show: lit(true),
+              labelDisplayUnits: lit("0"),
+              fontSize: litD(9),
+              color: solid("#0F1C24"),
+              labelPrecision: lit(1),
+            },
+          },
+        ],
+        legend: [{ properties: { show: lit(true), position: lit("Top"), fontSize: litD(9) } }],
+        valueAxis: [
+          {
+            properties: {
+              show: lit(true),
+              gridlineShow: lit(true),
+              labelColor: solid("#5A6B75"),
+              fontSize: litD(9),
+              showAxisTitle: lit(false),
+            },
+          },
+        ],
+        categoryAxis: [
+          {
+            properties: {
+              show: lit(true),
+              showAxisTitle: lit(false),
+              labelColor: solid("#5A6B75"),
+              fontSize: litD(9),
+            },
+          },
+        ],
+        dataPoint: dataPoint.length ? dataPoint : [{ properties: { fill: solid(ACCENTS.teal) } }],
+      },
+      visualContainerObjects: cardChrome(title),
+    },
+  };
+}
+
 function seriesLineChart(name, pos, entity, dateCol, seriesCol, measureName, title, seriesColors = {}) {
   const dataPoint = Object.entries(seriesColors).map(([val, hex]) =>
     scopeColor(entity, seriesCol, val, hex)
@@ -694,6 +753,8 @@ const ACT = "FactRebalanceAction";
 const MAN = "DimMandateRule";
 const NCO = "DimNordicCompany";
 const NPX = "FactNordicPrices";
+const RSW = "FactRiskWeight";
+const RSS = "FactRiskSnapshot";
 
 // Landing
 {
@@ -729,7 +790,7 @@ const NPX = "FactNordicPrices";
       { text: "01  Asset Allocation — strategic sleeve map", size: "13pt" },
       { text: "02  Performance — excess return & policy peers", size: "13pt" },
       { text: "03  Holdings & Rebalance — book weights and actions", size: "13pt" },
-      { text: "04  Risk & Mandate — vol, drawdown, IPS rules", size: "13pt" },
+      { text: "04  Risk & Mandate — VaR, book vs optimizer, IPS rules", size: "13pt" },
       { text: "05  Regional Markets — Nordic tape for book names", size: "13pt" },
     ]),
     textbox(id(), { x: 88, y: 640, z: z++, height: 80, width: 1080, tabOrder: 8 }, [
@@ -901,44 +962,52 @@ const NPX = "FactNordicPrices";
   let z = 0;
   [
     pageNavigator(id(), { ...NAV, z: z++, tabOrder: 0 }),
-    pageTitle(id(), { x: 32, y: 16, z: z++, height: 72, width: 1100, tabOrder: 1 }, "Risk & Mandate", "Portfolio risk metrics and investment-policy compliance"),
-    kpiCard(id(), { x: 32, y: 100, z: z++, height: 96, width: 220, tabOrder: 2 }, PM, "Mid Ann Vol", "Ann. volatility", ACCENTS.soft),
-    kpiCard(id(), { x: 268, y: 100, z: z++, height: 96, width: 220, tabOrder: 3 }, PM, "Mid Max DD", "Max drawdown", ACCENTS.danger),
-    kpiCard(id(), { x: 504, y: 100, z: z++, height: 96, width: 220, tabOrder: 4 }, PM, "Mid Sharpe", "Sharpe", ACCENTS.teal),
-    kpiCard(id(), { x: 740, y: 100, z: z++, height: 96, width: 220, tabOrder: 5 }, POL, "Policy Turnover", "Ann. one-way turnover", ACCENTS.copper),
-    kpiCard(id(), { x: 976, y: 100, z: z++, height: 96, width: 220, tabOrder: 6 }, MAN, "Rules Total", "Mandate rules", ACCENTS.muted),
+    pageTitle(id(), { x: 32, y: 16, z: z++, height: 72, width: 1100, tabOrder: 1 }, "Risk & Mandate", "Live-sleeve VaR and optimizer weights beside policy risk and IPS rules"),
+    kpiCard(id(), { x: 32, y: 100, z: z++, height: 96, width: 188, tabOrder: 2 }, PM, "Mid Ann Vol", "Ann. volatility", ACCENTS.soft),
+    kpiCard(id(), { x: 236, y: 100, z: z++, height: 96, width: 188, tabOrder: 3 }, PM, "Mid Max DD", "Max drawdown", ACCENTS.danger),
+    kpiCard(id(), { x: 440, y: 100, z: z++, height: 96, width: 188, tabOrder: 4 }, PM, "Mid Sharpe", "Sharpe", ACCENTS.teal),
+    kpiCard(id(), { x: 644, y: 100, z: z++, height: 96, width: 188, tabOrder: 5 }, POL, "Policy Turnover", "Ann. one-way turnover", ACCENTS.copper),
+    kpiCard(id(), { x: 848, y: 100, z: z++, height: 96, width: 188, tabOrder: 6 }, RSS, "VaR 95 Hist", "Book 95% VaR (1d)", ACCENTS.danger),
+    kpiCard(id(), { x: 1052, y: 100, z: z++, height: 96, width: 188, tabOrder: 7 }, MAN, "Rules Total", "Mandate rules", ACCENTS.muted),
     clusteredColumn(
       id(),
-      { x: 32, y: 216, z: z++, height: 360, width: 900, tabOrder: 7 },
+      { x: 32, y: 216, z: z++, height: 360, width: 720, tabOrder: 8 },
       POL,
       "Label",
       "Policy Vol",
       "Policy set — annualized volatility"
     ),
-    clusteredColumn(
+    clusteredColumnSeries(
       id(),
-      { x: 952, y: 216, z: z++, height: 360, width: 936, tabOrder: 8 },
-      POL,
-      "Label",
-      "Policy Max DD",
-      "Policy set — max drawdown"
+      { x: 768, y: 216, z: z++, height: 360, width: 1120, tabOrder: 9 },
+      RSW,
+      "Name",
+      "BookLabel",
+      "Risk Weight",
+      "Book vs min-vol vs max-Sharpe (live sleeve)",
+      {
+        Book: ACCENTS.teal,
+        "Min-vol": ACCENTS.muted,
+        "Max Sharpe": ACCENTS.copper,
+      }
     ),
     columnTable(
       id(),
-      { x: 32, y: 596, z: z++, height: 300, width: 1200, tabOrder: 9 },
+      { x: 32, y: 596, z: z++, height: 300, width: 1200, tabOrder: 10 },
       MAN,
       ["Category", "RuleId", "Status"],
       "Mandate rules (IPS)",
       sortByColumnField(MAN, "CategorySort", "Ascending")
     ),
-    textbox(id(), { x: 1256, y: 596, z: z++, height: 300, width: 632, tabOrder: 10 }, [
+    textbox(id(), { x: 1256, y: 596, z: z++, height: 300, width: 632, tabOrder: 11 }, [
       { text: "Review calendar", size: "14pt", font: "Segoe UI Semibold", bold: true },
       { text: "Cadence · semiannual (Apr / Oct)", size: "12pt" },
       { text: "Working policy · mom_semi_max3 (max 3 name changes)", size: "12pt" },
+      { text: "Risk layer · 1-day 95% VaR on live weights vs min-vol / max-Sharpe", size: "12pt" },
       { text: "Short sleeve · blocked until mid gates + costs modeled", size: "12pt", color: "#B42318" },
       { text: "Live trading requires explicit authorization — never auto-routed.", size: "12pt", color: "#5A6B75" },
     ]),
-    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 11 }),
+    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 12 }),
   ].forEach((v) => writeVisual(p, v));
 }
 
@@ -1005,14 +1074,14 @@ const NPX = "FactNordicPrices";
       { text: "No automated order routing to Saxo or Nordnet.", size: "13pt" },
       { text: "", size: "10pt" },
       { text: "Sources", size: "16pt", font: "Segoe UI Semibold", bold: true },
-      { text: "A · investing research repo — capital.yaml, sim_latest, review, compare_policies", size: "12pt" },
+      { text: "A · investing research repo — capital.yaml, sim_latest, review, compare_policies, risk layer", size: "12pt" },
       { text: "B · 01-finance Nordic Equity gold — DimCompany, FactPrices", size: "12pt" },
       { text: "Benchmark · VWCE.DE  ·  Working policy · semiannual momentum max-3", size: "12pt" },
       { text: "Citation · Jegadeesh & Titman momentum literature (research framing)", size: "12pt" },
     ]),
     textbox(id(), { x: 960, y: 240, z: z++, height: 640, width: 920, tabOrder: 6 }, [
       { text: "How to refresh", size: "16pt", font: "Segoe UI Semibold", bold: true },
-      { text: "1. Re-run sims / review in the investing repo", size: "13pt" },
+      { text: "1. Re-run sims / review / invest risk-layer in the investing repo", size: "13pt" },
       { text: "2. Optional: refresh Nordic Equity gold (01-finance)", size: "13pt" },
       { text: "3. node scripts/export-from-sources.mjs", size: "13pt" },
       { text: "4. Open InvestingDesk.pbip → Refresh in Desktop", size: "13pt" },

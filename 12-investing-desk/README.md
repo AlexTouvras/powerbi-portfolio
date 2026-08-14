@@ -28,7 +28,7 @@ CIO-style **multi-sleeve investment portfolio** report: strategic allocation, ex
 | **Asset Allocation** | Sleeve weights · ring-fence context (weights only) |
 | **Performance** | Indexed equity · drawdown · Sharpe peers + gap vs VWCE |
 | **Holdings & Rebalance** | Book weights · EXIT/ENTER/TRIM/DEFER |
-| **Risk & Mandate** | Vol / MDD · IPS rules · review calendar |
+| **Risk & Mandate** | Vol / MDD · **book 95% VaR** · book vs optimizer weights · IPS rules |
 | **Regional Markets** | Nordic overlap · [live board](https://heatmap-web-five.vercel.app) CTA |
 | **Notes** | Methodology · not advice · refresh path |
 
@@ -68,7 +68,8 @@ CIO-style **multi-sleeve investment portfolio** report: strategic allocation, ex
 
 ```powershell
 cd 12-investing-desk
-# Optional: refresh sims/review in the investing repo first
+# Optional: refresh sims/review + risk layer in the investing repo first
+#   invest risk-layer
 node scripts/export-from-sources.mjs
 node scripts/scaffold-investing-desk-pbip.mjs   # first time / model reset
 node scripts/elevate-investing-desk-report.mjs
@@ -82,6 +83,7 @@ Optional env: `INVESTING_ROOT`, `HEATMAP_WEB_URL`.
 | Metric | Value |
 |--------|------:|
 | Excess CAGR (Mid − Core VWCE) | ~15.8% |
+| Book 95% VaR (1-day, historical) | ~2.1% |
 | Mid CAGR / Sharpe / Max DD | ~29.5% / ~1.36 / ~-18% |
 | Core CAGR / Sharpe | ~13.7% / ~1.01 |
 | Working policy | `mom_semi_max3` (semiannual · max 3 name changes) |

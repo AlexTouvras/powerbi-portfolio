@@ -1,0 +1,22 @@
+Name,YahooSymbol,BookLabel,BookLabelSort,WeightPct
+Accenture,ACN,Book,1,0.05837477011102786
+Accenture,ACN,Min-vol,2,0.14641553
+Accenture,ACN,Max Sharpe,3,0
+Intel,INTC,Book,1,0.10046999523193242
+Intel,INTC,Min-vol,2,0.01517412
+Intel,INTC,Max Sharpe,3,0.1052337
+Microsoft,MSFT,Book,1,0.10046999523193242
+Microsoft,MSFT,Min-vol,2,0.24333982
+Microsoft,MSFT,Max Sharpe,3,0.24412455
+Neste,NESTE.HE,Book,1,0.306246168517131
+Neste,NESTE.HE,Min-vol,2,0.10158663
+Neste,NESTE.HE,Max Sharpe,3,0
+Nordea,NDA-FI.HE,Book,1,0.23424834820516313
+Nordea,NDA-FI.HE,Min-vol,2,0.47808982
+Nordea,NDA-FI.HE,Max Sharpe,3,0.56536062
+Sarepta Therapeutics,SRPT,Book,1,0.08807301954907704
+Sarepta Therapeutics,SRPT,Min-vol,2,0.01539408
+Sarepta Therapeutics,SRPT,Max Sharpe,3,0
+SoFi Technologies,SOFI,Book,1,0.11211770315373612
+SoFi Technologies,SOFI,Min-vol,2,0
+SoFi Technologies,SOFI,Max Sharpe,3,0.08528113

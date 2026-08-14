@@ -1,0 +1,178 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 334.18269278110967,
+            "y": 298.21728500869426
+          },
+          "nodeIndex": "DimDate",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1136.5580401778161,
+            "y": 206.70587140168584
+          },
+          "nodeIndex": "DimMandateRule",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 902.55804017781622,
+            "y": -50
+          },
+          "nodeIndex": "DimNordicCompany",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1420.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "DimSleeve",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 387.41174280337168
+          },
+          "nodeIndex": "FactEquityCurve",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1704.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactHolding",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 618.38448636284215,
+            "y": 97.334036245616062
+          },
+          "nodeIndex": "FactNordicPrices",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1988.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactPolicyCompare",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2272.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactRebalanceAction",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2556.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactRiskSnapshot",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2840.5580401778161,
+            "y": 242.70587140168584
+          },
+          "nodeIndex": "FactRiskWeight",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3124.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactSimSummary",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3408.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "PortfolioMetrics",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

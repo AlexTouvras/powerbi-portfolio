@@ -9,6 +9,7 @@
 - [x] **08-customer-experience** — Experience Pulse Featured (PBIP + propensity + screenshots + docs)
 - [x] Desktop screenshots for `12-investing-desk`
 - [x] README / DATASETS / Orbit notify path
+- [x] **Risk layer (first cycle)** — VaR KPI + book vs min-vol vs max-Sharpe on Risk & Mandate (2026-08-14)
 
 ## Next
 

@@ -141,6 +141,8 @@ const tableNames = [
   "FactHolding",
   "FactRebalanceAction",
   "FactNordicPrices",
+  "FactRiskWeight",
+  "FactRiskSnapshot",
 ];
 
 write(
@@ -555,6 +557,52 @@ ${tableBody(
       "CALCULATE([Avg Day Change], DimNordicCompany[InMidUniverse] = 1)",
       "0.00%"
     ),
+  ]
+)}
+`
+);
+
+write(
+  path.join(tablesDir, "FactRiskWeight.tmdl"),
+  `table FactRiskWeight
+
+${tableBody(
+  [
+    ["Name", "string", {}],
+    ["YahooSymbol", "string", {}],
+    ["BookLabel", "string", { sortByColumn: "BookLabelSort" }],
+    ["BookLabelSort", "int64", { formatString: "0", isHidden: true, summarizeBy: "none" }],
+    ["WeightPct", "double", { formatString: "0.0%" }],
+  ],
+  "FactRiskWeight.csv",
+  "FactRiskWeight",
+  [measure("Risk Weight", "SUM(FactRiskWeight[WeightPct])", "0.0%")]
+)}
+`
+);
+
+write(
+  path.join(tablesDir, "FactRiskSnapshot.tmdl"),
+  `table FactRiskSnapshot
+
+${tableBody(
+  [
+    ["AsOf", "string", {}],
+    ["NObs", "int64", { formatString: "#,0", summarizeBy: "none" }],
+    ["NamesUsed", "int64", { formatString: "0", summarizeBy: "none" }],
+    ["VaR95HistPct", "double", { formatString: "0.00%" }],
+    ["VaR95ParamPct", "double", { formatString: "0.00%" }],
+    ["MinVolAnn", "double", { formatString: "0.0%" }],
+    ["MaxSharpeAnn", "double", { formatString: "0.00" }],
+    ["DroppedTickers", "string", {}],
+  ],
+  "FactRiskSnapshot.csv",
+  "FactRiskSnapshot",
+  [
+    measure("VaR 95 Hist", "MAX(FactRiskSnapshot[VaR95HistPct])", "0.00%"),
+    measure("VaR 95 Param", "MAX(FactRiskSnapshot[VaR95ParamPct])", "0.00%"),
+    measure("Risk Names Used", "MAX(FactRiskSnapshot[NamesUsed])", "0"),
+    measure("Risk Return Days", "MAX(FactRiskSnapshot[NObs])", "#,0"),
   ]
 )}
 `

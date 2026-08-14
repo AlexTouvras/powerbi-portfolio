@@ -1,105 +1,127 @@
 table FactHolding
+	lineageTag: 1a03db6b-920d-4b6e-b32e-d264619b7157
 
 	measure 'Holding EUR' = SUM(FactHolding[CurrentEUR])
 		formatString: €#,0
+		lineageTag: 3becb281-b9f4-47c5-9336-46e475c6ee6a
 
 	measure 'Holding Weight' = SUM(FactHolding[WeightPct])
 		formatString: 0.0%
+		lineageTag: e29283d1-fa44-44a4-8bfe-12fee228117d
 
 	measure 'Target Weight' = SUM(FactHolding[TargetWeightPct])
 		formatString: 0.0%
+		lineageTag: 675c136b-2ff5-44f5-ad05-c6c9d2778304
 
 	measure 'Delta Weight' = SUM(FactHolding[DeltaWeightPct])
 		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 0a5d542c-dad5-4bd5-bce2-fbce5595346a
 
 	measure 'Holding Count' = COUNTROWS(FactHolding)
 		formatString: #,0
+		lineageTag: dc9d4ce8-920e-40e8-87ab-283b35aab783
 
 	measure 'Avg Mom 12m' = AVERAGE(FactHolding[Mom12m])
 		formatString: 0.0%
+		lineageTag: 76807a39-a160-4218-b982-d89b2ceba65f
 
 	measure 'Nordic Holding Weight' = CALCULATE([Holding Weight], FactHolding[IsNordic] = 1)
 		formatString: 0.0%
+		lineageTag: 64ddbee1-c641-4f3a-b1df-f52a9c9548dc
 
 	column Name
 		dataType: string
+		lineageTag: 7d4e974f-951f-4bc8-88de-d7cd52b9a698
 		sourceColumn: Name
 
 	column YahooSymbol
 		dataType: string
+		lineageTag: 159404fe-50e3-45c0-867f-6a9064738878
 		sourceColumn: YahooSymbol
 
 	column CurrentEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: eb2d4ef5-5c65-432d-a9cb-588227442834
 		sourceColumn: CurrentEUR
 
 	column TargetEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: d6a1795a-6453-4f98-adc8-436d0b1d9c05
 		sourceColumn: TargetEUR
 
 	column DeltaEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: cb0a1361-2b69-426f-903b-f339178a3a23
 		sourceColumn: DeltaEUR
 
 	column WeightPct
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 4be7ae41-d98c-4c01-8d3d-e7d968ca2960
 		sourceColumn: WeightPct
 
 	column TargetWeightPct
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 10812db7-2957-4508-9b4a-956bd82de213
 		sourceColumn: TargetWeightPct
 
 	column DeltaWeightPct
 		dataType: double
 		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 70e6ea2b-d677-4d34-b52d-ba0c7830c02c
 		sourceColumn: DeltaWeightPct
 
 	column Mom12m
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 3c9cd458-c94c-4783-a20f-6a5d89b0c1a8
 		sourceColumn: Mom12m
 
 	column Rank
 		dataType: string
+		lineageTag: 87e39bcc-017b-4045-a96e-d9d77f729ff8
 		sourceColumn: Rank
 
 	column Action
 		dataType: string
+		lineageTag: 7cab4b77-517a-4fc8-a5a2-1077960444ff
 		sourceColumn: Action
 
 	column InTargetBook
 		dataType: int64
 		formatString: 0
+		lineageTag: 3b7f7f60-257c-40dd-830e-6ab81b4306ff
 		summarizeBy: none
 		sourceColumn: InTargetBook
 
 	column IsNordic
 		dataType: int64
 		formatString: 0
+		lineageTag: 297bdb39-38a5-4b81-9c9a-80a696fc1aa0
 		summarizeBy: none
 		sourceColumn: IsNordic
 
 	column Region
 		dataType: string
+		lineageTag: 6523b9f6-a92e-4115-b24c-9b02d10a9733
 		sourceColumn: Region
-
 
 	partition FactHolding = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/FactHolding.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"WeightPct", type number}, {"TargetWeightPct", type number}, {"DeltaWeightPct", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Action", type text}, {"InTargetBook", Int64.Type}, {"IsNordic", Int64.Type}, {"Region", type text}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactHolding.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Name", type text}, {"YahooSymbol", type text}, {"CurrentEUR", type number}, {"TargetEUR", type number}, {"DeltaEUR", type number}, {"WeightPct", type number}, {"TargetWeightPct", type number}, {"DeltaWeightPct", type number}, {"Mom12m", type number}, {"Rank", type text}, {"Action", type text}, {"InTargetBook", Int64.Type}, {"IsNordic", Int64.Type}, {"Region", type text}})
+				in
+					Typed
+

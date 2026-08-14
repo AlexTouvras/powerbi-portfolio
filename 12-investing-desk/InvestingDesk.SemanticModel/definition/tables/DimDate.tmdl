@@ -1,44 +1,52 @@
 table DimDate
+	lineageTag: 4df4c7d0-49b1-42fe-8766-5e5b7efc1b5c
 	dataCategory: Time
 
 	column Date
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		summarizeBy: none
+		lineageTag: 3024ab57-9119-41ca-92a1-581a5be2ace5
 		dataCategory: Time
+		summarizeBy: none
 		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column Year
 		dataType: int64
 		formatString: 0
+		lineageTag: a85f8335-f967-4646-bb56-119f8d408a37
 		summarizeBy: none
 		sourceColumn: Year
 
 	column Month
 		dataType: int64
 		formatString: 0
+		lineageTag: 803308a1-d604-4736-9488-82dd66e56484
 		summarizeBy: none
 		sourceColumn: Month
 
 	column YearMonth
 		dataType: string
+		lineageTag: e998e8bf-b054-4408-bc6b-502090111d04
 		sourceColumn: YearMonth
 
 	column Quarter
 		dataType: int64
 		formatString: 0
+		lineageTag: 5c9989ef-cf30-4193-9041-62d2d815b179
 		summarizeBy: none
 		sourceColumn: Quarter
-
 
 	partition DimDate = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/DimDate.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"YearMonth", type text}, {"Quarter", Int64.Type}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/DimDate.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"YearMonth", type text}, {"Quarter", Int64.Type}})
+				in
+					Typed
+

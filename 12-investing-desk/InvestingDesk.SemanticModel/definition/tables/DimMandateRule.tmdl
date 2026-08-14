@@ -1,53 +1,63 @@
 table DimMandateRule
+	lineageTag: 67f86e2e-5069-41e2-bda5-1f989f821ac4
 
 	measure 'Rules Total' = COUNTROWS(DimMandateRule)
 		formatString: #,0
+		lineageTag: 0f43ca69-a430-4352-ac7d-54e23bef0532
 
 	measure 'Rules Met' = CALCULATE([Rules Total], DimMandateRule[StatusFlag] = 1)
 		formatString: #,0
+		lineageTag: 54ac21df-6bb7-45c9-9a4d-bc6bbbc7e728
 
 	measure 'Mandate Compliance' = DIVIDE([Rules Met], [Rules Total])
 		formatString: 0.0%
+		lineageTag: 18c3d196-bbce-4898-8864-f30962a8d89d
 
 	column RuleId
 		dataType: string
+		lineageTag: 93b249ec-eb76-4d32-9001-19d5779c836e
 		sourceColumn: RuleId
 
 	column Category
 		dataType: string
-		sortByColumn: CategorySort
+		lineageTag: 50e4cee1-38ec-4f7e-956e-ad64076c3b71
 		sourceColumn: Category
+		sortByColumn: CategorySort
 
 	column CategorySort
 		dataType: int64
 		isHidden
+		lineageTag: f27d5680-2e88-4433-9e34-75fc09918e9f
 		summarizeBy: none
 		sourceColumn: CategorySort
 
 	column RuleSort
 		dataType: int64
+		lineageTag: 62f6854d-dc5f-4d29-ac27-3a88c65eb6cb
 		summarizeBy: none
 		sourceColumn: RuleSort
 
 	column Status
 		dataType: string
+		lineageTag: 711a35a4-9616-4fbc-bbd0-fdfc1c930353
 		sourceColumn: Status
 
 	column StatusFlag
 		dataType: int64
 		formatString: 0
+		lineageTag: 443b79be-a66e-4745-ac21-db3940c66081
 		summarizeBy: none
 		sourceColumn: StatusFlag
-
 
 	partition DimMandateRule = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/DimMandateRule.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"RuleId", type text}, {"Category", type text}, {"CategorySort", Int64.Type}, {"RuleSort", Int64.Type}, {"Status", type text}, {"StatusFlag", Int64.Type}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/DimMandateRule.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"RuleId", type text}, {"Category", type text}, {"CategorySort", Int64.Type}, {"RuleSort", Int64.Type}, {"Status", type text}, {"StatusFlag", Int64.Type}})
+				in
+					Typed
+

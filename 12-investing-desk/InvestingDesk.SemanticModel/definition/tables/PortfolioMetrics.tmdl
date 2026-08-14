@@ -1,214 +1,263 @@
 table PortfolioMetrics
+	lineageTag: a5ea3dc4-ed8d-4952-83b5-b765cccc5c58
 
 	measure 'Book EUR' = MAX(PortfolioMetrics[BookEUR])
 		formatString: €#,0
+		lineageTag: ca4cdac1-840f-46f4-9d52-61b39630fb38
 
 	measure 'Equity EUR' = MAX(PortfolioMetrics[EquityEUR])
 		formatString: €#,0
+		lineageTag: 09026c08-4c29-4565-a3c0-bac343f1f15d
 
 	measure 'Cash EUR' = MAX(PortfolioMetrics[CashEUR])
 		formatString: €#,0
+		lineageTag: 71e1f52d-aedf-497c-aba1-168eae560267
 
 	measure 'Names Held' = MAX(PortfolioMetrics[NamesHeld])
 		formatString: #,0
+		lineageTag: 695cbc22-223e-47d1-a998-93c00fd3f3d0
 
 	measure 'Top N' = MAX(PortfolioMetrics[TopN])
 		formatString: 0
+		lineageTag: 1fb70e24-aa0d-44d9-a8fc-49dcd0b9a530
 
 	measure 'Core CAGR' = MAX(PortfolioMetrics[CoreCAGR])
 		formatString: 0.0%
+		lineageTag: 8822bec1-512e-4066-b9c4-a8dd249d8760
 
 	measure 'Mid CAGR' = MAX(PortfolioMetrics[MidCAGR])
 		formatString: 0.0%
+		lineageTag: e8960a08-2bf9-4cd5-aa77-9634b3dae2c9
 
 	measure 'Excess CAGR' = MAX(PortfolioMetrics[ExcessCAGR])
 		formatString: 0.0%
+		lineageTag: 9b125147-e2fb-406c-85c6-08ea38363b6f
 
 	measure 'Core Sharpe' = MAX(PortfolioMetrics[CoreSharpe])
 		formatString: 0.00
+		lineageTag: 6f317445-10fe-487a-a8b5-46eeaa925f65
 
 	measure 'Mid Sharpe' = MAX(PortfolioMetrics[MidSharpe])
 		formatString: 0.00
+		lineageTag: 2ff734b1-9381-400b-9a94-73c725eac414
 
 	measure 'Mid Max DD' = MAX(PortfolioMetrics[MidMaxDD])
 		formatString: 0.0%
+		lineageTag: 3fa3ce84-efdb-40e7-ad3e-24aac5914226
 
 	measure 'Mid Ann Vol' = MAX(PortfolioMetrics[MidAnnVol])
 		formatString: 0.0%
+		lineageTag: 1ebe4218-ec5f-4d83-bd10-c874c4468823
 
 	measure 'Fee Bps' = MAX(PortfolioMetrics[FeeBps])
 		formatString: 0.0
+		lineageTag: d7506125-fc0c-4aa0-b336-97c6eaf75691
 
 	measure 'Universe N' = MAX(PortfolioMetrics[UniverseN])
 		formatString: #,0
+		lineageTag: cda216cd-57db-40a1-b102-54208973ba38
 
 	measure 'Ring-Fence EUR' = MAX(PortfolioMetrics[RingFenceEUR])
 		formatString: €#,0
+		lineageTag: 8ecdf3f9-0412-4505-8c9f-c56bd5c3ff24
 
 	measure 'Policy Book EUR' = MAX(PortfolioMetrics[PolicyBookEUR])
 		formatString: €#,0
+		lineageTag: 8e7d47a3-3c9e-4a97-8a9b-06ff2801e3a4
 
 	measure 'Ring-Fence Weight' = MAX(PortfolioMetrics[RingFenceWeightPct])
 		formatString: 0.0%
+		lineageTag: 776eaceb-9406-4468-8e0f-0292a716334e
 
 	measure 'Nordic In Book' = MAX(PortfolioMetrics[NordicNamesInBook])
 		formatString: #,0
+		lineageTag: eabeb10c-9b7c-44d4-adfe-5ee73dbbfa79
 
 	measure 'Mandate Rule Count' = MAX(PortfolioMetrics[MandateRules])
 		formatString: #,0
+		lineageTag: 1b10bea5-f3d9-40ce-a4ab-017b4e69c982
 
 	measure 'Cash Weight' = DIVIDE([Cash EUR], [Book EUR])
 		formatString: 0.0%
+		lineageTag: e62e1987-291f-41cf-b461-6230ca5e6db8
 
 	measure 'Equity Weight' = DIVIDE([Equity EUR], [Book EUR])
 		formatString: 0.0%
+		lineageTag: df0a528c-570a-4f03-8507-4d17bef5e5fb
 
 	column BookEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 55ce8dfc-2504-4536-b000-d4e3e5ec775c
 		sourceColumn: BookEUR
 
 	column EquityEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 06181cc6-98f8-4da6-ba93-ac5447f97790
 		sourceColumn: EquityEUR
 
 	column CashEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 8fbcbfb5-ec8d-4bb7-bd78-4de7a70a6cf7
 		sourceColumn: CashEUR
 
 	column HoldingsAsOf
 		dataType: string
+		lineageTag: f095273d-58df-49f8-b7cb-13f6944a4f3e
 		sourceColumn: HoldingsAsOf
 
 	column TopN
 		dataType: int64
 		formatString: 0
+		lineageTag: 67623831-bdf1-46c8-acdd-7a08ee2dcc90
 		summarizeBy: none
 		sourceColumn: TopN
 
 	column NamesHeld
 		dataType: int64
 		formatString: 0
+		lineageTag: 7d6039be-9e89-4e74-b1f1-da653ee8992c
 		summarizeBy: none
 		sourceColumn: NamesHeld
 
 	column CoreCAGR
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 6e9c80d3-5751-4fe1-9d81-d86f195a7b19
 		sourceColumn: CoreCAGR
 
 	column MidCAGR
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 16bbd4f5-721b-45bd-8a0c-ea0d787de219
 		sourceColumn: MidCAGR
 
 	column ExcessCAGR
 		dataType: double
 		formatString: 0.0%
+		lineageTag: d1f10c38-cdb0-4715-9cff-c8a0226f7748
 		sourceColumn: ExcessCAGR
 
 	column CoreSharpe
 		dataType: double
 		formatString: 0.00
+		lineageTag: 6a16cd26-28a5-4fea-839f-61a83c7f2d3e
 		sourceColumn: CoreSharpe
 
 	column MidSharpe
 		dataType: double
 		formatString: 0.00
+		lineageTag: 889b2125-b946-4e81-9eed-64de0f0ea3dd
 		sourceColumn: MidSharpe
 
 	column MidMaxDD
 		dataType: double
 		formatString: 0.0%
+		lineageTag: fcc98ca1-194c-4377-ab70-30329b7c57d8
 		sourceColumn: MidMaxDD
 
 	column MidAnnVol
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 0fbbfd81-094c-4766-91e1-ca2acfc7892b
 		sourceColumn: MidAnnVol
 
 	column FeeBps
 		dataType: double
 		formatString: 0.0
+		lineageTag: c3eefaea-23a8-4ad4-b119-b742e12963a8
 		sourceColumn: FeeBps
 
 	column SampleStart
 		dataType: string
+		lineageTag: 51a2dd25-6de7-49be-a98d-55e184a4a3d7
 		sourceColumn: SampleStart
 
 	column SampleEnd
 		dataType: string
+		lineageTag: 8c0541cc-5da4-43f8-b8d6-151d9d308a4d
 		sourceColumn: SampleEnd
 
 	column UniverseN
 		dataType: int64
 		formatString: 0
+		lineageTag: 0196403f-0dc0-4189-946c-65ffb0745045
 		summarizeBy: none
 		sourceColumn: UniverseN
 
 	column WorkingPolicy
 		dataType: string
+		lineageTag: 7bfb6b2f-5e7c-491e-bf94-c3bdcc3e9e1b
 		sourceColumn: WorkingPolicy
 
 	column ProposeBy
 		dataType: string
+		lineageTag: ca17cdab-3711-48e7-87f0-51c9aa4ce0a0
 		sourceColumn: ProposeBy
 
 	column ExecuteWindow
 		dataType: string
+		lineageTag: b12379cd-445f-4a9b-84b4-3b1732511b8c
 		sourceColumn: ExecuteWindow
 
 	column RingFenceEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 93e84cc8-4843-45bd-ab31-1c10e7c501f9
 		sourceColumn: RingFenceEUR
 
 	column PolicyBookEUR
 		dataType: double
-		formatString: #,0
 		isHidden
+		formatString: #,0
+		lineageTag: 31501601-257e-4349-9a23-011db4ae8480
 		sourceColumn: PolicyBookEUR
 
 	column RingFenceWeightPct
 		dataType: double
 		formatString: 0.0%
+		lineageTag: d7e0610d-7086-4001-9f48-2b70b05fb8f0
 		sourceColumn: RingFenceWeightPct
 
 	column NordicNamesInBook
 		dataType: int64
 		formatString: 0
+		lineageTag: 53bffed5-9451-45b2-912b-b25ef2b1f84b
 		summarizeBy: none
 		sourceColumn: NordicNamesInBook
 
 	column MandateRules
 		dataType: int64
 		formatString: 0
+		lineageTag: 6ee9755b-9678-463a-b2c3-57ea5d7788a6
 		summarizeBy: none
 		sourceColumn: MandateRules
 
 	column SimGeneratedAt
 		dataType: string
+		lineageTag: 229f4a15-6134-48c0-b156-ebaee4f36cff
 		sourceColumn: SimGeneratedAt
 
 	column Benchmark
 		dataType: string
+		lineageTag: 5372b2ac-d828-46da-8216-78580956942a
 		sourceColumn: Benchmark
-
 
 	partition PortfolioMetrics = m
 		mode: import
 		source =
-			let
-				FolderPath = GoldDataFolder,
-				FilePath = FolderPath & "/PortfolioMetrics.csv",
-				RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-				Typed = Table.TransformColumnTypes(WithHeaders, {{"BookEUR", type number}, {"EquityEUR", type number}, {"CashEUR", type number}, {"HoldingsAsOf", type text}, {"TopN", Int64.Type}, {"NamesHeld", Int64.Type}, {"CoreCAGR", type number}, {"MidCAGR", type number}, {"ExcessCAGR", type number}, {"CoreSharpe", type number}, {"MidSharpe", type number}, {"MidMaxDD", type number}, {"MidAnnVol", type number}, {"FeeBps", type number}, {"SampleStart", type text}, {"SampleEnd", type text}, {"UniverseN", Int64.Type}, {"WorkingPolicy", type text}, {"ProposeBy", type text}, {"ExecuteWindow", type text}, {"RingFenceEUR", type number}, {"PolicyBookEUR", type number}, {"RingFenceWeightPct", type number}, {"NordicNamesInBook", Int64.Type}, {"MandateRules", Int64.Type}, {"SimGeneratedAt", type text}, {"Benchmark", type text}})
-			in
-				Typed
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/PortfolioMetrics.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"BookEUR", type number}, {"EquityEUR", type number}, {"CashEUR", type number}, {"HoldingsAsOf", type text}, {"TopN", Int64.Type}, {"NamesHeld", Int64.Type}, {"CoreCAGR", type number}, {"MidCAGR", type number}, {"ExcessCAGR", type number}, {"CoreSharpe", type number}, {"MidSharpe", type number}, {"MidMaxDD", type number}, {"MidAnnVol", type number}, {"FeeBps", type number}, {"SampleStart", type text}, {"SampleEnd", type text}, {"UniverseN", Int64.Type}, {"WorkingPolicy", type text}, {"ProposeBy", type text}, {"ExecuteWindow", type text}, {"RingFenceEUR", type number}, {"PolicyBookEUR", type number}, {"RingFenceWeightPct", type number}, {"NordicNamesInBook", Int64.Type}, {"MandateRules", Int64.Type}, {"SimGeneratedAt", type text}, {"Benchmark", type text}})
+				in
+					Typed
+

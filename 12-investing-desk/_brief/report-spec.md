@@ -34,6 +34,8 @@
 | `FactEquityCurve` | `sim_latest.series` | date × series |
 | `FactPolicyCompare` | `compare_policies.csv` / research KPIs | policy |
 | `FactHolding` | `review_latest.json` (positions / targets) | name |
+| `FactRiskWeight` | `invest risk-layer` | name × Book / Min-vol / Max Sharpe |
+| `FactRiskSnapshot` | `invest risk-layer` | 1 row — 95% VaR hist/param |
 | `FactRebalanceAction` | `review_actions.csv` | action × name |
 | `DimMandateRule` | `capital.yaml` risk_gates + `next_review.yaml` | rule |
 | `DimNordicCompany` | Nordic Equity DimCompany | ticker (+ `InBook` / `InMidUniverse`) |
@@ -92,11 +94,12 @@ Slicer (optional): policy family
 Short sleeve **not** a live trading blotter — Mid book focus.
 
 ### 5. Risk & Mandate
-- KPI cards: Ann. vol · Max DD · Sharpe · Turnover (ann. one-way) · Mandate rules met (n/N)
-- **Bullet / bar:** Risk metrics vs benchmark (vol, MDD)
+- KPI cards: Ann. vol · Max DD · Sharpe · Turnover · **Book 95% VaR (1-day historical)** · Mandate rules met (n/N)
+- **Bullet / bar:** Policy-set annualized volatility
+- **Clustered column:** Live-sleeve weights — Book vs min-vol vs max-Sharpe (risk layer)
 - **Table:** Mandate rules — rule · category (live authorization / cost / kill-rule / short-sleeve) · status
 - **Cards / text:** Next production review window (`next_review.yaml`) · working policy id · max name changes  
-Framing = **Investment Policy Statement compliance**, not a hobby checklist.
+Framing = **Investment Policy Statement compliance**, not a hobby checklist. Risk layer is extra math on the live sleeve, not a second product.
 
 ### 6. Regional Markets (Nordic Equity)
 - KPI cards: Nordic names in book · Avg day change % · RSI extremes count

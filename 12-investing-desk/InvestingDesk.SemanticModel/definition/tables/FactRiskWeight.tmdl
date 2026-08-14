@@ -1,0 +1,49 @@
+table FactRiskWeight
+	lineageTag: 627175a8-4ff7-4670-9f9a-e29fcf676346
+
+	measure 'Risk Weight' = SUM(FactRiskWeight[WeightPct])
+		formatString: 0.0%
+		lineageTag: d7d355f9-b3d1-421b-a85f-85052fcbd493
+
+	column Name
+		dataType: string
+		lineageTag: dffd4354-daab-4eba-bc8f-ffa941e9a5f1
+		sourceColumn: Name
+
+	column YahooSymbol
+		dataType: string
+		lineageTag: 6a115bf2-875f-43b9-9f9d-8a468c0f29b2
+		sourceColumn: YahooSymbol
+
+	column BookLabel
+		dataType: string
+		lineageTag: 1893856e-8d96-49cc-8ea6-47c47abe6be6
+		sourceColumn: BookLabel
+		sortByColumn: BookLabelSort
+
+	column BookLabelSort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 93ebfd28-913d-4f60-9722-684490b4a2f0
+		summarizeBy: none
+		sourceColumn: BookLabelSort
+
+	column WeightPct
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 34f0dee8-2961-4001-8672-d266cfc7e16f
+		sourceColumn: WeightPct
+
+	partition FactRiskWeight = m
+		mode: import
+		source =
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactRiskWeight.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Name", type text}, {"YahooSymbol", type text}, {"BookLabel", type text}, {"BookLabelSort", Int64.Type}, {"WeightPct", type number}})
+				in
+					Typed
+
