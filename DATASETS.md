@@ -99,7 +99,7 @@ KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care 
 **Featured:** Logistics Pulse — Olist delivered orders (~96k), on-time delivery %, seller risk queue, SARIMAX weekly demand forecast with 80%/95% prediction intervals (holdout MAPE ~19%).
 
 - Open [`04-supply-chain/LogisticsPulse.pbip`](04-supply-chain/LogisticsPulse.pbip)
-- Gold: `FactOrders`, `DimSeller`, `FactForecast`, `ModelMetrics`, …
+- Gold: `FactOrders`, `DimSeller`, `FactForecast`, `ModelMetrics`, `DimLaneNetwork`, …
 - Refresh: `.\.venv\Scripts\python scripts\build-gold.py` then `forecast-demand.py` then Desktop Refresh
 - Sample demo — not inventory policy advice; In-Full OTIF out of v1
 

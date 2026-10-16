@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct","DimCustomer","FactOrders","FactDemandWeekly","FactForecast","FactCorridor","ModelMetrics"]
+annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct","DimCustomer","FactOrders","FactDemandWeekly","FactForecast","FactCorridor","DimLaneNetwork","ModelMetrics"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -19,4 +19,5 @@ ref table FactOrders
 ref table FactDemandWeekly
 ref table FactForecast
 ref table FactCorridor
+ref table DimLaneNetwork
 ref table ModelMetrics
