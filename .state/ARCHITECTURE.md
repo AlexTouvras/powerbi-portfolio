@@ -23,6 +23,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 - Dual-source reports: research policy from investing + market tape from Nordic Equity (no Fabric composite model in v1 — copy/export gold)
 - Forecast signature: Demand Outlook uses Actual/Forecast/Lo80/Hi80 line series with per-measure metadata color selectors
 - Scatter Size/X/Y must bind **measures** (or Aggregations), never bare columns
+- Analyst scores live in `_shared/analyst/brain.py`, once for the portfolio. A report passes its gold path and column names. It does not keep a second copy of the math. First operation is `network` (directed betweenness and cut points)
 
 ## Dependencies
 
@@ -34,6 +35,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | Argos Translate (PT→EN) | Experience Pulse review comment English | 2026-07-26 |
 | scikit-learn | Experience Pulse detractor logistic propensity | 2026-07-26 |
 | statsmodels SARIMAX | Weekly demand forecast + PI bands | 2026-07-24 |
+| networkx | Shared analyst graph score (`_shared/analyst`) | 2026-10-16 |
 
 ## File structure
 
@@ -76,3 +78,4 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | 2026-07-24 | Logistics Pulse signature = demand forecast PI ribbon; KPI = On-time % (not true OTIF) | Portfolio gap = forecasting; In-Full deferred; avoid Bank Icon Map hero |
 | 2026-07-24 | Trim Olist early ramp + trailing stub week before SARIMAX holdout | Raw end-of-sample wind-down inflated MAPE to >100% |
 | 2026-08-14 | Investing Desk Risk & Mandate shows live-sleeve 95% VaR + book vs min-vol vs max-Sharpe | User: risk as extra layer, not Ledger 2.0; first cycle gold + one visual |
+| 2026-10-16 | One analyst in `_shared/analyst`, called by any report before Power BI | Graph and later scores stay out of DAX and out of per-report scripts |

@@ -107,7 +107,7 @@
 |------|---------|
 | Queue | Seller late-rate rank (N≥30) · RiskBand · RecommendedAction |
 | Corridor | State→state matrix / table (orders, late rate) — **not** Icon Map hero |
-| Network score | `DimLaneNetwork` is in the model (cut point, betweenness by late orders and by orders). Not placed on the canvas yet — bind it on the next Desktop pass |
+| Network score | `DimLaneNetwork` is in the model (cut point, betweenness by late orders and by orders), written by the shared analyst. Not placed on the canvas yet — bind it on the next Desktop pass |
 | Scatter | Freight vs late rate (optional secondary) |
 
 ### P3 — Demand Outlook (Analytical — **signature**)

@@ -48,7 +48,7 @@ COO-style **on-time delivery + demand forecast** report: delivery pulse, seller 
 | Raw notes | `data/raw/SOURCE.md` |
 | Spec | `_brief/report-spec.md` |
 | Screenshots | `screenshots/` |
-| Pipeline | `scripts/build-gold.py`, `score-lane-network.py`, `forecast-demand.py`, `scaffold-logistics-pbip.mjs`, `elevate-logistics-report.mjs` |
+| Pipeline | `scripts/build-gold.py`, `forecast-demand.py`, `scaffold-logistics-pbip.mjs`, `elevate-logistics-report.mjs`. Lane scores come from `../_shared/analyst/brain.py` |
 
 ## Dataset
 
@@ -78,7 +78,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\pip install -r requirements.txt
 # Download Olist CSVs into data/raw/ (see data/raw/SOURCE.md)
 .\.venv\Scripts\python scripts\build-gold.py
-.\.venv\Scripts\python scripts\score-lane-network.py
+py -3 ..\_shared\analyst\brain.py network --edges data\gold\FactCorridor.csv --source SellerState --target CustomerState --weight Late=Orders*LateRate --weight Order=Orders --node-column State --label-map data\ref\br-state-names.csv --output data\gold\DimLaneNetwork.csv
 .\.venv\Scripts\python scripts\forecast-demand.py
 node scripts\scaffold-logistics-pbip.mjs
 node scripts\elevate-logistics-report.mjs
