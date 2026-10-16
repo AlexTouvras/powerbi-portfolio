@@ -14,7 +14,7 @@ py -3 _shared/analyst/brain.py network `
   --output 04-supply-chain/data/gold/DimLaneNetwork.csv
 ```
 
-`--weight` may be repeated. `Name=Column` uses that column. `Name=Column*Column` multiplies them. A positive product keeps the directed edge. Self-loops are dropped. Betweenness counts paths. The weight does not become a distance.
+`--weight` may be repeated. `Name=Column` uses that column. `Name=Column*Column` multiplies them. A positive product keeps the edge. Self-loops are dropped. Betweenness counts paths. The weight does not become a distance. Add `--undirected` when the edge has no direction.
 
 Install once, from the repo root:
 
@@ -23,3 +23,11 @@ py -3 -m pip install -r _shared/analyst/requirements.txt
 ```
 
 Logistics Pulse calls the same command at the end of `build-gold.py`. Another report with an edge table uses the same command and its own paths.
+
+| Report | What the analyst receives | Score in the model |
+|--------|---------------------------|--------------------|
+| Logistics Pulse | `FactCorridor.csv`, seller state to customer state | `DimLaneNetwork` |
+| Care Pulse | `FactPathwayBridge.csv`, admission to disposition | `DimPathwayNetwork` |
+| Sales Executive | product pairs built from `FactSales.csv` | `DimBasketNetwork` |
+
+Bank, churn, experience, credit, Nordic Equity, and the Investment Portfolio do not have an edge table. The analyst is not called for them. A price series needs a later command on this same brain, not a script inside the report.

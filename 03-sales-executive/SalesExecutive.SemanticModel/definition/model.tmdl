@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","FactSales","DimDate","DimCustomer","DimProduct"]
+annotation PBI_QueryOrder = ["GoldDataFolder","FactSales","DimDate","DimCustomer","DimProduct","DimBasketNetwork"]
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
@@ -17,6 +17,7 @@ ref table FactSales
 ref table DimDate
 ref table DimCustomer
 ref table DimProduct
+ref table DimBasketNetwork
 ref table DateTableTemplate_ac449ce0-6815-4a7a-a522-bc474626d2ea
 ref table LocalDateTable_f7b607ec-1fb3-4b71-a781-7d13b79b30e1
 ref table LocalDateTable_5a4945f2-52dd-44c8-b759-18fcf31e3a6c

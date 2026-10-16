@@ -1,10 +1,13 @@
 """
 Build Care Pulse gold tables from UCI Diabetes 130-US Hospitals.
-Writes FactEncounter, DimPatient, DimDate, FactPathwayBridge, FactHeatBridge.
+Writes FactEncounter, DimPatient, DimDate, FactPathwayBridge, FactHeatBridge,
+then asks the shared analyst to score the pathway.
 """
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -229,6 +232,26 @@ def main() -> None:
     dim_date.to_csv(GOLD / "DimDate.csv", index=False)
     pathway.to_csv(GOLD / "FactPathwayBridge.csv", index=False)
     heat.to_csv(GOLD / "FactHeatBridge.csv", index=False)
+    analyst = Path(__file__).resolve().parents[2] / "_shared" / "analyst" / "brain.py"
+    subprocess.check_call(
+        [
+            sys.executable,
+            str(analyst),
+            "network",
+            "--edges",
+            str(GOLD / "FactPathwayBridge.csv"),
+            "--source",
+            "Source",
+            "--target",
+            "Target",
+            "--weight",
+            "Flow=Weight",
+            "--node-column",
+            "Node",
+            "--output",
+            str(GOLD / "DimPathwayNetwork.csv"),
+        ]
+    )
 
     print(
         json.dumps(

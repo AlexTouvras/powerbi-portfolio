@@ -33,8 +33,8 @@ def parse_weight(spec: str) -> tuple[str, list[str]]:
     return name, columns
 
 
-def digraph(edges: pd.DataFrame, source: str, target: str, columns: list[str]) -> nx.DiGraph:
-    graph = nx.DiGraph()
+def digraph(edges: pd.DataFrame, source: str, target: str, columns: list[str], undirected: bool) -> nx.Graph:
+    graph = nx.Graph() if undirected else nx.DiGraph()
     for row in edges.itertuples(index=False):
         as_dict = row._asdict()
         origin = as_dict[source]
@@ -55,7 +55,7 @@ def digraph(edges: pd.DataFrame, source: str, target: str, columns: list[str]) -
     return graph
 
 
-def score_graph(graph: nx.DiGraph, name: str) -> pd.DataFrame:
+def score_graph(graph: nx.Graph, name: str) -> pd.DataFrame:
     between = nx.betweenness_centrality(graph, normalized=False, weight=None)
     cuts = set(nx.articulation_points(graph.to_undirected()))
     nodes = list(between)
@@ -76,6 +76,7 @@ def score_network(
     target: str,
     weights: list[tuple[str, list[str]]],
     node_column: str,
+    undirected: bool,
 ) -> pd.DataFrame:
     frames: list[pd.DataFrame] = []
     for name, columns in weights:
@@ -84,7 +85,7 @@ def score_network(
             raise SystemExit(f"weight {name} needs columns {missing} on the edge table")
         if source not in edges.columns or target not in edges.columns:
             raise SystemExit(f"edge table needs {source!r} and {target!r}")
-        scored = score_graph(digraph(edges, source, target, columns), name)
+        scored = score_graph(digraph(edges, source, target, columns, undirected), name)
         frames.append(scored)
     out = frames[0]
     for frame in frames[1:]:
@@ -122,7 +123,7 @@ def apply_labels(scored: pd.DataFrame, node_column: str, label_map: Path, label_
 def write_network(args: argparse.Namespace) -> pd.DataFrame:
     weights = [parse_weight(spec) for spec in args.weight]
     edges = pd.read_csv(args.edges)
-    scored = score_network(edges, args.source, args.target, weights, args.node_column)
+    scored = score_network(edges, args.source, args.target, weights, args.node_column, args.undirected)
     if args.label_map:
         scored = apply_labels(scored, args.node_column, Path(args.label_map), args.label_key, args.label_column)
     output = Path(args.output)
@@ -151,6 +152,11 @@ def build_parser() -> argparse.ArgumentParser:
     network.add_argument("--label-map", help="Optional CSV of display names, joined onto the node.")
     network.add_argument("--label-key", default="State", help="Key column in the label map.")
     network.add_argument("--label-column", default="StateName", help="Display-name column in the label map and the score table.")
+    network.add_argument(
+        "--undirected",
+        action="store_true",
+        help="The edge has no direction, as with two products in one order. Pathways and corridors stay directed.",
+    )
     network.add_argument("--output", required=True, help="Score CSV to write.")
     network.set_defaults(func=write_network)
     return parser

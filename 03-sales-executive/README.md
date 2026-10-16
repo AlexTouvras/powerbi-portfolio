@@ -60,7 +60,7 @@ $env:PBI_DESKTOP_PATH = "C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBI
 
 ## Model
 
-Star schema: `FactSales` · `DimDate` · `DimCustomer` · `DimProduct`
+Star schema: `FactSales` · `DimDate` · `DimCustomer` · `DimProduct` · `DimBasketNetwork`
 
 - ~60k order lines, AdventureWorks-style sample from the KDNuggets warehouse CSVs (see [`../DATASETS.md`](../DATASETS.md))
 - Continuous `DimDate` calendar 2009–2014 for prior-year YoY
@@ -70,6 +70,7 @@ Rebuild gold from raw:
 
 ```bash
 node scripts/build-gold.mjs
+py -3 scripts/call-analyst.py
 ```
 
 ## Validate report definition

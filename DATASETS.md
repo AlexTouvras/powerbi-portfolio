@@ -41,6 +41,8 @@ The Kaggle sales notebook does not expose a public downloadable dataset. For the
 
 Observed: **60,398** order lines · revenue **~$29.4M** · dates **2010-12-29 → 2014-01-28**
 
+Basket pairs from those orders are scored by the shared analyst into `DimBasketNetwork`.
+
 ### Churn (`02-ecommerce-churn`)
 
 KDNuggets #1 customer-level churn export:
@@ -63,7 +65,7 @@ Upstream scale is small (~200 customers · ~1k transactions). Portfolio gold is 
 KDNuggets #5 Kaggle billing notebooks often lack a true readmission label. Care Pulse uses **[UCI Diabetes 130-US Hospitals](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)**:
 
 - Raw: `diabetic_data.csv` (+ IDS mappings)
-- Gold: ~35k encounters with `Readmit30`, pathway bridge, heat bridge
+- Gold: ~35k encounters with `Readmit30`, pathway bridge, heat bridge, `DimPathwayNetwork`
 - ML: logistic **ReadmitProbability** / **RiskBand** / **RiskRank** (sample model, not clinical CDS)
 
 ## Wave 2 — planned (folders scaffolded)

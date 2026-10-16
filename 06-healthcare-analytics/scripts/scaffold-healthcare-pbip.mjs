@@ -117,7 +117,7 @@ write(
 \t\tlegacyRedirects
 \t\treturnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","DimPatient","DimDate","FactEncounter","FactPathwayBridge","FactHeatBridge"]
+annotation PBI_QueryOrder = ["GoldDataFolder","DimPatient","DimDate","FactEncounter","FactPathwayBridge","FactHeatBridge","DimPathwayNetwork"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -127,6 +127,7 @@ ref table DimDate
 ref table FactEncounter
 ref table FactPathwayBridge
 ref table FactHeatBridge
+ref table DimPathwayNetwork
 `
 );
 
@@ -282,6 +283,31 @@ ${csvPartition("FactEncounter", "FactEncounter.csv", [
   ["ReadmitProbability", "type number"],
   ["RiskBand", "type text"],
   ["RiskRank", "Int64.Type"],
+])}
+`
+);
+
+// --- DimPathwayNetwork (disconnected — scored from FactPathwayBridge by the shared analyst) ---
+write(
+  path.join(tablesDir, "DimPathwayNetwork.tmdl"),
+  `table DimPathwayNetwork
+
+\tmeasure 'Pathway cut points' =
+\t\t\tCONCATENATEX(
+\t\t\t\tFILTER(DimPathwayNetwork, DimPathwayNetwork[IsCutPointFlow] = 1),
+\t\t\t\tDimPathwayNetwork[Node],
+\t\t\t\t", "
+\t\t\t)
+
+${col("Node", "string", { summarizeBy: "none", sortByColumn: "FlowRank" })}
+${col("FlowBetweenness", "double", { formatString: "#,0.0", summarizeBy: "none" })}
+${col("FlowRank", "int64", { formatString: "0", summarizeBy: "none" })}
+${col("IsCutPointFlow", "int64", { formatString: "0", summarizeBy: "none" })}
+${csvPartition("DimPathwayNetwork", "DimPathwayNetwork.csv", [
+  ["Node", "type text"],
+  ["FlowBetweenness", "type number"],
+  ["FlowRank", "Int64.Type"],
+  ["IsCutPointFlow", "Int64.Type"],
 ])}
 `
 );
