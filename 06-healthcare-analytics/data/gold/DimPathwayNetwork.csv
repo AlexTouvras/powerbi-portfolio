@@ -1,0 +1,16 @@
+Node,FlowBetweenness,FlowRank,IsCutPointFlow
+Elective,0.0,1,0
+Emergency,0.0,1,1
+Expired,0.0,1,0
+Home,0.0,1,1
+Home health,0.0,1,0
+Hospice,0.0,1,0
+Left AMA,0.0,1,0
+Newborn,0.0,1,0
+Other,0.0,1,0
+Rehab,0.0,1,0
+SNF / nursing,0.0,1,0
+Transfer,0.0,1,0
+Trauma Center,0.0,1,0
+Unknown,0.0,1,0
+Urgent,0.0,1,0

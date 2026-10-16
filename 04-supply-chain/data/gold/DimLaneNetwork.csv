@@ -1,0 +1,28 @@
+State,StateName,LateBetweenness,OrderBetweenness,LateRank,OrderRank,IsCutPointLate,IsCutPointOrder
+SP,Sao Paulo,171.7333,139.5667,1,1,1,1
+RJ,Rio de Janeiro,37.7333,25.9,2,3,0,0
+MG,Minas Gerais,14.9,42.5667,3,2,0,0
+PR,Parana,6.0167,7.5333,4,4,0,0
+RS,Rio Grande do Sul,3.2167,2.4833,5,5,0,0
+DF,Distrito Federal,2.2833,2.2,6,6,0,0
+SC,Santa Catarina,1.55,1.4667,7,7,0,0
+BA,Bahia,0.4,1.0833,8,8,0,0
+GO,Goias,0.1667,0.0,9,10,0,0
+AC,Acre,0.0,0.0,10,10,0,0
+AL,Alagoas,0.0,0.0,10,10,0,0
+AM,Amazonas,0.0,0.0,10,10,0,0
+AP,Amapa,0.0,0.0,10,10,0,0
+CE,Ceara,0.0,0.0,10,10,0,0
+ES,Espirito Santo,0.0,0.0,10,10,0,0
+MA,Maranhao,0.0,0.0,10,10,0,0
+MS,Mato Grosso do Sul,0.0,0.0,10,10,0,0
+MT,Mato Grosso,0.0,0.0,10,10,0,0
+PA,Para,0.0,0.0,10,10,0,0
+PB,Paraiba,0.0,0.0,10,10,0,0
+PE,Pernambuco,0.0,0.2,10,9,0,0
+PI,Piaui,0.0,0.0,10,10,0,0
+RN,Rio Grande do Norte,0.0,0.0,10,10,0,0
+RO,Rondonia,0.0,0.0,10,10,0,0
+RR,Roraima,0.0,0.0,10,10,0,0
+SE,Sergipe,0.0,0.0,10,10,0,0
+TO,Tocantins,0.0,0.0,10,10,0,0

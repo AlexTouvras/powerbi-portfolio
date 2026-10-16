@@ -87,6 +87,7 @@ ref table FactSales
 ref table DimDate
 ref table DimCustomer
 ref table DimProduct
+ref table DimBasketNetwork
 `
 );
 
@@ -310,6 +311,53 @@ ${csvPartition("DimProduct", "DimProduct.csv", [
   ["ProductLine", "type text"],
   ["Cost", "type number"],
   ["Maintenance", "type text"],
+])}
+`
+);
+
+write(
+  path.join(tablesDir, "DimBasketNetwork.tmdl"),
+  `table DimBasketNetwork
+
+\tmeasure 'Basket bridge' =
+\t\t\tLOOKUPVALUE(DimBasketNetwork[Product], DimBasketNetwork[OrdersRank], 1)
+
+\tmeasure 'Basket cut points' =
+\t\t\tCONCATENATEX(
+\t\t\t\tFILTER(DimBasketNetwork, DimBasketNetwork[IsCutPointOrders] = 1),
+\t\t\t\tDimBasketNetwork[Product],
+\t\t\t\t", "
+\t\t\t)
+
+\tcolumn Product
+\t\tdataType: string
+\t\tsummarizeBy: none
+\t\tsourceColumn: Product
+\t\tsortByColumn: OrdersRank
+
+\tcolumn OrdersBetweenness
+\t\tdataType: double
+\t\tformatString: #,0.0
+\t\tsummarizeBy: none
+\t\tsourceColumn: OrdersBetweenness
+
+\tcolumn OrdersRank
+\t\tdataType: int64
+\t\tformatString: 0
+\t\tsummarizeBy: none
+\t\tsourceColumn: OrdersRank
+
+\tcolumn IsCutPointOrders
+\t\tdataType: int64
+\t\tformatString: 0
+\t\tsummarizeBy: none
+\t\tsourceColumn: IsCutPointOrders
+
+${csvPartition("DimBasketNetwork", "DimBasketNetwork.csv", [
+  ["Product", "type text"],
+  ["OrdersBetweenness", "type number"],
+  ["OrdersRank", "Int64.Type"],
+  ["IsCutPointOrders", "Int64.Type"],
 ])}
 `
 );

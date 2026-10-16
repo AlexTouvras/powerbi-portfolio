@@ -38,7 +38,7 @@ Prefer **UCI Diabetes 130-US Hospitals** (true `readmitted` label, ~101k encount
 ## Page plan
 
 1. **Care Pulse** — portfolio health: encounters, 30d readmit rate, avg LOS, high-risk discharges; monthly volume  
-2. **Pathways & Drivers** — care pathway Sankey; readmit rate heatmap (e.g. age band × primary diagnosis group)  
+2. **Pathways & Drivers** — care pathway Sankey; readmit rate heatmap (e.g. age band × primary diagnosis group). `DimPathwayNetwork` holds the shared-analyst cut points and is not on the canvas yet.  
 3. **Discharge Risk Queue** — intervention list sorted by propensity  
 4. **Context** (last visible) — audience, how to read Sankey, data/model caveats  
 5. **Encounter Profile** (hidden) — drillthrough detail for one encounter/patient  

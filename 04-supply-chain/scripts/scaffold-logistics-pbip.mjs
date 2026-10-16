@@ -118,7 +118,7 @@ write(
 \t\tlegacyRedirects
 \t\treturnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct","DimCustomer","FactOrders","FactDemandWeekly","FactForecast","FactCorridor","ModelMetrics"]
+annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct","DimCustomer","FactOrders","FactDemandWeekly","FactForecast","FactCorridor","DimLaneNetwork","ModelMetrics"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -131,6 +131,7 @@ ref table FactOrders
 ref table FactDemandWeekly
 ref table FactForecast
 ref table FactCorridor
+ref table DimLaneNetwork
 ref table ModelMetrics
 `
 );
@@ -397,6 +398,45 @@ ${csvPartition("FactCorridor", "FactCorridor.csv", [
   ["LateRate", "type number"],
   ["AvgLeadTime", "type number"],
   ["AvgFreight", "type number"],
+])}
+`
+);
+
+// --- DimLaneNetwork (disconnected — one row per state, scored from FactCorridor) ---
+write(
+  path.join(tablesDir, "DimLaneNetwork.tmdl"),
+  `table DimLaneNetwork
+
+\tmeasure 'Cut point' =
+\t\t\tCONCATENATEX(
+\t\t\t\tFILTER(DimLaneNetwork, DimLaneNetwork[IsCutPointLate] = 1),
+\t\t\t\tDimLaneNetwork[State],
+\t\t\t\t", "
+\t\t\t)
+
+\tmeasure 'Second bridge by late orders' =
+\t\t\tLOOKUPVALUE(DimLaneNetwork[State], DimLaneNetwork[LateRank], 2)
+
+\tmeasure 'Second bridge by orders' =
+\t\t\tLOOKUPVALUE(DimLaneNetwork[State], DimLaneNetwork[OrderRank], 2)
+
+${col("State", "string", { summarizeBy: "none", sortByColumn: "LateRank" })}
+${col("StateName", "string", { summarizeBy: "none" })}
+${col("LateBetweenness", "double", { formatString: "#,0.0", summarizeBy: "none" })}
+${col("OrderBetweenness", "double", { formatString: "#,0.0", summarizeBy: "none" })}
+${col("LateRank", "int64", { formatString: "0", summarizeBy: "none" })}
+${col("OrderRank", "int64", { formatString: "0", summarizeBy: "none" })}
+${col("IsCutPointLate", "int64", { formatString: "0", summarizeBy: "none" })}
+${col("IsCutPointOrder", "int64", { formatString: "0", summarizeBy: "none" })}
+${csvPartition("DimLaneNetwork", "DimLaneNetwork.csv", [
+  ["State", "type text"],
+  ["StateName", "type text"],
+  ["LateBetweenness", "type number"],
+  ["OrderBetweenness", "type number"],
+  ["LateRank", "Int64.Type"],
+  ["OrderRank", "Int64.Type"],
+  ["IsCutPointLate", "Int64.Type"],
+  ["IsCutPointOrder", "Int64.Type"],
 ])}
 `
 );

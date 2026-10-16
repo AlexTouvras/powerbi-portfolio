@@ -66,6 +66,7 @@ node scripts/elevate-healthcare-report.mjs
 
 - **30-day readmission propensity** (logistic, class-weighted) → `ReadmitProbability`, `RiskBand`, `RiskRank`
 - **Microsoft Sankey** (embedded CustomVisual) — admission → disposition pathway weights
+- **Pathway cut points** from the shared analyst (`DimPathwayNetwork`). Every pathway hop is one step, so betweenness is 0. Home and Emergency are cut points because Newborn and Other have a single exit. Not placed on the canvas yet.
 - **Matrix heatmap** — age band × diagnosis group readmit rate
 - Ranked **Discharge Risk Queue** + Encounter Profile drillthrough
 

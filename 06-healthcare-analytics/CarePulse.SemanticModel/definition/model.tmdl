@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["GoldDataFolder","DimPatient","DimDate","FactEncounter","FactPathwayBridge","FactHeatBridge"]
+annotation PBI_QueryOrder = ["GoldDataFolder","DimPatient","DimDate","FactEncounter","FactPathwayBridge","FactHeatBridge","DimPathwayNetwork"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -16,3 +16,4 @@ ref table DimDate
 ref table FactEncounter
 ref table FactPathwayBridge
 ref table FactHeatBridge
+ref table DimPathwayNetwork

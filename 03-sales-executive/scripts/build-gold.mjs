@@ -1,6 +1,7 @@
 /**
  * Bronze CRM/ERP CSVs → Gold star-schema CSVs (mirrors DataWithBaraa silver/gold logic).
  */
+import { spawnSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -378,3 +379,14 @@ console.log(
     2
   )
 );
+
+const py = process.platform === "win32" ? "py" : "python3";
+const analystArgs =
+  process.platform === "win32"
+    ? ["-3", path.join(__dirname, "call-analyst.py")]
+    : [path.join(__dirname, "call-analyst.py")];
+const analyst = spawnSync(py, analystArgs, { stdio: "inherit" });
+if (analyst.status !== 0) {
+  console.error("Shared analyst call failed");
+  process.exit(analyst.status ?? 1);
+}
