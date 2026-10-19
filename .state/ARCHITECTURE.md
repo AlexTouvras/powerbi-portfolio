@@ -34,6 +34,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | Argos Translate (PT→EN) | Experience Pulse review comment English | 2026-07-26 |
 | scikit-learn | Experience Pulse detractor logistic propensity | 2026-07-26 |
 | statsmodels SARIMAX | Weekly demand forecast + PI bands | 2026-07-24 |
+| lifelines | Duration engine: Kaplan–Meier, Cox, Grambsch–Therneau | 2026-10-19 |
 
 ## File structure
 
@@ -63,6 +64,10 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 └── _brief/report-spec.md
 ```
 
+## Analytics engine
+
+`_shared/analytics_engine` fits a caller-supplied duration table (time, event, optional strata and covariates). It writes FactKm, FactCox, FactPh, FactBetaT, FactPrediction, and ModelMetrics. `cite` and `render` refuse a draft. The CLI cannot write `APPROVED`; a person copies `fit_hash.txt` there. Label outcomes stay on the logistic scripts. A single series stays on SARIMAX. Contract: `docs/architecture/analytics-engine.md`.
+
 ## Key decisions
 
 | Date | Decision | Rationale |
@@ -76,3 +81,4 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | 2026-07-24 | Logistics Pulse signature = demand forecast PI ribbon; KPI = On-time % (not true OTIF) | Portfolio gap = forecasting; In-Full deferred; avoid Bank Icon Map hero |
 | 2026-07-24 | Trim Olist early ramp + trailing stub week before SARIMAX holdout | Raw end-of-sample wind-down inflated MAPE to >100% |
 | 2026-08-14 | Investing Desk Risk & Mandate shows live-sleeve 95% VaR + book vs min-vol vs max-Sharpe | User: risk as extra layer, not Ledger 2.0; first cycle gold + one visual |
+| 2026-10-19 | Duration engine is dataset-free. Care Pulse stays a 30-day label: UCI has no readmission time | User: do not bind a dataset to set the engine |
