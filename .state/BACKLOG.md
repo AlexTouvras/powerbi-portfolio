@@ -13,7 +13,7 @@
 
 ## Next
 
-- [x] **Analytics engine v1** — duration contract, citation gate, Kaplan–Meier / forest / β(t) templates. No portfolio dataset bound (2026-10-19)
+- [x] **Analytics engine v1** — duration contract, citation gate, survminer-style figure collection (Kaplan–Meier, cumulative hazard and events, log-log, censoring, forest, β(t), martingale, deviance, dfbeta, adjusted survival). No portfolio dataset bound (2026-10-19)
 - [ ] Argument page on a real duration grain, once a table with a clock and a censoring flag is in the portfolio
 - [ ] `07-helsinki-energy` Facility Energy (Nuuka)
 - [ ] `10-fpa-controllership` Controllership (BvA seed)

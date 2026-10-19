@@ -66,7 +66,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 
 ## Analytics engine
 
-`_shared/analytics_engine` fits a caller-supplied duration table (time, event, optional strata and covariates). It writes FactKm, FactCox, FactPh, FactBetaT, FactPrediction, and ModelMetrics. `cite` and `render` refuse a draft. The CLI cannot write `APPROVED`; a person copies `fit_hash.txt` there. Label outcomes stay on the logistic scripts. A single series stays on SARIMAX. Contract: `docs/architecture/analytics-engine.md`.
+`_shared/analytics_engine` fits a caller-supplied duration table (time, event, optional strata and covariates). It writes FactKm, FactCox, FactPh, FactBetaT, FactPrediction, FactCensor, FactResidual, FactInfluence, FactAdjusted, and ModelMetrics. `render` draws the survminer-style set (Kaplan–Meier, cumulative hazard and events, log-log, censoring, forest, β(t), martingale, deviance, dfbeta, adjusted survival). Cumulative hazard stops where survival falls below 0.02. `cite` and `render` refuse a draft. The CLI cannot write `APPROVED`; a person copies `fit_hash.txt` there. Label outcomes stay on the logistic scripts. A single series stays on SARIMAX. Contract: `docs/architecture/analytics-engine.md`.
 
 ## Key decisions
 

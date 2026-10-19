@@ -24,6 +24,10 @@ Instrument pages stay on the [report page contract](report-page-contract.md): La
 | `FactPh` | Term. Grambsch–Therneau p and verdict `holds` or `changes` |
 | `FactBetaT` | Term × time. Scaled Schoenfeld residual, and a cubic smooth of β(t) on log time with a pointwise 95% band |
 | `FactPrediction` | One row, when a horizon was set. N still at risk (event = 0), expected exits inside the horizon |
+| `FactCensor` | Reverse Kaplan–Meier. Censoring is the event |
+| `FactResidual` | Row. Linear predictor, martingale residual, deviance residual |
+| `FactInfluence` | Term × row. dfbeta, the approximate change in the coefficient when the row is omitted |
+| `FactAdjusted` | Profile × time. Cox predicted survival at the reference profile |
 | `ModelMetrics` | One row. N, events, censorings, concordance, log-rank p |
 
 The proportional-hazards test uses the Kaplan–Meier time transform, which is the transform current R `cox.zph` uses. lifelines' own default is the rank transform, and the two will not match digit for digit. lifelines stores the scaled Schoenfeld residual centered at zero; R adds the Cox coefficient. `FactBetaT.Residual` is the lifelines value. The figure adds the coefficient before drawing, so the dashed line sits on the Cox coefficient.
@@ -57,7 +61,25 @@ PYTHONPATH=_shared python -m analytics_engine render \
 
 `fit` writes the tables, `draft.json`, and `fit_hash.txt`. It never writes `APPROVED`. `cite` and `render` require `APPROVED` to contain the current hash. Refitting changes the hash, and the old approval stops matching.
 
-The three figures are `kaplan-meier.png` (step curve, log-log band, at-risk table), `forest.png` (log hazard-ratio axis, line at 1), and `beta-time.png` (residual points, smooth, band, dashed Cox coefficient, the test in the panel title). Their captions are filled through the same citation rule.
+## Figure collection
+
+The set follows the publication gallery in survminer and the survival package: `ggsurvplot`, `ggforest`, `ggcoxzph`, `ggcoxdiagnostics`, and `ggadjustedcurves`.
+
+| File | What it shows |
+|---|---|
+| `kaplan-meier.png` | Step curve, log-log band, at-risk table |
+| `cumulative-hazard.png` | −log of the Kaplan–Meier estimate, drawn while survival stays at or above 0.02, band transformed and stopped at the same floor |
+| `cumulative-events.png` | One minus the Kaplan–Meier estimate. One event type, so this is not a competing-risk cumulative incidence |
+| `log-cumulative-hazard.png` | Complementary log-log against log time. Parallel curves are what proportional hazards look like |
+| `censoring.png` | Reverse Kaplan–Meier of the censoring time |
+| `forest.png` | Log hazard-ratio axis, line at 1, interval labels |
+| `beta-time.png` | Scaled Schoenfeld points, smooth, band, dashed Cox coefficient, the test in the panel title |
+| `martingale.png` | Martingale residual against the linear predictor, smooth, line at 0 |
+| `deviance.png` | Deviance residual. Filled points had the event, open points were censored |
+| `influence.png` | dfbeta against time, one panel per coefficient |
+| `adjusted-survival.png` | Cox predicted survival for each stratum. Other categories at the reference level, numeric covariates at their mean |
+
+Cumulative hazard, cumulative events, and the log-log plot are drawn from `FactKm`. The others are drawn from the tables above. Captions that quote a count go through the citation rule.
 
 ## What this is not
 

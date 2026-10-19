@@ -31,9 +31,13 @@ TIME_TRANSFORM = "km"
 TABLES = (
     "FactKm",
     "StratumSummary",
+    "FactCensor",
     "FactCox",
     "FactPh",
     "FactBetaT",
+    "FactResidual",
+    "FactInfluence",
+    "FactAdjusted",
     "FactPrediction",
     "ModelMetrics",
 )
@@ -45,6 +49,9 @@ _PH_COLUMNS = ["Term", "Test", "P", "Verdict", "TimeTransform"]
 _BETA_COLUMNS = ["Term", "Time", "Beta", "Lo", "Hi", "Residual", "Kind"]
 _PRED_COLUMNS = ["Horizon", "NAtRisk", "ExpectedExits"]
 _METRIC_COLUMNS = ["N", "Events", "NCensored", "Concordance", "LogRankP"]
+_RESIDUAL_COLUMNS = ["Time", "Event", "LinearPredictor", "Martingale", "Deviance"]
+_INFLUENCE_COLUMNS = ["Term", "Time", "DeltaBeta"]
+_ADJUSTED_COLUMNS = ["Profile", "Time", "Survival"]
 
 
 @dataclass(frozen=True)
@@ -69,8 +76,12 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
     work, design, references = _prepare(frame, outcome)
     km, summary, km_fitters = _kaplan_meier(work, outcome)
     logrank_p = _logrank(work, outcome)
-    cox, ph, beta, concordance, notes = _cox(work, design, references)
-    prediction = _prediction(work, outcome, design, km_fitters, cox_was_fit=concordance is not None)
+    cox, ph, beta, concordance, notes, fitter, train = _cox(work, design, references)
+    prediction = _prediction(
+        work, outcome, design, km_fitters, fitter, cox_was_fit=concordance is not None
+    )
+    censor = _censoring(work, outcome)
+    residual, influence, adjusted = _model_curves(outcome, design, references, fitter, train)
     metrics = pd.DataFrame(
         [
             {
@@ -86,9 +97,13 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
     tables = {
         "FactKm": km,
         "StratumSummary": summary,
+        "FactCensor": censor,
         "FactCox": cox,
         "FactPh": ph,
         "FactBetaT": beta,
+        "FactResidual": residual,
+        "FactInfluence": influence,
+        "FactAdjusted": adjusted,
         "FactPrediction": prediction,
         "ModelMetrics": metrics,
     }
@@ -98,6 +113,8 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         f"Proportional-hazards time transform: {TIME_TRANSFORM}",
         "Scaled Schoenfeld residuals are stored as lifelines returns them (mean zero). "
         "The figure adds the Cox coefficient, matching R's scaled Schoenfeld residual.",
+        "Cumulative hazard and the log-log plot are transforms of FactKm. "
+        "FactCensor is the reverse Kaplan–Meier, with censoring treated as the event.",
         *notes,
     )
     return FitResult(
@@ -320,12 +337,12 @@ def _cox(
     work: pd.DataFrame,
     design: pd.DataFrame,
     references: dict[str, str],
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, float | None, tuple[str, ...]]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, float | None, tuple[str, ...], CoxPHFitter | None, pd.DataFrame | None]:
     empty_cox = pd.DataFrame(columns=_COX_COLUMNS)
     empty_ph = pd.DataFrame(columns=_PH_COLUMNS)
     empty_beta = pd.DataFrame(columns=_BETA_COLUMNS)
     if design.empty:
-        return empty_cox, empty_ph, empty_beta, None, ("No covariates with variation, so no Cox model.",)
+        return empty_cox, empty_ph, empty_beta, None, ("No covariates with variation, so no Cox model.",), None, None
     time_col = work.attrs["time"]
     event_col = work.attrs["event"]
     train = design.copy()
@@ -368,6 +385,8 @@ def _cox(
         beta,
         float(fitter.concordance_index_),
         (),
+        fitter,
+        train,
     )
 
 
@@ -448,11 +467,113 @@ def _smooth(term: str, time: np.ndarray, scaled: np.ndarray, beta: float) -> lis
     return out
 
 
+def _censoring(work: pd.DataFrame, outcome: Outcome) -> pd.DataFrame:
+    """Reverse Kaplan–Meier: censoring is the event, and the original event censors follow-up."""
+
+    if int((work[outcome.event] == 0).sum()) < 1:
+        return pd.DataFrame(columns=_KM_COLUMNS)
+    flipped = work.copy()
+    flipped[outcome.event] = (work[outcome.event] == 0).astype(int)
+    curve, _, _ = _kaplan_meier(flipped, outcome)
+    return curve
+
+
+def _model_curves(
+    outcome: Outcome,
+    design: pd.DataFrame,
+    references: dict[str, str],
+    fitter: CoxPHFitter | None,
+    train: pd.DataFrame | None,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    empty_residual = pd.DataFrame(columns=_RESIDUAL_COLUMNS)
+    empty_influence = pd.DataFrame(columns=_INFLUENCE_COLUMNS)
+    empty_adjusted = pd.DataFrame(columns=_ADJUSTED_COLUMNS)
+    if fitter is None or train is None:
+        return empty_residual, empty_influence, empty_adjusted
+    time_col = outcome.time
+    event_col = outcome.event
+    martingale = fitter.compute_residuals(train, "martingale")
+    deviance = fitter.compute_residuals(train, "deviance").reindex(martingale.index)
+    linear = fitter.predict_log_partial_hazard(train).reindex(martingale.index)
+    residual = pd.DataFrame(
+        {
+            "Time": train.loc[martingale.index, time_col].to_numpy(dtype=float),
+            "Event": train.loc[martingale.index, event_col].to_numpy(dtype=float),
+            "LinearPredictor": linear.to_numpy(dtype=float),
+            "Martingale": martingale["martingale"].to_numpy(dtype=float),
+            "Deviance": deviance["deviance"].to_numpy(dtype=float),
+        }
+    )
+    delta = fitter.compute_residuals(train, "delta_beta")
+    times = train.loc[delta.index, time_col]
+    influence_rows = []
+    for term in delta.columns:
+        for observed, value in zip(times.to_numpy(dtype=float), delta[term].to_numpy(dtype=float), strict=True):
+            influence_rows.append({"Term": str(term), "Time": float(observed), "DeltaBeta": float(value)})
+    influence = pd.DataFrame(influence_rows)[_INFLUENCE_COLUMNS] if influence_rows else empty_influence
+    adjusted = _adjusted(fitter, train, design, outcome, references)
+    return residual[_RESIDUAL_COLUMNS], influence, adjusted
+
+
+def _adjusted(
+    fitter: CoxPHFitter,
+    train: pd.DataFrame,
+    design: pd.DataFrame,
+    outcome: Outcome,
+    references: dict[str, str],
+) -> pd.DataFrame:
+    times = np.unique(np.quantile(train[outcome.time].to_numpy(dtype=float), np.linspace(0, 0.98, 36)))
+    times = np.unique(np.r_[0.0, times])
+    profiles = _profiles(design, outcome, references)
+    rows: list[dict] = []
+    for name, values in profiles:
+        covariates = pd.DataFrame([values], columns=list(design.columns))
+        survival = fitter.predict_survival_function(covariates, times=times)
+        for observed, estimate in zip(survival.index.to_numpy(dtype=float), survival.iloc[:, 0].to_numpy(dtype=float), strict=True):
+            rows.append({"Profile": name, "Time": float(observed), "Survival": float(estimate)})
+    if not rows:
+        return pd.DataFrame(columns=_ADJUSTED_COLUMNS)
+    return pd.DataFrame(rows)[_ADJUSTED_COLUMNS]
+
+
+def _profiles(
+    design: pd.DataFrame, outcome: Outcome, references: dict[str, str]
+) -> list[tuple[str, dict[str, float]]]:
+    if design.empty:
+        return []
+    means = {column: float(design[column].mean()) for column in design.columns}
+    strata = outcome.strata
+    dummy_prefix = f"{strata}[" if strata else ""
+    dummy_columns = [column for column in design.columns if dummy_prefix and column.startswith(dummy_prefix)]
+    numeric_means = {column: value for column, value in means.items() if column not in dummy_columns}
+
+    def row_for(level: str | None) -> dict[str, float]:
+        values = dict(numeric_means)
+        for column in design.columns:
+            if column in numeric_means:
+                continue
+            if strata and column.startswith(dummy_prefix):
+                values[column] = 1.0 if level is not None and column == f"{strata}[{level}]" else 0.0
+            else:
+                values[column] = 0.0
+        return values
+
+    if strata and strata in references and dummy_columns:
+        levels = [references[strata]]
+        for column in dummy_columns:
+            level = column[len(dummy_prefix) : -1]
+            if level not in levels:
+                levels.append(level)
+        return [(level, row_for(level)) for level in levels]
+    return [("average", row_for(None))]
+
+
 def _prediction(
     work: pd.DataFrame,
     outcome: Outcome,
     design: pd.DataFrame,
     km_fitters: dict[str, KaplanMeierFitter],
+    fitter: CoxPHFitter | None,
     cox_was_fit: bool,
 ) -> pd.DataFrame:
     if outcome.horizon is None:
@@ -463,8 +584,8 @@ def _prediction(
             [{"Horizon": outcome.horizon, "NAtRisk": 0, "ExpectedExits": 0.0}],
             columns=_PRED_COLUMNS,
         )
-    if cox_was_fit:
-        expected = _cox_expected_exits(work, outcome, design, at_risk)
+    if cox_was_fit and fitter is not None:
+        expected = _cox_expected_exits(fitter, work, outcome, design, at_risk)
     else:
         expected = _km_expected_exits(at_risk, outcome, km_fitters)
     return pd.DataFrame(
@@ -474,14 +595,13 @@ def _prediction(
 
 
 def _cox_expected_exits(
-    work: pd.DataFrame, outcome: Outcome, design: pd.DataFrame, at_risk: pd.DataFrame
+    fitter: CoxPHFitter,
+    work: pd.DataFrame,
+    outcome: Outcome,
+    design: pd.DataFrame,
+    at_risk: pd.DataFrame,
 ) -> float:
     time_col = work.attrs["time"]
-    event_col = work.attrs["event"]
-    train = design.copy()
-    train.insert(0, event_col, work[event_col].to_numpy())
-    train.insert(0, time_col, work[time_col].to_numpy())
-    fitter = CoxPHFitter().fit(train, duration_col=time_col, event_col=event_col)
     rows = design.loc[at_risk.index]
     lived = at_risk[time_col].to_numpy(dtype=float)
     survival = fitter.predict_survival_function(rows, times=[float(outcome.horizon)], conditional_after=lived)

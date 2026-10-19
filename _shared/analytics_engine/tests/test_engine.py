@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from analytics_engine import CitationError, Outcome, RouteError, cite, fit, read_fit, release, render, route
 from analytics_engine.fit import approval_matches, hash_directory, write_fit
+from analytics_engine.gallery import cumulative_hazard_frame
 from analytics_engine.__main__ import main
 
 
@@ -80,6 +81,15 @@ def test_duration_fit_matches_the_draw_and_refuses_a_draft():
     assert set(ph["TimeTransform"]) == {"km"}
     assert not released.tables["FactBetaT"].empty
     assert set(released.tables["FactBetaT"]["Kind"]) == {"residual", "smooth"}
+    assert abs(float(released.tables["FactResidual"]["Martingale"].mean())) < 0.05
+    censor = released.tables["FactCensor"]
+    for _, part in censor.groupby("Stratum"):
+        assert part.sort_values("Time")["Survival"].is_monotonic_decreasing
+    for _, part in released.tables["FactAdjusted"].groupby("Profile"):
+        ordered = part.sort_values("Time")
+        assert ordered["Survival"].is_monotonic_decreasing
+        assert ((ordered["Survival"] >= -1e-6) & (ordered["Survival"] <= 1 + 1e-6)).all()
+    assert set(released.tables["FactInfluence"]["Term"]) == set(released.tables["FactCox"]["Term"])
 
     sentence = cite(
         "Of {N} rows, concordance {Concordance}. Of the {NAtRisk} still at risk, about {ExpectedExits} exit within {Horizon}.",
@@ -89,6 +99,25 @@ def test_duration_fit_matches_the_draw_and_refuses_a_draft():
     assert released.measures["NAtRisk"] == int((_draw()["event"] == 0).sum())
     with pytest.raises(CitationError):
         cite("The answer is {MadeUp}.", released)
+
+
+def test_cumulative_hazard_stops_before_survival_hits_zero():
+    curve = pd.DataFrame(
+        {
+            "Stratum": ["A", "A", "A", "B"],
+            "Time": [0.0, 1.0, 2.0, 1.5],
+            "Survival": [1.0, 0.4, 0.0, 0.05],
+            "Lo": [1.0, 0.2, 0.0, 0.0],
+            "Hi": [1.0, 0.6, 0.05, 0.2],
+        }
+    )
+    hazard = cumulative_hazard_frame(curve)
+    assert list(hazard["Time"]) == [0.0, 1.0, 1.5]
+    assert np.isfinite(hazard["Hazard"]).all()
+    assert hazard["Hazard"].max() <= -np.log(0.02) + 1e-9
+    tail = hazard[hazard["Stratum"] == "B"].iloc[0]
+    assert np.isnan(tail["Hi"])
+    assert np.isfinite(tail["Lo"])
 
 
 def test_missing_column_and_bad_event_fail_before_a_figure():
@@ -118,7 +147,19 @@ def test_approval_hash_gates_the_files(tmp_path: Path):
 
     released = release(loaded)
     written = render(released, tmp_path / "figures")
-    for name in ("kaplan-meier", "forest", "beta-time"):
+    for name in (
+        "kaplan-meier",
+        "forest",
+        "beta-time",
+        "cumulative-hazard",
+        "cumulative-events",
+        "log-cumulative-hazard",
+        "censoring",
+        "martingale",
+        "deviance",
+        "influence",
+        "adjusted-survival",
+    ):
         blob = written[name].read_bytes()
         assert blob.startswith(b"\x89PNG")
         assert len(blob) > 8_000

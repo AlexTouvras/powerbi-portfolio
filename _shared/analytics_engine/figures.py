@@ -15,27 +15,8 @@ from matplotlib.figure import Figure
 
 from analytics_engine.cite import cite, format_measure
 from analytics_engine.fit import FitResult
-
-INK = "#1F2A33"
-MUTED = "#5A6B75"
-RULE = "#D5DEE4"
-PALETTE = ("#2F5F73", "#C17B3A", "#1B7A4E", "#8C3A4A", "#3E5C76", "#6E5A3A", "#4E6B62", "#7A4E62")
-
-plt.rcParams.update(
-    {
-        "font.family": "DejaVu Serif",
-        "text.color": INK,
-        "axes.labelcolor": INK,
-        "xtick.color": INK,
-        "ytick.color": INK,
-        "axes.edgecolor": INK,
-        "axes.linewidth": 0.6,
-        "figure.facecolor": "white",
-        "axes.facecolor": "white",
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-    }
-)
+from analytics_engine.gallery import render_gallery
+from analytics_engine.style import INK, MUTED, PALETTE, RULE
 
 
 def render(result: FitResult, directory: str | Path) -> dict[str, Path]:
@@ -60,6 +41,7 @@ def render(result: FitResult, directory: str | Path) -> dict[str, Path]:
         beta.savefig(beta_path, dpi=140, bbox_inches="tight")
         plt.close(beta)
         written["beta-time"] = beta_path
+    written.update(render_gallery(result, path))
     return written
 
 
