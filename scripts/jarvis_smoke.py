@@ -13,6 +13,12 @@ REQUIRED_DIRS = [
     "05-bank-segmentation",
     "06-healthcare-analytics",
     "docs/architecture",
+    "_shared/analytics_engine",
+]
+
+REQUIRED_FILES = [
+    "docs/architecture/analytics-engine.md",
+    "_shared/analytics_engine/__main__.py",
 ]
 
 REQUIRED_PBIPS = [
@@ -32,6 +38,9 @@ def main() -> int:
     for rel in REQUIRED_PBIPS:
         if not (ROOT / rel).is_file():
             missing.append(f"pbip:{rel}")
+    for rel in REQUIRED_FILES:
+        if not (ROOT / rel).is_file():
+            missing.append(f"file:{rel}")
     if missing:
         print("FAIL", *missing, sep="\n  ")
         return 1
