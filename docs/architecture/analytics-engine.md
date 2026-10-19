@@ -19,8 +19,7 @@ Instrument pages stay on the [report page contract](report-page-contract.md): La
 | Table | Grain |
 |---|---|
 | `FactKm` | Stratum × time. Survival, log-log 95% band, n at risk, events, censorings |
-| `StratumSummary` | Stratum. N, events, median, restricted mean up to the last observed time in the stratum |
-| `FactFollowup` | One row per input row. Stratum, time, event. The individual-follow-up figures read this |
+| `StratumSummary` | Stratum. N, events, median, restricted mean on one shared clock, and the difference versus the reference stratum with a Greenwood 95% interval. The clock is the latest time at which every stratum still has a tenth of its rows at risk |
 | `FactCox` | Term. Hazard ratio, 95% interval, p, reference level. Efron ties |
 | `FactPh` | Term. Grambsch–Therneau p and verdict `holds` or `changes` |
 | `FactBetaT` | Term × time. Scaled Schoenfeld residual, and a cubic smooth of β(t) on log time with a pointwise 95% band |
@@ -29,6 +28,12 @@ Instrument pages stay on the [report page contract](report-page-contract.md): La
 | `FactResidual` | Row. Linear predictor, martingale residual, deviance residual |
 | `FactInfluence` | Term × row. dfbeta, the approximate change in the coefficient when the row is omitted |
 | `FactAdjusted` | Profile × time. Cox predicted survival at the reference profile |
+| `FactHazard` | Stratum × time. Epanechnikov smooth of the Nelson–Aalen hazard, one bandwidth for every stratum, pointwise 95% band |
+| `FactCoxSnell` | Residual. Nelson–Aalen cumulative hazard of the Cox–Snell residuals. A fitting model tracks y = x |
+| `FactCalibration` | Predicted-risk group. Mean Cox risk of the event by a stated time, against one minus the Kaplan–Meier survival in that group |
+| `FactAalen` | Term × time. Cumulative coefficient of the Aalen additive hazard, with a pointwise 95% band |
+| `FactDecision` | Threshold × strategy. Net benefit of the Cox model, of treating everyone, and of treating no one. The rates are Kaplan–Meier rates |
+| `FactNomogram` | Axis × tick. Points, covariate scales, total points, and survival at the stated time |
 | `ModelMetrics` | One row. N, events, censorings, concordance, log-rank p |
 
 The proportional-hazards test uses the Kaplan–Meier time transform, which is the transform current R `cox.zph` uses. lifelines' own default is the rank transform, and the two will not match digit for digit. lifelines stores the scaled Schoenfeld residual centered at zero; R adds the Cox coefficient. `FactBetaT.Residual` is the lifelines value. The figure adds the coefficient before drawing, so the dashed line sits on the Cox coefficient.
@@ -82,23 +87,19 @@ The set follows the publication gallery in survminer and the survival package: `
 
 Cumulative hazard, cumulative events, and the log-log plot are drawn from `FactKm`. The others are drawn from the tables above. Captions that quote a count go through the citation rule.
 
-## Chart forms
+## Further estimands
 
-The curves above are one family. The same fit also draws the forms below, taken from the [Financial Times visual vocabulary](https://github.com/Financial-Times/chart-doctor/tree/main/visual-vocabulary) and from the clinical swimmer plot (a Priestley timeline of individual follow-up). They are displays of the tables already written. They do not add an estimator.
+A histogram of the recorded time treats a censored row as if that time were the event. These figures do not. Each one is an estimand with a stated null.
 
-| File | Form | What it shows |
-|---|---|---|
-| `risk-heatmap.png` | XY heatmap | Number at risk by stratum and time. Color repeats the count |
-| `histogram.png` | Histogram | Follow-up time. Lower segment had the event, upper segment was censored. Shared vertical scale |
-| `raincloud.png` | Violin, box, dot strip | Density of every row, median and quartiles, and the raw points. Points are capped at 80 per stratum. The axis stops at the 98th percentile of follow-up time |
-| `barcode.png` | Barcode | Every row as a tick. Teal had the event, copper was censored |
-| `swimmer.png` | Priestley timeline | The 12 longest follow-ups in each stratum. Filled square: event. Open circle: censored |
-| `composition.png` | Proportional stacked bar | Width is the stratum's share of the cohort. The split is event against censoring |
-| `event-columns.png` | Column | Events per time bin, from the Kaplan–Meier event table |
-| `restricted-mean.png` | Lollipop | Area under the Kaplan–Meier curve, ordered, axis starting at zero |
-| `landmark-dots.png` | Dot plot | Kaplan–Meier survival at the 25th and 75th percentiles of follow-up time, with the log-log band |
-| `residual-hexbin.png` | Hexbin | Martingale residual against the linear predictor, counted in cells so a dense cloud is not one point |
-| `influence-bars.png` | Diverging bar | The 12 largest signed dfbeta values for each coefficient |
+| File | What it shows |
+|---|---|
+| `hazard.png` | Kernel-smoothed hazard from the Nelson–Aalen estimator, one bandwidth for every stratum, pointwise 95% band. The figure keeps the central 90 percent of follow-up and drops a point whose upper band is more than three times that stratum's typical hazard |
+| `cox-snell.png` | Nelson–Aalen cumulative hazard of the Cox–Snell residuals against the line y = x |
+| `calibration.png` | Observed Kaplan–Meier event rate against mean predicted Cox risk, by quantile group, at the horizon or the median follow-up |
+| `aalen.png` | Cumulative additive-hazard coefficients. A flat stretch adds no hazard. The line at 0 is no effect |
+| `decision-curve.png` | Net benefit across decision thresholds. Treat-all and treat-none are the comparators. Rates are Kaplan–Meier rates |
+| `nomogram.png` | Cox nomogram. Points, each covariate, total points, and survival at the stated time |
+| `rmst.png` | Difference in restricted mean time versus the reference stratum. One shared clock. Greenwood 95% interval. The line at 0 is no difference |
 
 ## What this is not
 

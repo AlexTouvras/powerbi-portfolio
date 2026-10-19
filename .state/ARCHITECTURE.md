@@ -66,7 +66,7 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 
 ## Analytics engine
 
-`_shared/analytics_engine` fits a caller-supplied duration table (time, event, optional strata and covariates). It writes FactKm, FactFollowup, FactCox, FactPh, FactBetaT, FactPrediction, FactCensor, FactResidual, FactInfluence, FactAdjusted, and ModelMetrics. `render` draws the survminer-style curves and a second set of chart forms (heatmap, histogram, raincloud, barcode, swimmer, proportional stacked bar, columns, lollipop, dot plot, hexbin, diverging bar). Cumulative hazard stops where survival falls below 0.02. `cite` and `render` refuse a draft. The CLI cannot write `APPROVED`; a person copies `fit_hash.txt` there. Label outcomes stay on the logistic scripts. A single series stays on SARIMAX. Contract: `docs/architecture/analytics-engine.md`.
+`_shared/analytics_engine` fits a caller-supplied duration table (time, event, optional strata and covariates). It writes FactKm, StratumSummary, FactCensor, FactCox, FactPh, FactBetaT, FactResidual, FactInfluence, FactAdjusted, FactHazard, FactCoxSnell, FactCalibration, FactAalen, FactDecision, FactNomogram, FactPrediction, and ModelMetrics. `render` draws the survminer-style curves and seven censoring-aware estimands: smoothed hazard, Cox–Snell, calibration, Aalen additive hazard, decision curve, Cox nomogram, and a restricted-mean contrast on one shared clock with a Greenwood interval. Cumulative hazard stops where survival falls below 0.02. `cite` and `render` refuse a draft. The CLI cannot write `APPROVED`; a person copies `fit_hash.txt` there. Label outcomes stay on the logistic scripts. A single series stays on SARIMAX. Contract: `docs/architecture/analytics-engine.md`.
 
 ## Key decisions
 
@@ -82,3 +82,4 @@ Nordic Boardroom Power BI portfolio: gold CSVs → TMDL semantic model → PBIR 
 | 2026-07-24 | Trim Olist early ramp + trailing stub week before SARIMAX holdout | Raw end-of-sample wind-down inflated MAPE to >100% |
 | 2026-08-14 | Investing Desk Risk & Mandate shows live-sleeve 95% VaR + book vs min-vol vs max-Sharpe | User: risk as extra layer, not Ledger 2.0; first cycle gold + one visual |
 | 2026-10-19 | Duration engine is dataset-free. Care Pulse stays a 30-day label: UCI has no readmission time | User: do not bind a dataset to set the engine |
+| 2026-10-19 | Extra figures are censoring-aware estimands (hazard, Cox–Snell, calibration, Aalen, decision curve, nomogram, restricted-mean contrast). A histogram or barcode of recorded time is not in the collection | User: the extra charts were too basic |

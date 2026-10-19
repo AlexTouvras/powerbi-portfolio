@@ -13,7 +13,7 @@
 
 ## Next
 
-- [x] **Analytics engine v1** — duration contract, citation gate, survminer-style curves plus heatmap, histogram, raincloud, barcode, swimmer, proportional stacked bar, columns, lollipop, dot plot, hexbin, and diverging bar. No portfolio dataset bound (2026-10-19)
+- [x] **Analytics engine v1** — duration contract, citation gate, survminer-style curves, and censoring-aware estimands (smoothed hazard, Cox–Snell, calibration, Aalen, decision curve, nomogram, restricted-mean contrast). No portfolio dataset bound (2026-10-19)
 - [ ] Argument page on a real duration grain, once a table with a clock and a censoring flag is in the portfolio
 - [ ] `07-helsinki-energy` Facility Energy (Nuuka)
 - [ ] `10-fpa-controllership` Controllership (BvA seed)

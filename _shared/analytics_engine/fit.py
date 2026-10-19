@@ -22,8 +22,7 @@ import pandas as pd
 import statsmodels.api as sm
 from lifelines import CoxPHFitter, KaplanMeierFitter
 from lifelines.statistics import multivariate_logrank_test, proportional_hazard_test
-from lifelines.utils import restricted_mean_survival_time
-
+from analytics_engine import diagnostics
 from analytics_engine.outcome import Outcome, RouteError, route
 
 PH_ALPHA = 0.05
@@ -31,7 +30,6 @@ TIME_TRANSFORM = "km"
 TABLES = (
     "FactKm",
     "StratumSummary",
-    "FactFollowup",
     "FactCensor",
     "FactCox",
     "FactPh",
@@ -39,13 +37,28 @@ TABLES = (
     "FactResidual",
     "FactInfluence",
     "FactAdjusted",
+    "FactHazard",
+    "FactCoxSnell",
+    "FactCalibration",
+    "FactAalen",
+    "FactDecision",
+    "FactNomogram",
     "FactPrediction",
     "ModelMetrics",
 )
 
 _KM_COLUMNS = ["Stratum", "Time", "Survival", "Lo", "Hi", "NRisk", "NEvent", "NCensor"]
-_STRATUM_COLUMNS = ["Stratum", "N", "Events", "Median", "RestrictedMean"]
-_FOLLOWUP_COLUMNS = ["Stratum", "Time", "Event"]
+_STRATUM_COLUMNS = [
+    "Stratum",
+    "N",
+    "Events",
+    "Median",
+    "RestrictedMean",
+    "Tau",
+    "Difference",
+    "DiffLo",
+    "DiffHi",
+]
 _COX_COLUMNS = ["Term", "HazardRatio", "Lo", "Hi", "P", "Reference", "Kind"]
 _PH_COLUMNS = ["Term", "Test", "P", "Verdict", "TimeTransform"]
 _BETA_COLUMNS = ["Term", "Time", "Beta", "Lo", "Hi", "Residual", "Kind"]
@@ -77,14 +90,21 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         )
     work, design, references = _prepare(frame, outcome)
     km, summary, km_fitters = _kaplan_meier(work, outcome)
+    summary = diagnostics.rmst_contrast(summary, km_fitters, work, outcome)[_STRATUM_COLUMNS]
     logrank_p = _logrank(work, outcome)
     cox, ph, beta, concordance, notes, fitter, train = _cox(work, design, references)
     prediction = _prediction(
         work, outcome, design, km_fitters, fitter, cox_was_fit=concordance is not None
     )
     censor = _censoring(work, outcome)
-    followup = _followup(work, outcome)
     residual, influence, adjusted = _model_curves(outcome, design, references, fitter, train)
+    when = diagnostics.clock(work, outcome)
+    hazard = diagnostics.hazard_table(work, outcome)
+    cox_snell = diagnostics.cox_snell_table(fitter, train, outcome)
+    calibrated = diagnostics.calibration_table(fitter, train, outcome, when)
+    aalen = diagnostics.aalen_table(train, outcome)
+    decision = diagnostics.decision_table(fitter, train, outcome, when)
+    nomogram = diagnostics.nomogram_table(fitter, design, references, outcome, when)
     metrics = pd.DataFrame(
         [
             {
@@ -100,7 +120,6 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
     tables = {
         "FactKm": km,
         "StratumSummary": summary,
-        "FactFollowup": followup,
         "FactCensor": censor,
         "FactCox": cox,
         "FactPh": ph,
@@ -108,6 +127,12 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         "FactResidual": residual,
         "FactInfluence": influence,
         "FactAdjusted": adjusted,
+        "FactHazard": hazard,
+        "FactCoxSnell": cox_snell,
+        "FactCalibration": calibrated,
+        "FactAalen": aalen,
+        "FactDecision": decision,
+        "FactNomogram": nomogram,
         "FactPrediction": prediction,
         "ModelMetrics": metrics,
     }
@@ -119,9 +144,10 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         "The figure adds the Cox coefficient, matching R's scaled Schoenfeld residual.",
         "Cumulative hazard and the log-log plot are transforms of FactKm. "
         "FactCensor is the reverse Kaplan–Meier, with censoring treated as the event.",
-        "FactFollowup is one row per input row. The heatmap, histogram, raincloud, barcode, "
-        "swimmer, composition, event columns, restricted mean, and landmark dots are displays "
-        "of these tables. They are not extra estimators.",
+        "Restricted mean uses one clock: the latest time at which every stratum still has a tenth of its rows at risk. "
+        "The hazard figure is a kernel smooth of the Nelson–Aalen estimator. "
+        "Calibration, the decision curve, the nomogram, and the Cox–Snell plot read the Cox model. "
+        "The Aalen plot is the cumulative additive hazard.",
         *notes,
     )
     return FitResult(
@@ -320,12 +346,12 @@ def _kaplan_meier(
                 "N": int(len(part)),
                 "Events": int(part[outcome.event].sum()),
                 "Median": median,
-                "RestrictedMean": float(restricted_mean_survival_time(fitter, t=float(part[outcome.time].max()))),
+                "RestrictedMean": np.nan,
             }
         )
     return (
         pd.concat(curves, ignore_index=True)[_KM_COLUMNS],
-        pd.DataFrame(summaries)[_STRATUM_COLUMNS],
+        pd.DataFrame(summaries),
         fitters,
     )
 
@@ -472,22 +498,6 @@ def _smooth(term: str, time: np.ndarray, scaled: np.ndarray, beta: float) -> lis
             }
         )
     return out
-
-
-def _followup(work: pd.DataFrame, outcome: Outcome) -> pd.DataFrame:
-    """The analysis rows, kept so a figure can show every follow-up rather than only the curve."""
-
-    if outcome.strata:
-        stratum = work[outcome.strata].astype(str).to_numpy()
-    else:
-        stratum = np.full(len(work), "All")
-    return pd.DataFrame(
-        {
-            "Stratum": stratum,
-            "Time": work[outcome.time].to_numpy(dtype=float),
-            "Event": work[outcome.event].to_numpy(dtype=float),
-        }
-    )[_FOLLOWUP_COLUMNS]
 
 
 def _censoring(work: pd.DataFrame, outcome: Outcome) -> pd.DataFrame:

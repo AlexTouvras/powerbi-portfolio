@@ -1,11 +1,10 @@
-"""Chart forms that are not step curves or residual scatters.
+"""Figures for the estimands in ``diagnostics``.
 
-The geometries follow the Financial Times visual vocabulary — XY heatmap,
-histogram, violin, barcode, Priestley timeline, proportional stacked bar,
-column, lollipop, dot plot, diverging bar — plus the clinical swimmer plot
-and a hexbin for a residual cloud that would overplot as a scatter.
-Each one is a display of a table the fit already wrote. None of them is a
-new estimator.
+These are not summaries of the recorded time. The hazard is a kernel smooth of
+the Nelson–Aalen increments. The nomogram, the calibration plot, the Cox–Snell
+plot, and the decision curve are checks and readings of the Cox model. The
+Aalen plot is the cumulative additive hazard. The restricted-mean contrast is
+a difference of areas under the Kaplan–Meier curve, with an interval.
 """
 
 from __future__ import annotations
@@ -17,51 +16,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
-from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
-from matplotlib.patches import Rectangle
-from scipy.stats import gaussian_kde
 
 from analytics_engine.fit import FitResult
 from analytics_engine.style import INK, MUTED, PALETTE, RULE
 
 FORM_NAMES = (
-    "risk-heatmap",
-    "histogram",
-    "raincloud",
-    "barcode",
-    "swimmer",
-    "composition",
-    "event-columns",
-    "restricted-mean",
-    "landmark-dots",
-    "residual-hexbin",
-    "influence-bars",
+    "hazard",
+    "cox-snell",
+    "calibration",
+    "aalen",
+    "decision-curve",
+    "nomogram",
+    "rmst",
 )
 
-_SWIMMER_CAP = 12
-_RAIN_CAP = 80
-_INFLUENCE_CAP = 12
-_HEAT = LinearSegmentedColormap.from_list("board-teal", ["#E6EEF2", "#2F5F73"])
 _DASH = (0, (3, 2))
 
 
 def render_forms(result: FitResult, directory: Path) -> dict[str, Path]:
-    followup = result.tables["FactFollowup"]
-    influence = result.tables["FactInfluence"]
-    residual = result.tables["FactResidual"]
     specs: list[tuple[str, Figure | None]] = [
-        ("risk-heatmap", _risk_heatmap(result)),
-        ("histogram", _histogram(result) if not followup.empty else None),
-        ("raincloud", _raincloud(result) if not followup.empty else None),
-        ("barcode", _barcode(result) if not followup.empty else None),
-        ("swimmer", _swimmer(result) if not followup.empty else None),
-        ("composition", _composition(result) if not result.tables["StratumSummary"].empty else None),
-        ("event-columns", _event_columns(result)),
-        ("restricted-mean", _restricted_mean(result)),
-        ("landmark-dots", _landmark(result) if not followup.empty else None),
-        ("residual-hexbin", _hexbin(result) if _hexbin_ready(residual) else None),
-        ("influence-bars", _influence_bars(result) if not influence.empty else None),
+        ("hazard", _hazard(result) if not result.tables["FactHazard"].empty else None),
+        ("cox-snell", _cox_snell(result) if not result.tables["FactCoxSnell"].empty else None),
+        ("calibration", _calibration(result) if not result.tables["FactCalibration"].empty else None),
+        ("aalen", _aalen(result) if not result.tables["FactAalen"].empty else None),
+        ("decision-curve", _decision(result) if not result.tables["FactDecision"].empty else None),
+        ("nomogram", _nomogram(result) if not result.tables["FactNomogram"].empty else None),
+        ("rmst", _rmst(result)),
     ]
     written: dict[str, Path] = {}
     for name, figure in specs:
@@ -74,522 +55,274 @@ def render_forms(result: FitResult, directory: Path) -> dict[str, Path]:
     return written
 
 
-def risk_grid(curve: pd.DataFrame, times: np.ndarray) -> pd.DataFrame:
-    """Number at risk for each stratum at each display time, read off the Kaplan–Meier step."""
-
-    rows: list[dict[str, float | str]] = []
-    for name in _strata(curve):
-        part = curve[curve["Stratum"].astype(str) == name].sort_values("Time")
-        for observed in times:
-            rows.append({"Stratum": name, "Time": float(observed), "NRisk": _step_value(part, float(observed), "NRisk")})
-    return pd.DataFrame(rows)
-
-
-def event_bin_counts(curve: pd.DataFrame, edges: np.ndarray) -> pd.DataFrame:
-    """Events from the Kaplan–Meier table, summed inside each time bin."""
-
-    rows: list[dict[str, float | str]] = []
-    cuts = edges[1:-1]
-    for name in _strata(curve):
-        part = curve[curve["Stratum"].astype(str) == name]
-        times = part["Time"].to_numpy(dtype=float)
-        counts = part["NEvent"].to_numpy(dtype=float)
-        inside = (times >= edges[0]) & (times <= edges[-1])
-        bins = np.digitize(times[inside], cuts, right=True)
-        counts = counts[inside]
-        for index in range(len(edges) - 1):
-            rows.append(
-                {
-                    "Stratum": name,
-                    "Left": float(edges[index]),
-                    "Right": float(edges[index + 1]),
-                    "Events": float(counts[bins == index].sum()),
-                }
-            )
-    return pd.DataFrame(rows)
-
-
-def composition_frame(summary: pd.DataFrame) -> pd.DataFrame:
-    """Width is the stratum's share of the cohort. The split is event against censoring."""
-
-    out = summary.copy()
-    out["Censored"] = out["N"] - out["Events"]
-    total = float(out["N"].sum())
-    out["Width"] = out["N"] / total if total else 0.0
-    out["EventShare"] = np.where(out["N"] > 0, out["Events"] / out["N"], np.nan)
-    return out
-
-
-def landmark_frame(curve: pd.DataFrame, times: tuple[float, float]) -> pd.DataFrame:
-    """Kaplan–Meier survival at two times. The value is the last step at or before that time."""
-
-    rows: list[dict[str, float | str]] = []
-    for name in _strata(curve):
-        part = curve[curve["Stratum"].astype(str) == name].sort_values("Time")
-        for observed in times:
-            rows.append(
-                {
-                    "Stratum": name,
-                    "Time": float(observed),
-                    "Survival": _step_value(part, float(observed), "Survival"),
-                    "Lo": _step_value(part, float(observed), "Lo"),
-                    "Hi": _step_value(part, float(observed), "Hi"),
-                }
-            )
-    return pd.DataFrame(rows)
-
-
-def _risk_heatmap(result: FitResult) -> Figure:
-    curve = result.tables["FactKm"]
-    times = _time_grid(curve, 8)
-    grid = risk_grid(curve, times)
-    strata = _strata(grid)
-    values = np.vstack(
-        [grid.loc[grid["Stratum"] == name, "NRisk"].to_numpy(dtype=float) for name in strata]
-    )
-    fig, ax = _canvas(
-        8.4,
-        max(3.8, 0.55 * len(strata) + 2.6),
-        "Number still at risk, the same count as the Kaplan–Meier risk table, at eight times spread across follow-up. Color repeats the count. It is not a hazard.",
-    )
-    image = ax.imshow(values, aspect="auto", cmap=_HEAT, vmin=0, vmax=max(float(values.max()), 1))
-    ax.set_xticks(range(len(times)), [f"{t:.2g}" for t in times])
-    ax.set_yticks(range(len(strata)), strata)
-    ax.set_xlabel("Time")
-    threshold = float(values.max()) * 0.62
-    for row in range(values.shape[0]):
-        for col in range(values.shape[1]):
-            count = values[row, col]
-            ax.text(
-                col,
-                row,
-                f"{int(round(count))}",
-                ha="center",
-                va="center",
-                fontsize=8,
-                color="white" if count >= threshold else INK,
-            )
-    cbar = fig.colorbar(image, ax=ax, fraction=0.046, pad=0.03)
-    cbar.set_label("At risk")
-    cbar.outline.set_linewidth(0.4)
-    _seal(fig)
-    return fig
-
-
-def _histogram(result: FitResult) -> Figure:
-    followup = result.tables["FactFollowup"]
-    strata = _strata(followup)
-    edges = _bin_edges(followup["Time"].to_numpy(dtype=float), 10)
-    width = float(edges[1] - edges[0]) * 0.92
-    centers = (edges[:-1] + edges[1:]) / 2
+def _hazard(result: FitResult) -> Figure:
+    table = result.tables["FactHazard"]
+    bandwidth = float(table["Bandwidth"].iloc[0])
+    strata = list(dict.fromkeys(table["Stratum"].astype(str)))
     cols = min(3, len(strata))
     rows = int(np.ceil(len(strata) / cols))
-    fig, axes = plt.subplots(rows, cols, figsize=(3.5 * cols, 2.7 * rows + 0.9), squeeze=False, sharex=True, sharey=True)
+    fig, axes = plt.subplots(rows, cols, figsize=(3.6 * cols, 3.0 * rows + 1.0), squeeze=False, sharex=True, sharey=True)
     flat = list(axes.ravel())
-    ceiling = 1
-    for ax, name in zip(flat, strata, strict=False):
-        part = followup[followup["Stratum"].astype(str) == name]
-        times = part["Time"].to_numpy(dtype=float)
-        events = times[part["Event"].to_numpy(dtype=float) == 1]
-        censored = times[part["Event"].to_numpy(dtype=float) == 0]
-        event_counts, _ = np.histogram(events, bins=edges)
-        censor_counts, _ = np.histogram(censored, bins=edges)
-        ceiling = max(ceiling, int((event_counts + censor_counts).max()))
-        ax.bar(centers, event_counts, width=width, color=PALETTE[0], label="Event")
-        ax.bar(centers, censor_counts, width=width, bottom=event_counts, color=PALETTE[1], label="Censored")
+    drawn: list[pd.DataFrame] = []
+    for name in strata:
+        part = _central(table[table["Stratum"].astype(str) == name])
+        part = _finite_band(part, "Hazard")
+        drawn.append(part)
+    ceiling = max((float(np.nanmax(part["Hi"])) for part in drawn if not part.empty), default=1.0)
+    for ax, name, part in zip(flat, strata, drawn, strict=False):
+        color = PALETTE[strata.index(name) % len(PALETTE)]
+        if not part.empty:
+            ax.plot(part["Time"], part["Hazard"], color=color, lw=1.5)
+            ax.fill_between(part["Time"], part["Lo"], part["Hi"], color=color, alpha=0.16, linewidth=0)
         ax.set_title(name, loc="left", fontsize=9)
-        ax.set_xlabel("Follow-up time")
-        ax.set_ylabel("Rows")
-        ax.set_axisbelow(True)
+        ax.set_xlabel("Time")
+        ax.set_ylim(0, ceiling * 1.08)
         ax.yaxis.grid(True, color=RULE, lw=0.6)
+        ax.set_axisbelow(True)
+    flat[0].set_ylabel("Hazard")
     for ax in flat[len(strata) :]:
         ax.set_visible(False)
-    for ax in flat[: len(strata)]:
-        ax.set_ylim(0, ceiling * 1.08)
-    _finish_grid(
+    _finish(
         fig,
-        "Histogram of follow-up time. The lower segment had the event. The upper segment was censored. Column height is a count of rows, not a hazard. The panels share one vertical scale.",
+        f"Kernel-smoothed hazard from the Nelson–Aalen estimator. Epanechnikov kernel, half-width {bandwidth:.2g}, the same width in every stratum. The band is the pointwise 95% interval. Drawn on the central 90 percent of follow-up in each stratum. A point is omitted when its upper band is more than three times that stratum's typical hazard, so one unstable tail does not set the scale. This is the instantaneous rate, not a survival probability.",
     )
     return fig
 
 
-def _raincloud(result: FitResult) -> Figure:
-    followup = result.tables["FactFollowup"]
-    strata = _strata(followup)
+def _cox_snell(result: FitResult) -> Figure:
+    table = _central(result.tables["FactCoxSnell"], "Residual").replace([np.inf, -np.inf], np.nan).dropna()
     fig, ax = _canvas(
-        8.4,
-        max(4.6, 1.7 * len(strata) + 1.8),
-        "Follow-up time by stratum. The violin is the density of every row. The box is the median and the quartiles. Filled points had the event and open points were censored. When a stratum has more than 80 rows, the points are a sample of 80. The axis stops at the 98th percentile of follow-up time so a few very long rows do not set the scale.",
-        wrap=92,
+        6.6,
+        6.8,
+        "Cox–Snell residual. The step is the Nelson–Aalen cumulative hazard of the residuals, and the band is its 95% interval. The dashed line is y = x. A Cox model that fits follows that line. The axis stops at the 95th percentile of the residual so the last jump does not set the scale.",
     )
-    rng = np.random.default_rng(0)
-    spacing = 1.35
-    for index, name in enumerate(strata):
-        part = followup[followup["Stratum"].astype(str) == name]
-        y = (len(strata) - 1 - index) * spacing
-        color = PALETTE[index % len(PALETTE)]
-        values = part["Time"].to_numpy(dtype=float)
-        _half_violin(ax, values, y + 0.08, color)
-        ax.boxplot(
-            values,
-            orientation="horizontal",
-            positions=[y],
-            widths=0.16,
-            manage_ticks=False,
-            patch_artist=True,
-            showfliers=False,
-            boxprops={"facecolor": "white", "edgecolor": color, "linewidth": 0.8},
-            medianprops={"color": INK, "linewidth": 1.2},
-            whiskerprops={"color": color, "linewidth": 0.8},
-            capprops={"color": color, "linewidth": 0.8},
-        )
-        take = min(_RAIN_CAP, len(part))
-        chosen = rng.choice(len(part), size=take, replace=False)
-        sample = part.iloc[chosen]
-        jitter = rng.uniform(-0.28, -0.08, size=take)
-        times = sample["Time"].to_numpy(dtype=float)
-        events = sample["Event"].to_numpy(dtype=float) == 1
-        ax.scatter(times[events], y + jitter[events], s=12, color=color, alpha=0.55, linewidths=0, zorder=3)
-        ax.scatter(
-            times[~events],
-            y + jitter[~events],
-            s=14,
-            facecolors="none",
-            edgecolors=color,
-            linewidths=0.7,
-            alpha=0.8,
-            zorder=3,
-        )
-    ax.set_yticks([(len(strata) - 1 - i) * spacing for i in range(len(strata))], strata)
-    ax.set_ylim(-0.55, (len(strata) - 1) * spacing + 0.55)
-    ax.set_xlabel("Follow-up time")
-    high = float(np.quantile(followup["Time"].to_numpy(dtype=float), 0.98))
-    ax.set_xlim(0, max(high, 1e-6) * 1.04)
-    _seal(fig)
-    return fig
-
-
-def _barcode(result: FitResult) -> Figure:
-    followup = result.tables["FactFollowup"]
-    strata = _strata(followup)
-    fig, ax = _canvas(
-        8.4,
-        max(3.6, 0.85 * len(strata) + 2.2),
-        "Every row is a tick, so this is the whole cohort. Teal ticks had the event. Copper ticks were censored. A dark band is many rows ending at that time.",
-    )
-    for index, name in enumerate(strata):
-        part = followup[followup["Stratum"].astype(str) == name]
-        y = len(strata) - 1 - index
-        events = part.loc[part["Event"] == 1, "Time"].to_numpy(dtype=float)
-        censored = part.loc[part["Event"] == 0, "Time"].to_numpy(dtype=float)
-        ax.vlines(censored, y - 0.34, y + 0.34, color=PALETTE[1], lw=0.45, alpha=0.45)
-        ax.vlines(events, y - 0.34, y + 0.34, color=PALETTE[0], lw=0.45, alpha=0.7)
-    ax.set_yticks(range(len(strata)), strata[::-1])
-    ax.set_ylim(-0.6, len(strata) - 0.4)
-    ax.set_xlim(left=0)
-    ax.set_xlabel("Follow-up time")
-    _seal(fig)
-    return fig
-
-
-def _swimmer(result: FitResult) -> Figure:
-    followup = result.tables["FactFollowup"]
-    strata = _strata(followup)
-    lanes = sum(min(_SWIMMER_CAP, int((followup["Stratum"].astype(str) == name).sum())) for name in strata)
-    fig, ax = _canvas(
-        8.6,
-        max(4.8, 0.32 * lanes + 0.45 * len(strata) + 1.8),
-        f"Each bar is one row's follow-up, a Priestley timeline of the kind a swimmer plot uses. Filled square: the event. Open circle: censored. At most {_SWIMMER_CAP} rows per stratum, the longest follow-ups, so a larger cohort is not all shown here. The barcode shows every row.",
-        wrap=96,
-    )
-    y = 0
-    centers: list[float] = []
-    for index, name in enumerate(strata):
-        part = followup[followup["Stratum"].astype(str) == name].nlargest(_SWIMMER_CAP, "Time")
-        color = PALETTE[index % len(PALETTE)]
-        start = y
-        for row in part.itertuples(index=False):
-            ax.barh(y, row.Time, height=0.62, color=color, alpha=0.88)
-            event = float(row.Event) == 1
-            ax.plot(
-                row.Time,
-                y,
-                marker="s" if event else "o",
-                markersize=5.5,
-                markerfacecolor=color if event else "white",
-                markeredgecolor=color,
-                markeredgewidth=0.9,
-                linestyle="none",
-                zorder=3,
-            )
-            y += 1
-        if y > start:
-            centers.append((start + y - 1) / 2)
-        y += 0.7
-    ax.set_yticks(centers, strata)
-    ax.set_ylim(y - 0.4, -0.8)
-    ax.set_xlim(left=0)
-    ax.set_xlabel("Follow-up time")
-    _seal(fig)
-    return fig
-
-
-def _composition(result: FitResult) -> Figure:
-    frame = composition_frame(result.tables["StratumSummary"])
-    fig, ax = _canvas(
-        8.4,
-        5.2,
-        "Proportional stacked bar. The width of a column is that stratum's share of the cohort. The split is rows that had the event against rows that were censored. Area is a count of rows. This is the cohort composition, not a survival estimate.",
-        wrap=90,
-    )
-    x = 0.0
-    centers: list[float] = []
-    labels: list[str] = []
-    for index, row in enumerate(frame.itertuples(index=False)):
-        width = float(row.Width)
-        event_share = float(row.EventShare)
-        ax.add_patch(Rectangle((x, 0), width, event_share, facecolor=PALETTE[0], edgecolor="white", linewidth=0.6))
-        ax.add_patch(
-            Rectangle((x, event_share), width, 1 - event_share, facecolor=PALETTE[1], edgecolor="white", linewidth=0.6)
-        )
-        if event_share > 0.14 and width > 0.08:
-            ax.text(x + width / 2, event_share / 2, f"{int(row.Events)} event", ha="center", va="center", color="white", fontsize=8)
-        if (1 - event_share) > 0.14 and width > 0.08:
-            ax.text(
-                x + width / 2,
-                event_share + (1 - event_share) / 2,
-                f"{int(row.Censored)} censored",
-                ha="center",
-                va="center",
-                color="white",
-                fontsize=8,
-            )
-        centers.append(x + width / 2)
-        labels.append(str(row.Stratum))
-        x += width
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_xticks(centers, labels)
-    ax.set_ylabel("Share of the stratum")
-    ax.set_xlabel("Share of the cohort")
-    _seal(fig)
-    return fig
-
-
-def _event_columns(result: FitResult) -> Figure:
-    curve = result.tables["FactKm"]
-    edges = _bin_edges(curve["Time"].to_numpy(dtype=float), 6)
-    counts = event_bin_counts(curve, edges)
-    strata = _strata(counts)
-    fig, ax = _canvas(
-        8.4,
-        5.0,
-        "Events in each time bin up to the 98th percentile of observed time, summed from the Kaplan–Meier event table. Later events are left out. Column height is a count of events. It is not a hazard and it is not a survival probability.",
-    )
-    positions = np.arange(len(edges) - 1)
-    width = 0.8 / max(len(strata), 1)
-    for index, name in enumerate(strata):
-        part = counts[counts["Stratum"] == name]
-        offset = (index - (len(strata) - 1) / 2) * width
-        ax.bar(
-            positions + offset,
-            part["Events"].to_numpy(dtype=float),
-            width=width * 0.92,
-            color=PALETTE[index % len(PALETTE)],
-            label=name,
-        )
-    labels = [f"{left:.2g}–{right:.2g}" for left, right in zip(edges[:-1], edges[1:], strict=True)]
-    ax.set_xticks(positions, labels)
-    ax.set_ylabel("Events")
-    ax.set_xlabel("Time")
-    ax.set_ylim(bottom=0)
-    ax.legend(frameon=False, ncol=min(len(strata), 4), loc="upper right")
+    if not table.empty:
+        ax.step(table["Residual"], table["Cumulative"], where="post", color=PALETTE[0], lw=1.6)
+        ax.fill_between(table["Residual"], table["Lo"], table["Hi"], step="post", color=PALETTE[0], alpha=0.16, linewidth=0)
+        limit = float(max(table["Residual"].max(), table["Cumulative"].max(), table["Hi"].max()))
+        limit = max(limit, 1e-3)
+        ax.plot([0, limit], [0, limit], color=INK, lw=0.8, ls=_DASH)
+        ax.set_xlim(0, limit)
+        ax.set_ylim(0, limit)
+    ax.set_box_aspect(1)
+    ax.set_xlabel("Cox–Snell residual")
+    ax.set_ylabel("Cumulative hazard of the residual")
     ax.yaxis.grid(True, color=RULE, lw=0.6)
     ax.set_axisbelow(True)
     _seal(fig)
     return fig
 
 
-def _restricted_mean(result: FitResult) -> Figure | None:
-    summary = result.tables["StratumSummary"].replace([np.inf, -np.inf], np.nan).dropna(subset=["RestrictedMean"]).copy()
-    if summary.empty:
-        return None
-    summary = summary.sort_values(["RestrictedMean", "Stratum"], ascending=[False, True])
-    values = summary["RestrictedMean"].to_numpy(dtype=float)
-    span = float(values.max()) if len(values) else 1.0
-    if not np.isfinite(span) or span <= 0:
-        return None
+def _calibration(result: FitResult) -> Figure:
+    table = result.tables["FactCalibration"].sort_values("Predicted")
+    when = float(table["Time"].iloc[0])
     fig, ax = _canvas(
-        8.2,
-        max(3.6, 0.55 * len(summary) + 2.2),
-        "Restricted mean time without the event, the area under the Kaplan–Meier curve up to the last observed time. Ordered lollipop. The axis starts at zero because the length is a magnitude.",
+        6.8,
+        6.8,
+        f"Calibration at time {when:.2g}. Each point is a quantile group of predicted risk"
+        + (
+            f", {int(table['N'].iloc[0])} rows in every group"
+            if table["N"].nunique() == 1
+            else ""
+        )
+        + ". Horizontal position is the mean Cox probability of the event by that time. Vertical position is one minus the Kaplan–Meier survival in that group, with the log-log band. The dashed line is perfect calibration.",
     )
-    y = np.arange(len(summary))[::-1]
-    ax.hlines(y, 0, values, color=PALETTE[0], lw=1.4)
-    ax.scatter(values, y, s=36, color=PALETTE[0], zorder=3)
-    for y_pos, value in zip(y, values, strict=True):
-        ax.text(value + span * 0.02, y_pos, f"{value:.2f}", va="center", ha="left", fontsize=8, color=MUTED)
-    ax.set_yticks(y, summary["Stratum"].astype(str))
-    ax.set_xlim(0, span * 1.32)
-    ax.set_xlabel("Restricted mean time")
-    ax.xaxis.grid(True, color=RULE, lw=0.6)
+    predicted = table["Predicted"].to_numpy(dtype=float)
+    observed = table["Observed"].to_numpy(dtype=float)
+    low = table["Lo"].to_numpy(dtype=float)
+    high = table["Hi"].to_numpy(dtype=float)
+    ax.errorbar(
+        predicted,
+        observed,
+        yerr=[np.clip(observed - low, 0, None), np.clip(high - observed, 0, None)],
+        fmt="o",
+        color=PALETTE[0],
+        ecolor=PALETTE[0],
+        elinewidth=1.1,
+        capsize=3,
+        ms=6,
+    )
+    ax.plot([0, 1], [0, 1], color=INK, lw=0.8, ls=_DASH)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_box_aspect(1)
+    ax.set_xlabel("Predicted risk of the event")
+    ax.set_ylabel("Observed risk of the event")
+    ax.yaxis.grid(True, color=RULE, lw=0.6)
     ax.set_axisbelow(True)
     _seal(fig)
     return fig
 
 
-def _landmark(result: FitResult) -> Figure | None:
-    followup = result.tables["FactFollowup"]
-    times = np.quantile(followup["Time"].to_numpy(dtype=float), [0.25, 0.75])
-    early, late = float(times[0]), float(times[1])
-    if not np.isfinite(early) or not np.isfinite(late) or late <= early:
-        return None
-    frame = landmark_frame(result.tables["FactKm"], (early, late))
-    strata = _strata(frame)
-    fig, ax = _canvas(
-        8.2,
-        max(3.8, 0.7 * len(strata) + 2.4),
-        f"Dot plot of Kaplan–Meier survival at two landmarks. Teal is survival at {early:.2g}, the 25th percentile of follow-up time. Copper is survival at {late:.2g}, the 75th percentile. The connector is the drop between those times. Whiskers are the log-log band.",
-        wrap=92,
+def _aalen(result: FitResult) -> Figure:
+    table = result.tables["FactAalen"]
+    terms = list(dict.fromkeys(table["Term"].astype(str)))
+    cols = min(3, len(terms))
+    rows = int(np.ceil(len(terms) / cols))
+    fig, axes = plt.subplots(rows, cols, figsize=(3.5 * cols, 3.0 * rows + 1.1), squeeze=False)
+    flat = list(axes.ravel())
+    for ax, term in zip(flat, terms, strict=False):
+        part = _central(table[table["Term"].astype(str) == term])
+        part = part.replace([np.inf, -np.inf], np.nan).dropna(subset=["Cumulative"])
+        color = PALETTE[0]
+        if not part.empty:
+            ax.step(part["Time"], part["Cumulative"], where="post", color=color, lw=1.4)
+            band = part.dropna(subset=["Lo", "Hi"])
+            if not band.empty:
+                ax.fill_between(band["Time"], band["Lo"], band["Hi"], step="post", color=color, alpha=0.16, linewidth=0)
+            finite = np.concatenate([part["Cumulative"].to_numpy(), band["Lo"].to_numpy(), band["Hi"].to_numpy()])
+            finite = finite[np.isfinite(finite)]
+            if finite.size:
+                pad = 0.08 * (float(finite.max() - finite.min()) or 1.0)
+                ax.set_ylim(min(0.0, float(finite.min())) - pad, max(0.0, float(finite.max())) + pad)
+        ax.axhline(0, color=INK, lw=0.7, ls=_DASH)
+        ax.set_title("baseline cumulative hazard" if term == "baseline" else term, loc="left", fontsize=8)
+        ax.set_xlabel("Time")
+        ax.yaxis.grid(True, color=RULE, lw=0.6)
+        ax.set_axisbelow(True)
+    flat[0].set_ylabel("Cumulative coefficient")
+    for ax in flat[len(terms) :]:
+        ax.set_visible(False)
+    _finish(
+        fig,
+        "Aalen additive hazard. The step is the cumulative regression coefficient, and the band is the pointwise 95% interval. A flat stretch is a period that adds no hazard. The line at 0 is no effect. The baseline panel is the cumulative hazard when every covariate is at 0. Drawn on the central 90 percent of event time.",
     )
-    for index, name in enumerate(strata):
-        part = frame[frame["Stratum"] == name]
-        y = len(strata) - 1 - index
-        early_row = part[np.isclose(part["Time"], early)].iloc[0]
-        late_row = part[np.isclose(part["Time"], late)].iloc[0]
-        ax.plot([early_row["Survival"], late_row["Survival"]], [y, y], color=INK, lw=1.2, zorder=2)
-        for row, color in ((early_row, PALETTE[0]), (late_row, PALETTE[1])):
-            survival = float(row["Survival"])
-            low = min(float(row["Lo"]), survival)
-            high = max(float(row["Hi"]), survival)
-            ax.errorbar(
-                survival,
-                y,
-                xerr=[[survival - low], [high - survival]],
-                fmt="o",
-                color=color,
-                ecolor=color,
-                elinewidth=0.8,
-                capsize=2,
-                ms=6,
-                alpha=0.95,
-                zorder=3,
-            )
-    ax.set_yticks(range(len(strata)), strata[::-1])
-    ax.set_xlim(0, 1.02)
-    ax.set_xlabel("Still without the event")
-    ax.xaxis.grid(True, color=RULE, lw=0.6)
-    ax.set_axisbelow(True)
-    _seal(fig)
     return fig
 
 
-def _hexbin(result: FitResult) -> Figure:
-    residual = result.tables["FactResidual"].dropna(subset=["LinearPredictor", "Martingale"])
+def _decision(result: FitResult) -> Figure:
+    table = result.tables["FactDecision"]
+    when = float(table["Time"].iloc[0])
     fig, ax = _canvas(
         8.2,
         5.6,
-        "Martingale residual against the linear predictor, counted in hexagonal cells. A dark cell is many rows, which a scatter would draw on top of each other. The line at 0 is a residual with nothing left to explain.",
+        f"Decision curve at time {when:.2g}. Net benefit of acting when the Cox probability of the event by that time exceeds the threshold. True and false positives are Kaplan–Meier rates, so a censored row is not counted as a survivor or as an event. Treat all acts on the whole cohort. Treat none is the line at 0. Above both lines, the model has the higher net benefit.",
     )
-    bins = ax.hexbin(
-        residual["LinearPredictor"],
-        residual["Martingale"],
-        gridsize=22,
-        cmap=_HEAT,
-        mincnt=1,
-        linewidths=0.15,
-        edgecolors="white",
-    )
-    ax.axhline(0, color=INK, lw=0.7, ls=_DASH, zorder=3)
-    ax.set_xlabel("Linear predictor")
-    ax.set_ylabel("Martingale residual")
-    cbar = fig.colorbar(bins, ax=ax, fraction=0.046, pad=0.03)
-    cbar.set_label("Rows")
-    cbar.outline.set_linewidth(0.4)
+    styles = {"Model": (PALETTE[0], "-"), "Treat all": (PALETTE[1], "-"), "Treat none": (INK, _DASH)}
+    for name, (color, style) in styles.items():
+        part = table[table["Strategy"] == name].sort_values("Threshold")
+        ax.plot(part["Threshold"], part["NetBenefit"], color=color, lw=1.6, ls=style, label=name)
+    ax.axhline(0, color=INK, lw=0.6)
+    ax.set_xlabel("Threshold probability")
+    ax.set_ylabel("Net benefit")
+    ax.legend(frameon=False)
+    ax.yaxis.grid(True, color=RULE, lw=0.6)
+    ax.set_axisbelow(True)
     _seal(fig)
     return fig
 
 
-def _influence_bars(result: FitResult) -> Figure:
-    influence = result.tables["FactInfluence"].replace([np.inf, -np.inf], np.nan).dropna()
-    terms = list(dict.fromkeys(influence["Term"].astype(str)))
-    cols = min(3, max(1, len(terms)))
-    rows = int(np.ceil(len(terms) / cols))
-    fig, axes = plt.subplots(rows, cols, figsize=(3.6 * cols, 3.1 * rows + 0.8), squeeze=False)
-    flat = list(axes.ravel())
-    for ax, term in zip(flat, terms, strict=False):
-        part = influence[influence["Term"].astype(str) == term]
-        part = part.reindex(part["DeltaBeta"].abs().sort_values(ascending=False).index).head(_INFLUENCE_CAP)
-        part = part.sort_values("DeltaBeta")
-        colors = [PALETTE[0] if value >= 0 else PALETTE[1] for value in part["DeltaBeta"]]
-        y = np.arange(len(part))
-        ax.barh(y, part["DeltaBeta"], color=colors, height=0.72)
-        ax.axvline(0, color=INK, lw=0.7, ls=_DASH)
-        ax.set_yticks([])
-        ax.set_title(term, fontsize=9, loc="left")
-        ax.set_xlabel("dfbeta", labelpad=8)
-        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda value, _pos: f"{value:.3f}"))
-        ax.tick_params(axis="x", labelsize=8)
-        ax.xaxis.grid(True, color=RULE, lw=0.6)
-        ax.set_axisbelow(True)
-    for ax in flat[len(terms) :]:
-        ax.set_visible(False)
-    _finish_grid(
-        fig,
-        f"Diverging bars of signed dfbeta, the approximate change in the coefficient when that row is omitted. Each panel keeps the {_INFLUENCE_CAP} largest absolute values, so rows near zero are left out. A bar far from the line at 0 is an influential row.",
+def _nomogram(result: FitResult) -> Figure:
+    table = result.tables["FactNomogram"]
+    axes_order = (
+        table[["Axis", "Order"]]
+        .drop_duplicates()
+        .sort_values("Order", ascending=False)
     )
+    names = list(axes_order["Axis"].astype(str))
+    fig, ax = _canvas(
+        8.8,
+        max(4.8, 0.72 * len(names) + 2.2),
+        "Cox nomogram. Each covariate axis is scaled so the term with the widest effect spans the full points ruler. Read a value across to the points axis, add the points, and read the sum on the total-points axis. Survival is the baseline survival, at the time named on that axis, raised to the partial hazard. A reversed covariate axis is a protective term.",
+        wrap=96,
+    )
+    positions = {name: index for index, name in enumerate(names)}
+    for name in names:
+        y = positions[name]
+        part = table[table["Axis"].astype(str) == name]
+        left = 0.0 if name in {"Points", "Total points"} or name.startswith("Survival") else float(part["Points"].min())
+        right = 100.0 if name in {"Points", "Total points"} or name.startswith("Survival") else float(part["Points"].max())
+        ax.plot([left, right], [y, y], color=INK, lw=0.8, solid_capstyle="butt")
+        for row in part.itertuples(index=False):
+            ax.plot([row.Points, row.Points], [y - 0.12, y + 0.12], color=INK, lw=0.6)
+            ax.text(row.Points, y + 0.18, str(row.Label), ha="center", va="bottom", fontsize=8, color=INK)
+    ax.set_yticks([positions[name] for name in names], names)
+    ax.set_xlim(-2, 104)
+    ax.set_ylim(-0.45, len(names) - 0.35)
+    ax.tick_params(axis="y", length=0)
+    ax.set_xticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    _seal(fig)
     return fig
 
 
-def _hexbin_ready(residual: pd.DataFrame) -> bool:
-    if residual.empty or len(residual) < 20:
-        return False
-    predictor = residual["LinearPredictor"].to_numpy(dtype=float)
-    return bool(np.isfinite(predictor).sum() >= 20 and np.nanstd(predictor) > 1e-8)
+def _rmst(result: FitResult) -> Figure | None:
+    summary = result.tables["StratumSummary"].dropna(subset=["Difference", "DiffLo", "DiffHi"])
+    if summary.empty:
+        return None
+    summary = summary.sort_values("Difference")
+    tau = float(summary["Tau"].iloc[0])
+    reference = _reference_name(result)
+    fig, ax = _canvas(
+        8.4,
+        max(3.4, 0.55 * len(summary) + 2.4),
+        f"Difference in restricted mean time versus {reference}. Both areas stop at {tau:.2g}, the latest time at which every stratum still has at least a tenth of its rows at risk. The line at 0 is no difference. The interval uses the Greenwood variance of the area under the Kaplan–Meier curve. A negative difference is a shorter mean time without the event.",
+        wrap=96,
+    )
+    y = np.arange(len(summary))
+    difference = summary["Difference"].to_numpy(dtype=float)
+    low = summary["DiffLo"].to_numpy(dtype=float)
+    high = summary["DiffHi"].to_numpy(dtype=float)
+    ax.errorbar(
+        difference,
+        y,
+        xerr=[difference - low, high - difference],
+        fmt="o",
+        color=PALETTE[0],
+        ecolor=PALETTE[0],
+        elinewidth=1.2,
+        capsize=3,
+        ms=5,
+    )
+    ax.axvline(0, color=INK, lw=0.7, ls=_DASH)
+    ax.set_yticks(y, summary["Stratum"].astype(str))
+    span = float(np.nanmax(high) - np.nanmin(low))
+    span = max(span, 1e-6)
+    ax.set_xlim(min(float(np.nanmin(low)), 0.0) - span * 0.12, max(float(np.nanmax(high)), 0.0) + span * 0.08)
+    for index, row in enumerate(summary.itertuples(index=False)):
+        ax.text(
+            1.02,
+            index,
+            f"{row.Difference:.2f}  ({row.DiffLo:.2f}–{row.DiffHi:.2f})",
+            transform=ax.get_yaxis_transform(),
+            va="center",
+            ha="left",
+            fontsize=8,
+            color=MUTED,
+            clip_on=False,
+        )
+    ax.set_xlabel("Difference in restricted mean time")
+    ax.xaxis.grid(True, color=RULE, lw=0.6)
+    ax.set_axisbelow(True)
+    _seal(fig, right=0.72)
+    return fig
 
 
-def _half_violin(ax: Axes, values: np.ndarray, y: float, color: str) -> None:
-    if len(values) < 5 or float(np.std(values)) < 1e-8:
-        return
-    try:
-        density = gaussian_kde(values)
-    except (np.linalg.LinAlgError, ValueError):
-        return
-    xs = np.linspace(float(values.min()), float(values.max()), 160)
-    ys = density(xs)
-    peak = float(ys.max())
-    if peak <= 0:
-        return
-    ys = ys / peak * 0.42
-    ax.fill_between(xs, y, y + ys, color=color, alpha=0.28, linewidth=0)
-    ax.plot(xs, y + ys, color=color, lw=1.0)
+def _reference_name(result: FitResult) -> str:
+    summary = result.tables["StratumSummary"]
+    named = summary.loc[summary["Difference"].isna(), "Stratum"]
+    if len(named):
+        return str(named.iloc[0])
+    strata = result.outcome.strata
+    if strata:
+        return str(result.outcome.reference.get(strata, "the reference"))
+    return "the reference"
 
 
-def _step_value(part: pd.DataFrame, time: float, column: str) -> float:
-    eligible = part[part["Time"] <= time]
-    chosen = eligible if not eligible.empty else part
-    return float(chosen.iloc[-1][column])
+def _central(table: pd.DataFrame, column: str = "Time") -> pd.DataFrame:
+    if table.empty:
+        return table
+    low, high = np.quantile(table[column].to_numpy(dtype=float), [0.05, 0.95])
+    return table[(table[column] >= low) & (table[column] <= high)].sort_values(column)
 
 
-def _time_grid(curve: pd.DataFrame, count: int) -> np.ndarray:
-    tmax = float(np.quantile(curve["Time"].to_numpy(dtype=float), 0.98))
-    if tmax <= 0:
-        tmax = float(curve["Time"].max()) or 1.0
-    return np.linspace(0, tmax, count)
-
-
-def _bin_edges(times: np.ndarray, count: int) -> np.ndarray:
-    finite = times[np.isfinite(times)]
-    if len(finite) == 0:
-        return np.linspace(0, 1, count + 1)
-    high = float(np.quantile(finite, 0.98))
-    if high <= 0:
-        high = float(finite.max()) or 1.0
-    return np.linspace(0, high, count + 1)
-
-
-def _strata(frame: pd.DataFrame) -> list[str]:
-    return sorted(set(frame["Stratum"].astype(str)))
+def _finite_band(table: pd.DataFrame, value: str) -> pd.DataFrame:
+    part = table.replace([np.inf, -np.inf], np.nan).dropna(subset=[value, "Lo", "Hi"])
+    if part.empty:
+        return part
+    typical = float(np.median(part.loc[part[value] > 0, value])) if (part[value] > 0).any() else 1.0
+    return part[part["Hi"] <= max(typical * 3.0, 1e-6)]
 
 
 def _canvas(width: float, height: float, caption: str, wrap: int = 88) -> tuple[Figure, Axes]:
@@ -599,21 +332,15 @@ def _canvas(width: float, height: float, caption: str, wrap: int = 88) -> tuple[
     return fig, ax
 
 
-def _seal(fig: Figure) -> None:
-    """Pack the axes above the caption, after labels and colorbars exist."""
-
+def _seal(fig: Figure, right: float = 1.0) -> None:
     wrapped = fig._form_caption  # type: ignore[attr-defined]
     lines = wrapped.count("\n") + 1
     height = float(fig.get_size_inches()[1])
     bottom = min(0.48, max(0.14, (0.46 + 0.26 * lines) / height))
-    fig.tight_layout(rect=(0, bottom, 1, 1))
+    fig.tight_layout(rect=(0, bottom, right, 1))
     fig.text(0.01, 0.015, wrapped, ha="left", va="bottom", fontsize=9, color=MUTED, linespacing=1.35)
 
 
-def _finish_grid(fig: Figure, caption: str) -> None:
-    wrapped = textwrap.fill(caption, width=96)
-    lines = wrapped.count("\n") + 1
-    height = float(fig.get_size_inches()[1])
-    bottom = min(0.36, max(0.14, (0.34 + 0.22 * lines) / height))
-    fig.tight_layout(rect=(0, bottom, 1, 1))
-    fig.text(0.02, 0.02, wrapped, ha="left", va="bottom", fontsize=9, color=MUTED, linespacing=1.3)
+def _finish(fig: Figure, caption: str) -> None:
+    fig._form_caption = textwrap.fill(caption, width=96)  # type: ignore[attr-defined]
+    _seal(fig)
