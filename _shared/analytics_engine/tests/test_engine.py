@@ -13,6 +13,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from analytics_engine import CitationError, Outcome, RouteError, cite, fit, read_fit, release, render, route
 from analytics_engine.fit import approval_matches, hash_directory, write_fit
+from analytics_engine.forms import (
+    FORM_NAMES,
+    composition_frame,
+    event_bin_counts,
+    landmark_frame,
+    risk_grid,
+)
 from analytics_engine.gallery import cumulative_hazard_frame
 from analytics_engine.__main__ import main
 
@@ -75,6 +82,7 @@ def test_duration_fit_matches_the_draw_and_refuses_a_draft():
         assert (ordered["Lo"] <= ordered["Survival"] + 1e-9).all()
         assert (ordered["Survival"] <= ordered["Hi"] + 1e-9).all()
         assert ordered["NRisk"].is_monotonic_decreasing
+    assert np.isfinite(released.tables["StratumSummary"]["RestrictedMean"]).all()
 
     ph = released.tables["FactPh"]
     assert set(ph["Verdict"]) <= {"holds", "changes"}
@@ -90,6 +98,21 @@ def test_duration_fit_matches_the_draw_and_refuses_a_draft():
         assert ordered["Survival"].is_monotonic_decreasing
         assert ((ordered["Survival"] >= -1e-6) & (ordered["Survival"] <= 1 + 1e-6)).all()
     assert set(released.tables["FactInfluence"]["Term"]) == set(released.tables["FactCox"]["Term"])
+    followup = released.tables["FactFollowup"]
+    assert len(followup) == len(_draw())
+    assert set(followup["Event"]).issubset({0.0, 1.0})
+    grid = risk_grid(curve, [0.0])
+    assert set(grid["Stratum"]) == set(curve["Stratum"])
+    assert (grid["NRisk"] > 0).all()
+    composition = composition_frame(released.tables["StratumSummary"])
+    assert abs(float(composition["Width"].sum()) - 1) < 1e-9
+    assert (composition["Events"] + composition["Censored"] == composition["N"]).all()
+    bins = event_bin_counts(curve, [0.0, 0.5, float(curve["Time"].max()) + 1])
+    assert float(bins["Events"].sum()) == float(curve["NEvent"].sum())
+    landmarks = landmark_frame(curve, (0.2, 0.8))
+    for _, part in landmarks.groupby("Stratum"):
+        ordered = part.sort_values("Time")
+        assert ordered["Survival"].is_monotonic_decreasing
 
     sentence = cite(
         "Of {N} rows, concordance {Concordance}. Of the {NAtRisk} still at risk, about {ExpectedExits} exit within {Horizon}.",
@@ -159,6 +182,7 @@ def test_approval_hash_gates_the_files(tmp_path: Path):
         "deviance",
         "influence",
         "adjusted-survival",
+        *FORM_NAMES,
     ):
         blob = written[name].read_bytes()
         assert blob.startswith(b"\x89PNG")

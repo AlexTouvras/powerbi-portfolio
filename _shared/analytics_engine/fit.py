@@ -31,6 +31,7 @@ TIME_TRANSFORM = "km"
 TABLES = (
     "FactKm",
     "StratumSummary",
+    "FactFollowup",
     "FactCensor",
     "FactCox",
     "FactPh",
@@ -44,6 +45,7 @@ TABLES = (
 
 _KM_COLUMNS = ["Stratum", "Time", "Survival", "Lo", "Hi", "NRisk", "NEvent", "NCensor"]
 _STRATUM_COLUMNS = ["Stratum", "N", "Events", "Median", "RestrictedMean"]
+_FOLLOWUP_COLUMNS = ["Stratum", "Time", "Event"]
 _COX_COLUMNS = ["Term", "HazardRatio", "Lo", "Hi", "P", "Reference", "Kind"]
 _PH_COLUMNS = ["Term", "Test", "P", "Verdict", "TimeTransform"]
 _BETA_COLUMNS = ["Term", "Time", "Beta", "Lo", "Hi", "Residual", "Kind"]
@@ -81,6 +83,7 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         work, outcome, design, km_fitters, fitter, cox_was_fit=concordance is not None
     )
     censor = _censoring(work, outcome)
+    followup = _followup(work, outcome)
     residual, influence, adjusted = _model_curves(outcome, design, references, fitter, train)
     metrics = pd.DataFrame(
         [
@@ -97,6 +100,7 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
     tables = {
         "FactKm": km,
         "StratumSummary": summary,
+        "FactFollowup": followup,
         "FactCensor": censor,
         "FactCox": cox,
         "FactPh": ph,
@@ -115,6 +119,9 @@ def fit(frame: pd.DataFrame, outcome: Outcome) -> FitResult:
         "The figure adds the Cox coefficient, matching R's scaled Schoenfeld residual.",
         "Cumulative hazard and the log-log plot are transforms of FactKm. "
         "FactCensor is the reverse Kaplan–Meier, with censoring treated as the event.",
+        "FactFollowup is one row per input row. The heatmap, histogram, raincloud, barcode, "
+        "swimmer, composition, event columns, restricted mean, and landmark dots are displays "
+        "of these tables. They are not extra estimators.",
         *notes,
     )
     return FitResult(
@@ -313,7 +320,7 @@ def _kaplan_meier(
                 "N": int(len(part)),
                 "Events": int(part[outcome.event].sum()),
                 "Median": median,
-                "RestrictedMean": float(restricted_mean_survival_time(fitter)),
+                "RestrictedMean": float(restricted_mean_survival_time(fitter, t=float(part[outcome.time].max()))),
             }
         )
     return (
@@ -465,6 +472,22 @@ def _smooth(term: str, time: np.ndarray, scaled: np.ndarray, beta: float) -> lis
             }
         )
     return out
+
+
+def _followup(work: pd.DataFrame, outcome: Outcome) -> pd.DataFrame:
+    """The analysis rows, kept so a figure can show every follow-up rather than only the curve."""
+
+    if outcome.strata:
+        stratum = work[outcome.strata].astype(str).to_numpy()
+    else:
+        stratum = np.full(len(work), "All")
+    return pd.DataFrame(
+        {
+            "Stratum": stratum,
+            "Time": work[outcome.time].to_numpy(dtype=float),
+            "Event": work[outcome.event].to_numpy(dtype=float),
+        }
+    )[_FOLLOWUP_COLUMNS]
 
 
 def _censoring(work: pd.DataFrame, outcome: Outcome) -> pd.DataFrame:

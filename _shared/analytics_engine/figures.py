@@ -1,4 +1,4 @@
-"""Three figure templates, drawn from the fit tables and captioned from the fit."""
+"""Figure templates drawn from the fit tables and captioned from the fit."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from matplotlib.figure import Figure
 
 from analytics_engine.cite import cite, format_measure
 from analytics_engine.fit import FitResult
+from analytics_engine.forms import render_forms
 from analytics_engine.gallery import render_gallery
 from analytics_engine.style import INK, MUTED, PALETTE, RULE
 
@@ -42,6 +43,7 @@ def render(result: FitResult, directory: str | Path) -> dict[str, Path]:
         plt.close(beta)
         written["beta-time"] = beta_path
     written.update(render_gallery(result, path))
+    written.update(render_forms(result, path))
     return written
 
 
