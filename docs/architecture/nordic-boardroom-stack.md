@@ -9,7 +9,7 @@ flowchart TB
   Shared --> Bank[05 bank segmentation]
   Shared --> Care[06 healthcare]
   Shared --> Credit[11 credit risk]
-  Churn --> Export[Page screenshots]
+  Churn --> Export[Canvas screenshots]
   Sales --> Export
   Bank --> Export
   Care --> Export

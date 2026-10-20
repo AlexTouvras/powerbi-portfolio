@@ -33,7 +33,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "01  Franchise Pulse — credit, debit, net flow",
+                    "value": "01  Franchise Pulse — who drives the net outflow",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",
@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "02  Segments & Markets — RFM and city map",
+                    "value": "02  Segments & Markets — headcount versus balances",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",
@@ -59,7 +59,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "03  Relationship Book — dormancy queues",
+                    "value": "03  Relationship Book — single-product money",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",

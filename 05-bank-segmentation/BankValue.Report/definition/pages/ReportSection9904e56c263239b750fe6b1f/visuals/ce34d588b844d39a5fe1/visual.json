@@ -42,11 +42,25 @@
                       "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "Customer Base"
+                  "Property": "Customer Share"
                 }
               },
-              "queryRef": "DimCustomer.Customer Base",
-              "nativeQueryRef": "Customer Base"
+              "queryRef": "DimCustomer.Customer Share",
+              "nativeQueryRef": "Customer Share"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimCustomer"
+                    }
+                  },
+                  "Property": "Balance Share"
+                }
+              },
+              "queryRef": "DimCustomer.Balance Share",
+              "nativeQueryRef": "Balance Share"
             }
           ]
         }
@@ -61,7 +75,7 @@
                     "Entity": "DimCustomer"
                   }
                 },
-                "Property": "Customer Base"
+                "Property": "Balance Share"
               }
             },
             "direction": "Descending"
@@ -166,6 +180,44 @@
           }
         }
       ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'TopCenter'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "labelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5A6B75'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
       "dataPoint": [
         {
           "properties": {
@@ -173,40 +225,34 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "FillRule": {
-                      "Input": {
-                        "Measure": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "DimCustomer"
-                            }
-                          },
-                          "Property": "Customer Base"
-                        }
-                      },
-                      "FillRule": {
-                        "linearGradient2": {
-                          "min": {
-                            "color": {
-                              "Literal": {
-                                "Value": "'#D7E6EC'"
-                              }
-                            }
-                          },
-                          "max": {
-                            "color": {
-                              "Literal": {
-                                "Value": "'#2F5F73'"
-                              }
-                            }
-                          }
-                        }
-                      }
+                    "Literal": {
+                      "Value": "'#2F5F73'"
                     }
                   }
                 }
               }
             }
+          },
+          "selector": {
+            "metadata": "DimCustomer.Customer Share"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#C17B3A'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimCustomer.Balance Share"
           }
         }
       ]
@@ -287,7 +333,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Value segment mix'"
+                  "Value": "'Headcount share vs balance share'"
                 }
               }
             },

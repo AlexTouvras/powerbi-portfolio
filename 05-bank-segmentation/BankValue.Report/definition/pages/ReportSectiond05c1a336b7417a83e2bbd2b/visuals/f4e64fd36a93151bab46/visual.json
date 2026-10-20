@@ -133,7 +133,7 @@
                     "Entity": "DimCustomer"
                   }
                 },
-                "Property": "RecencyDays"
+                "Property": "TotalBalance"
               }
             },
             "direction": "Descending"
@@ -217,7 +217,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Relationship queue — sort by recency'"
+                  "Value": "'Relationship queue — largest balances'"
                 }
               }
             },

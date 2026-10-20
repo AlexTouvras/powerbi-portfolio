@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFlowBridge"
+                      "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "FlowStage"
+                  "Property": "ValueSegment"
                 }
               },
-              "queryRef": "FactFlowBridge.FlowStage",
-              "nativeQueryRef": "FlowStage",
+              "queryRef": "DimCustomer.ValueSegment",
+              "nativeQueryRef": "ValueSegment",
               "active": true
             }
           ]
@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFlowBridge"
+                      "Entity": "FactTransactions"
                     }
                   },
-                  "Property": "Flow Amount"
+                  "Property": "Net Flow"
                 }
               },
-              "queryRef": "FactFlowBridge.Flow Amount",
-              "nativeQueryRef": "Flow Amount"
+              "queryRef": "FactTransactions.Net Flow",
+              "nativeQueryRef": "Net Flow"
             }
           ]
         }
@@ -55,13 +55,13 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "FactFlowBridge"
+                    "Entity": "FactTransactions"
                   }
                 },
-                "Property": "FlowStage"
+                "Property": "Net Flow"
               }
             },
             "direction": "Ascending"
@@ -217,7 +217,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Credit vs debit flow'"
+                  "Value": "'Net flow by segment'"
                 }
               }
             },

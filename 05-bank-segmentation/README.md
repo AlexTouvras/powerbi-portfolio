@@ -1,6 +1,6 @@
 # 05 — Bank Value & Engagement
 
-Nordic Boardroom retail-bank report: dual-flow KPIs, RFM/k-means segments, geocoded city footprint, and a dormancy / cross-sell relationship book with drillthrough.
+Nordic Boardroom retail-bank report: the active book spends down, balances are spread evenly, and the cross-sell queue holds more money than dormancy.
 
 **Open:** [`BankValue.pbip`](BankValue.pbip)
 
@@ -18,10 +18,10 @@ Nordic Boardroom retail-bank report: dual-flow KPIs, RFM/k-means segments, geoco
 
 | Page | Role |
 |------|------|
-| **Landing** | Artistic cover · thesis · audience · page map (opens first) |
-| **Franchise Pulse** | Credit / debit / net flow · waterfall bridge · monthly volume |
-| **Segments & Markets** | Value segment mix · F×M scatter · Icon Map (OpenTopoMap) |
-| **Relationship Book** | Dormant + single-product queue · engagement funnel · drillthrough |
+| **Landing** | Cover · live net-flow thesis · page map (opens first) |
+| **Franchise Pulse** | Segment net-flow waterfall · monthly net flow · Champions + Loyal |
+| **Segments & Markets** | Headcount share vs balance share · frequency scatter · Icon Map |
+| **Relationship Book** | Single-product balances vs dormant balances · queue by balance |
 | **Customer Profile** | Hidden drillthrough — accounts + recent transactions |
 
 ## What's in the folder

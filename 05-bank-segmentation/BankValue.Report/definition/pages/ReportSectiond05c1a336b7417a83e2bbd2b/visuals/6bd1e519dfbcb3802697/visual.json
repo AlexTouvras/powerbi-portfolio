@@ -23,11 +23,11 @@
                       "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "Single Product Customers"
+                  "Property": "Single Product Balance"
                 }
               },
-              "queryRef": "DimCustomer.Single Product Customers",
-              "nativeQueryRef": "Single Product Customers"
+              "queryRef": "DimCustomer.Single Product Balance",
+              "nativeQueryRef": "Single Product Balance"
             }
           ]
         }
@@ -173,7 +173,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Single product'"
+                  "Value": "'Single-product balances'"
                 }
               }
             },

@@ -23,11 +23,11 @@
                       "Entity": "FactTransactions"
                     }
                   },
-                  "Property": "Active Customers"
+                  "Property": "Net Flow"
                 }
               },
-              "queryRef": "FactTransactions.Active Customers",
-              "nativeQueryRef": "Active Customers"
+              "queryRef": "FactTransactions.Net Flow",
+              "nativeQueryRef": "Net Flow"
             }
           ]
         }
@@ -137,7 +137,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Active customers (90d)'"
+                  "Value": "'Net flow'"
                 }
               }
             },

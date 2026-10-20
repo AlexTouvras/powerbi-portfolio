@@ -42,11 +42,11 @@
                       "Entity": "FactTransactions"
                     }
                   },
-                  "Property": "Transaction Volume"
+                  "Property": "Net Flow"
                 }
               },
-              "queryRef": "FactTransactions.Transaction Volume",
-              "nativeQueryRef": "Transaction Volume"
+              "queryRef": "FactTransactions.Net Flow",
+              "nativeQueryRef": "Net Flow"
             }
           ]
         }
@@ -243,7 +243,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Monthly transaction volume'"
+                  "Value": "'Monthly net flow'"
                 }
               }
             },

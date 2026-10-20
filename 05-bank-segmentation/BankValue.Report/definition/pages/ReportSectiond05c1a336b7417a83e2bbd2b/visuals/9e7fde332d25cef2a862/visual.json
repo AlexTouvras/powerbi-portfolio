@@ -23,11 +23,11 @@
                       "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "Dormant Customers"
+                  "Property": "Single Product Customers"
                 }
               },
-              "queryRef": "DimCustomer.Dormant Customers",
-              "nativeQueryRef": "Dormant Customers"
+              "queryRef": "DimCustomer.Single Product Customers",
+              "nativeQueryRef": "Single Product Customers"
             }
           ]
         }
@@ -173,7 +173,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dormant customers'"
+                  "Value": "'Single-product customers'"
                 }
               }
             },

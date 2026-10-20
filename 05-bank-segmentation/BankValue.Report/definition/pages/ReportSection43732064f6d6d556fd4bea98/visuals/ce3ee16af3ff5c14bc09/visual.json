@@ -20,14 +20,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactTransactions"
+                      "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "Active Customers"
+                  "Property": "Engaged Net Flow"
                 }
               },
-              "queryRef": "FactTransactions.Active Customers",
-              "nativeQueryRef": "Active Customers"
+              "queryRef": "DimCustomer.Engaged Net Flow",
+              "nativeQueryRef": "Engaged Net Flow"
             }
           ]
         }
@@ -173,7 +173,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Active customers (90d)'"
+                  "Value": "'Champions + Loyal'"
                 }
               }
             },

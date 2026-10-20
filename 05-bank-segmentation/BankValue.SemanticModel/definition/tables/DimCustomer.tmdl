@@ -29,6 +29,60 @@ table DimCustomer
 		formatString: #,0
 		lineageTag: 23ea003b-23e1-4bb6-93e0-85327d33b92c
 
+	measure 'Book Balance' = SUM(DimCustomer[TotalBalance])
+		formatString: #,0
+		lineageTag: 7c1a0e4b-2d6f-4a91-9c33-1b8e5f0a6d42
+
+	measure 'Dormant Balance' = CALCULATE([Book Balance], DimCustomer[IsDormant] = 1)
+		formatString: #,0
+		lineageTag: 4e8b2c71-9a15-4d60-b7f2-6c3d9e1a0b58
+
+	measure 'Single Product Balance' = CALCULATE([Book Balance], DimCustomer[ProductCount] = 1)
+		formatString: #,0
+		lineageTag: a91d4f06-3c78-4e2b-85a1-0d7c6b4e2f19
+
+	measure 'Customer Share' =
+			DIVIDE(
+				[Customer Base],
+				CALCULATE([Customer Base], REMOVEFILTERS(DimCustomer[ValueSegment]))
+			)
+		formatString: 0.0%
+		lineageTag: b6e3c8d2-1f47-4a90-9d55-2c8a7e0b3f61
+
+	measure 'Balance Share' =
+			DIVIDE(
+				[Book Balance],
+				CALCULATE([Book Balance], REMOVEFILTERS(DimCustomer[ValueSegment]))
+			)
+		formatString: 0.0%
+		lineageTag: c2d9a415-8e60-4b73-a1f8-5d6c0e9b2743
+
+	measure 'Engaged Net Flow' =
+			CALCULATE([Net Flow], DimCustomer[ValueSegment] IN { "Champions", "Loyal" })
+		formatString: #,0
+		lineageTag: d4f1b827-6a39-4c85-8e20-7b1d3a5c9e64
+
+	measure 'Quiet Net Flow' =
+			CALCULATE([Net Flow], DimCustomer[ValueSegment] IN { "Hibernating", "At Risk" })
+		formatString: #,0
+		lineageTag: e5a2c938-7b40-4d96-9f31-8c2e4b6d0f75
+
+	measure 'Landing Thesis' =
+			VAR engagedBn = DIVIDE([Engaged Net Flow], 1000000000)
+			VAR quietBn = DIVIDE([Quiet Net Flow], 1000000000)
+			VAR net = [Net Flow]
+			RETURN
+				IF(
+					ISBLANK(net),
+					"Waiting for transaction data.",
+					"Champions and Loyal are net "
+						& FORMAT(engagedBn, "0.00")
+						& "bn. Quieter segments are net "
+						& FORMAT(quietBn, "+0.00;-0.00")
+						& "bn."
+				)
+		lineageTag: f6b3d049-8c51-4e07-a042-9d3f5c7e1086
+
 	column CustomerID
 		dataType: int64
 		formatString: 0

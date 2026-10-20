@@ -23,11 +23,11 @@
                       "Entity": "DimCustomer"
                     }
                   },
-                  "Property": "Dormant %"
+                  "Property": "Dormant Balance"
                 }
               },
-              "queryRef": "DimCustomer.Dormant %",
-              "nativeQueryRef": "Dormant %"
+              "queryRef": "DimCustomer.Dormant Balance",
+              "nativeQueryRef": "Dormant Balance"
             }
           ]
         }
@@ -173,7 +173,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dormant %'"
+                  "Value": "'Dormant balances'"
                 }
               }
             },

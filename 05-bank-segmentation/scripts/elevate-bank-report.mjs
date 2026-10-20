@@ -294,6 +294,51 @@ function landingChrome(pageKey) {
   );
 }
 
+function thesisCard(name, pos, fontSize, color, bold) {
+  return {
+    $schema: SCHEMA,
+    name,
+    position: pos,
+    visual: {
+      visualType: "card",
+      query: {
+        queryState: {
+          Values: { projections: [measure("DimCustomer", "Landing Thesis")] },
+        },
+      },
+      objects: {
+        labels: [
+          {
+            properties: {
+              fontSize: litD(fontSize),
+              bold: lit(bold),
+              color: solid(color),
+              fontFamily: lit(bold ? "Segoe UI Semibold" : "Segoe UI"),
+            },
+          },
+        ],
+        categoryLabels: [{ properties: { show: lit(false) } }],
+      },
+      visualContainerObjects: {
+        background: [{ properties: { show: lit(false) } }],
+        border: [{ properties: { show: lit(false) } }],
+        title: [{ properties: { show: lit(false) } }],
+        visualHeader: [{ properties: { show: lit(false) } }],
+        padding: [
+          {
+            properties: {
+              top: litD(0),
+              bottom: litD(0),
+              left: litD(0),
+              right: litD(0),
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
 function editorialHero(name, pos, entity, measureName, accent, caption) {
   return {
     $schema: SCHEMA,
@@ -703,16 +748,16 @@ function waterfallChart(name, pos, title) {
       visualType: "waterfallChart",
       query: {
         queryState: {
-          Category: { projections: [column("FactFlowBridge", "FlowStage")] },
-          Y: { projections: [measure("FactFlowBridge", "Flow Amount")] },
+          Category: { projections: [column("DimCustomer", "ValueSegment")] },
+          Y: { projections: [measure("FactTransactions", "Net Flow")] },
         },
         sortDefinition: {
           sort: [
             {
               field: {
-                Column: {
-                  Expression: { SourceRef: { Entity: "FactFlowBridge" } },
-                  Property: "FlowStage",
+                Measure: {
+                  Expression: { SourceRef: { Entity: "FactTransactions" } },
+                  Property: "Net Flow",
                 },
               },
               direction: "Ascending",
@@ -755,7 +800,7 @@ function lineChart(name, pos, title) {
       query: {
         queryState: {
           Category: { projections: [column("DimDate", "YearMonth")] },
-          Y: { projections: [measure("FactTransactions", "Transaction Volume")] },
+          Y: { projections: [measure("FactTransactions", "Net Flow")] },
         },
       },
       objects: {
@@ -804,7 +849,12 @@ function clusteredBar(name, pos, title) {
       query: {
         queryState: {
           Category: { projections: [column("DimCustomer", "ValueSegment")] },
-          Y: { projections: [measure("DimCustomer", "Customer Base")] },
+          Y: {
+            projections: [
+              measure("DimCustomer", "Customer Share"),
+              measure("DimCustomer", "Balance Share"),
+            ],
+          },
         },
         sortDefinition: {
           sort: [
@@ -812,7 +862,7 @@ function clusteredBar(name, pos, title) {
               field: {
                 Measure: {
                   Expression: { SourceRef: { Entity: "DimCustomer" } },
-                  Property: "Customer Base",
+                  Property: "Balance Share",
                 },
               },
               direction: "Descending",
@@ -842,32 +892,24 @@ function clusteredBar(name, pos, title) {
             },
           },
         ],
-        dataPoint: [
+        legend: [
           {
             properties: {
-              fill: {
-                solid: {
-                  color: {
-                    expr: {
-                      FillRule: {
-                        Input: {
-                          Measure: {
-                            Expression: { SourceRef: { Entity: "DimCustomer" } },
-                            Property: "Customer Base",
-                          },
-                        },
-                        FillRule: {
-                          linearGradient2: {
-                            min: { color: { Literal: { Value: "'#D7E6EC'" } } },
-                            max: { color: { Literal: { Value: "'#2F5F73'" } } },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
+              show: lit(true),
+              position: lit("TopCenter"),
+              fontSize: litD(9),
+              labelColor: solid("#5A6B75"),
             },
+          },
+        ],
+        dataPoint: [
+          {
+            properties: { fill: solid("#2F5F73") },
+            selector: { metadata: "DimCustomer.Customer Share" },
+          },
+          {
+            properties: { fill: solid("#C17B3A") },
+            selector: { metadata: "DimCustomer.Balance Share" },
           },
         ],
       },
@@ -1067,7 +1109,7 @@ function customerQueue(name, pos, title) {
               field: {
                 Column: {
                   Expression: { SourceRef: { Entity: "DimCustomer" } },
-                  Property: "RecencyDays",
+                  Property: "TotalBalance",
                 },
               },
               direction: "Descending",
@@ -1239,7 +1281,7 @@ fs.writeFileSync(
     ]),
     textbox(id(), { x: 88, y: 268, z: z++, height: 56, width: 1080, tabOrder: 4 }, [
       {
-        text: "RFM franchise view and relationship book — segments, city footprint, dormancy queues.",
+        text: "Who spends the book down, and where the cross-sell money sits.",
         size: "16pt",
         color: "#5A6B75",
       },
@@ -1249,9 +1291,9 @@ fs.writeFileSync(
       id(),
       { x: 88, y: 380, z: z++, height: 240, width: 520, tabOrder: 6 },
       "FactTransactions",
-      "Active Customers",
-      ACCENTS.active,
-      "Active customers (90d)"
+      "Net Flow",
+      ACCENTS.net,
+      "Net flow"
     ),
     textbox(id(), { x: 640, y: 400, z: z++, height: 200, width: 520, tabOrder: 7 }, [
       {
@@ -1260,9 +1302,9 @@ fs.writeFileSync(
         font: "Segoe UI Semibold",
         bold: true,
       },
-      { text: "01  Franchise Pulse — credit, debit, net flow", size: "13pt" },
-      { text: "02  Segments & Markets — RFM and city map", size: "13pt" },
-      { text: "03  Relationship Book — dormancy queues", size: "13pt" },
+      { text: "01  Franchise Pulse — who drives the net outflow", size: "13pt" },
+      { text: "02  Segments & Markets — headcount versus balances", size: "13pt" },
+      { text: "03  Relationship Book — single-product money", size: "13pt" },
     ]),
     textbox(id(), { x: 88, y: 660, z: z++, height: 40, width: 1080, tabOrder: 8 }, [
       {
@@ -1271,13 +1313,13 @@ fs.writeFileSync(
         color: "#0F1C24",
       },
     ]),
-    textbox(id(), { x: 88, y: 720, z: z++, height: 80, width: 1080, tabOrder: 9 }, [
-      {
-        text: "Signature · Value segments × city footprint — Icon Map without Azure login.",
-        size: "13pt",
-        color: "#5A6B75",
-      },
-    ]),
+    thesisCard(
+      id(),
+      { x: 88, y: 700, z: z++, height: 96, width: 1080, tabOrder: 9 },
+      16,
+      "#0F1C24",
+      true
+    ),
     textbox(id(), { x: 88, y: 920, z: z++, height: 28, width: 1080, tabOrder: 10 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
@@ -1294,19 +1336,19 @@ fs.writeFileSync(
   const visuals = [
     textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 780, tabOrder: 0 }, [
       {
-        text: "Franchise Pulse — Credit, debit, and active book",
+        text: "Franchise Pulse — the active book spends down",
         size: "18pt",
         font: "Segoe UI Semibold",
         bold: true,
       },
     ]),
-    textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
-      {
-        text: "Dual-flow KPIs, waterfall bridge, and monthly transaction volume.",
-        size: "11pt",
-        color: "#5A6B75",
-      },
-    ]),
+    thesisCard(
+      id(),
+      { x: 32, y: 48, z: z++, height: 48, width: 1100, tabOrder: 1 },
+      12,
+      "#5A6B75",
+      false
+    ),
     dropdownSlicer(
       id(),
       { ...SL.a, z: z++, tabOrder: 2 },
@@ -1359,20 +1401,20 @@ fs.writeFileSync(
     classicCard(
       id(),
       { x: 1448, y: 112, z: z++, height: 140, width: 440, tabOrder: 9 },
-      "FactTransactions",
-      "Active Customers",
-      "Active customers (90d)",
+      "DimCustomer",
+      "Engaged Net Flow",
+      "Champions + Loyal",
       ACCENTS.active
     ),
     waterfallChart(
       id(),
       { x: 32, y: 276, z: z++, height: 736, width: 920, tabOrder: 10 },
-      "Credit vs debit flow"
+      "Net flow by segment"
     ),
     lineChart(
       id(),
       { x: 976, y: 276, z: z++, height: 736, width: 912, tabOrder: 11 },
-      "Monthly transaction volume"
+      "Monthly net flow"
     ),
     textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 12 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
@@ -1390,7 +1432,7 @@ fs.writeFileSync(
   const visuals = [
     textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 780, tabOrder: 0 }, [
       {
-        text: "Segments & Markets — RFM clusters and city footprint",
+        text: "Segments & Markets — balances are even, activity is not",
         size: "18pt",
         font: "Segoe UI Semibold",
         bold: true,
@@ -1398,7 +1440,7 @@ fs.writeFileSync(
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
       {
-        text: "Value segment mix, frequency × monetary scatter, and Icon Map city footprint (OpenTopoMap — no Azure login).",
+        text: "Headcount and balances sit together. Frequency is what separates the book.",
         size: "11pt",
         color: "#5A6B75",
       },
@@ -1423,12 +1465,12 @@ fs.writeFileSync(
     clusteredBar(
       id(),
       { x: 32, y: 112, z: z++, height: 896, width: 600, tabOrder: 5 },
-      "Value segment mix"
+      "Headcount share vs balance share"
     ),
     scatterChart(
       id(),
       { x: 656, y: 112, z: z++, height: 896, width: 620, tabOrder: 6 },
-      "Frequency × monetary by segment"
+      "Frequency separates the segments"
     ),
     iconMapVisual(
       id(),
@@ -1451,7 +1493,7 @@ fs.writeFileSync(
   const visuals = [
     textbox(id(), { x: 32, y: 16, z: z++, height: 36, width: 780, tabOrder: 0 }, [
       {
-        text: "Relationship Book — Dormancy and cross-sell queue",
+        text: "Relationship Book — cross-sell holds more than dormancy",
         size: "18pt",
         font: "Segoe UI Semibold",
         bold: true,
@@ -1459,7 +1501,7 @@ fs.writeFileSync(
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
       {
-        text: "Dormant and single-product customers. Drill through a row to Customer Profile.",
+        text: "Single-product balances dwarf the dormant book. Drill a row into Customer Profile.",
         size: "11pt",
         color: "#5A6B75",
       },
@@ -1493,25 +1535,25 @@ fs.writeFileSync(
       id(),
       { x: 32, y: 112, z: z++, height: 120, width: 448, tabOrder: 6 },
       "DimCustomer",
-      "Dormant Customers",
-      "Dormant customers",
-      ACCENTS.dormant
+      "Single Product Customers",
+      "Single-product customers",
+      ACCENTS.single
     ),
     classicCard(
       id(),
       { x: 504, y: 112, z: z++, height: 120, width: 448, tabOrder: 7 },
       "DimCustomer",
-      "Single Product Customers",
-      "Single product",
-      ACCENTS.single
+      "Single Product Balance",
+      "Single-product balances",
+      ACCENTS.balance
     ),
     classicCard(
       id(),
       { x: 976, y: 112, z: z++, height: 120, width: 448, tabOrder: 8 },
       "DimCustomer",
-      "Dormant %",
-      "Dormant %",
-      ACCENTS.pct
+      "Dormant Balance",
+      "Dormant balances",
+      ACCENTS.dormant
     ),
     funnelChart(
       id(),
@@ -1521,7 +1563,7 @@ fs.writeFileSync(
     customerQueue(
       id(),
       { x: 32, y: 256, z: z++, height: 756, width: 1392, tabOrder: 10 },
-      "Relationship queue — sort by recency"
+      "Relationship queue — largest balances"
     ),
     textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 11 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
