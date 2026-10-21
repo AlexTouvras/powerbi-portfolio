@@ -10,8 +10,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import textwrap
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -21,6 +19,7 @@ from statsmodels.nonparametric.smoothers_lowess import lowess
 
 from analytics_engine.cite import cite
 from analytics_engine.fit import FitResult
+from analytics_engine.stamp import caption
 from analytics_engine.style import INK, MUTED, PALETTE, RULE
 
 _DASH = (0, (3, 2))
@@ -82,6 +81,7 @@ def _cumulative_hazard(result: FitResult) -> Figure:
     ax.set_xlabel("Time")
     _foot(
         fig,
+        result,
         "Cumulative hazard, minus the log of the Kaplan–Meier estimate, drawn while survival stays at or above 0.02. The band is the log-log survival band, transformed, and it stops at the same floor. One event type.",
     )
     return fig
@@ -98,6 +98,7 @@ def _cumulative_events(result: FitResult) -> Figure:
     ax.set_xlabel("Time")
     _foot(
         fig,
+        result,
         "One minus the Kaplan–Meier estimate. With a single event type this is the cumulative incidence. It is not a competing-risk estimator.",
     )
     return fig
@@ -124,7 +125,7 @@ def _log_cumulative_hazard(result: FitResult) -> Figure:
     ax.set_ylabel("log(−log survival)")
     ax.yaxis.grid(True, color=RULE, lw=0.6)
     ax.set_axisbelow(True)
-    _foot(fig, "Complementary log-log of the Kaplan–Meier estimate. Proportional hazards look like parallel curves.")
+    _foot(fig, result, "Complementary log-log of the Kaplan–Meier estimate. Proportional hazards look like parallel curves.")
     return fig
 
 
@@ -134,7 +135,7 @@ def _censoring(result: FitResult) -> Figure:
     ax.set_ylim(0, 1.02)
     ax.set_xlabel("Time")
     text = cite("Reverse Kaplan–Meier of the censoring time. N = {N}. A drop is follow-up ending, not the event.", result)
-    _foot(fig, text)
+    _foot(fig, result, text)
     return fig
 
 
@@ -156,7 +157,7 @@ def _deviance(result: FitResult) -> Figure:
     )
 
 
-def _residual_plot(result: FitResult, column: str, ylabel: str, caption: str) -> Figure:
+def _residual_plot(result: FitResult, column: str, ylabel: str, text: str) -> Figure:
     residual = result.tables["FactResidual"].dropna(subset=["LinearPredictor", column])
     fig, ax = _panel()
     events = residual[residual["Event"] == 1]
@@ -179,7 +180,7 @@ def _residual_plot(result: FitResult, column: str, ylabel: str, caption: str) ->
     ax.legend(frameon=False)
     ax.yaxis.grid(True, color=RULE, lw=0.6)
     ax.set_axisbelow(True)
-    _foot(fig, caption)
+    _foot(fig, result, text)
     return fig
 
 
@@ -199,13 +200,14 @@ def _influence(result: FitResult) -> Figure:
         ax.set_ylabel("dfbeta")
     for ax in flat[len(terms) :]:
         ax.set_visible(False)
-    caption = textwrap.fill(
+    footer = caption(
         "Approximate change in each coefficient when that row is omitted. A point far from the line at 0 is an influential row.",
+        result,
         width=max(42, 32 * cols),
     )
-    lines = caption.count("\n") + 1
-    fig.tight_layout(rect=(0, 0.06 + 0.045 * lines, 1, 1))
-    fig.text(0.01, 0.02, caption, ha="left", va="bottom", fontsize=9, color=MUTED)
+    lines = footer.count("\n") + 1
+    fig.tight_layout(rect=(0, 0.05 + 0.04 * lines, 1, 1))
+    fig.text(0.01, 0.02, footer, ha="left", va="bottom", fontsize=9, color=MUTED)
     return fig
 
 
@@ -224,6 +226,7 @@ def _adjusted(result: FitResult) -> Figure:
     ax.set_axisbelow(True)
     _foot(
         fig,
+        result,
         "Cox predicted survival. Each line is one stratum at the reference level of the other categories, numeric covariates at their mean. These are the model's curves.",
     )
     return fig
@@ -259,10 +262,10 @@ def _lowess(ax: Axes, x: np.ndarray, y: np.ndarray) -> None:
 
 
 def _panel() -> tuple[Figure, Axes]:
-    fig = plt.figure(figsize=(8.2, 5.4))
-    ax = fig.add_axes((0.10, 0.22, 0.84, 0.70))
+    fig = plt.figure(figsize=(8.2, 5.8))
+    ax = fig.add_axes((0.10, 0.36, 0.84, 0.58))
     return fig, ax
 
 
-def _foot(fig: Figure, text: str) -> None:
-    fig.text(0.10, 0.04, text, ha="left", va="bottom", fontsize=9, color=MUTED, wrap=True)
+def _foot(fig: Figure, result: FitResult, text: str) -> None:
+    fig.text(0.10, 0.02, caption(text, result, width=92), ha="left", va="bottom", fontsize=9, color=MUTED)

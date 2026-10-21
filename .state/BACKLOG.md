@@ -14,6 +14,7 @@
 ## Next
 
 - [x] **Analytics engine v1** — duration contract, citation gate, survminer-style curves, and censoring-aware estimands (smoothed hazard, Cox–Snell, calibration, Aalen, decision curve, nomogram, restricted-mean contrast). No portfolio dataset bound (2026-10-19)
+- [x] **Figure binding** — column contract, latest follow-up, and fit-hash prefix on every duration figure; `figures.json` repeats the line (2026-10-21)
 - [ ] Argument page on a real duration grain, once a table with a clock and a censoring flag is in the portfolio
 - [ ] `07-helsinki-energy` Facility Energy (Nuuka)
 - [ ] `10-fpa-controllership` Controllership (BvA seed)
