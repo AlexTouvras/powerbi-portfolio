@@ -67,6 +67,8 @@ PYTHONPATH=_shared python -m analytics_engine render \
 
 `fit` writes the tables, `draft.json`, and `fit_hash.txt`. It never writes `APPROVED`. `cite` and `render` require `APPROVED` to contain the current hash. Refitting changes the hash, and the old approval stops matching.
 
+The approved Study Duration fit is already drawn: [GALLERY.md](../GALLERY.md) and `docs/gallery/study-duration/`. Those PNGs are in git. The fit tables are not.
+
 ## What a figure claims
 
 Every figure ends with the same binding: the columns the caller named, the latest time in the table, and the first eight characters of the fit hash.

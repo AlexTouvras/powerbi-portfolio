@@ -1,0 +1,72 @@
+table FactOverfitAudit
+
+	measure 'Observed Sharpe' = AVERAGE(FactOverfitAudit[ObservedSharpe])
+		formatString: 0.00
+
+	measure 'Deflated Sharpe p' = AVERAGE(FactOverfitAudit[DeflatedSharpeP])
+		formatString: 0.00
+
+	measure 'Min Backtest Days' = AVERAGE(FactOverfitAudit[MinBacktestLengthDays])
+		formatString: #,0
+
+	column StrategyId
+		dataType: string
+		sourceColumn: StrategyId
+
+	column Label
+		dataType: string
+		sourceColumn: Label
+
+	column ObservedSharpe
+		dataType: double
+		formatString: 0.00
+		sourceColumn: ObservedSharpe
+
+	column NObs
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: NObs
+
+	column NTrial
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: NTrial
+
+	column DeflatedSharpeP
+		dataType: double
+		formatString: 0.00
+		sourceColumn: DeflatedSharpeP
+
+	column MinBacktestLengthDays
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: MinBacktestLengthDays
+
+	column PassesMinLength
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PassesMinLength
+
+	column Status
+		dataType: string
+		sourceColumn: Status
+
+	column Warning
+		dataType: string
+		sourceColumn: Warning
+
+	partition FactOverfitAudit = m
+		mode: import
+		source =
+				let
+					FolderPath = GoldDataFolder,
+					FilePath = FolderPath & "/FactOverfitAudit.csv",
+					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"StrategyId", type text}, {"Label", type text}, {"ObservedSharpe", type number}, {"NObs", Int64.Type}, {"NTrial", Int64.Type}, {"DeflatedSharpeP", type number}, {"MinBacktestLengthDays", Int64.Type}, {"PassesMinLength", Int64.Type}, {"Status", type text}, {"Warning", type text}})
+				in
+					Typed

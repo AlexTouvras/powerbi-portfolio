@@ -1,2 +1,2 @@
-HoldoutMAPE,Coverage80,Coverage95,Method,HorizonWeeks,HoldoutWeeks,SampleN,WeekCount
-0.1884,0.8333,1.0,SARIMAX,8,12,95781,83
+HoldoutMAPE,Coverage80,Coverage95,Method,DecompMethod,DecompPeriod,HorizonWeeks,HoldoutWeeks,SampleN,WeekCount
+0.1884,0.8333,1.0,SARIMAX,STL,12,8,12,95781,83

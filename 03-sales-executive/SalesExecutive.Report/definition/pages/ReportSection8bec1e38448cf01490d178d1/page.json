@@ -126,5 +126,17 @@
         }
       }
     ]
-  }
+  },
+  "visualInteractions": [
+    {
+      "source": "6bd4653f8b9f00d429a5",
+      "target": "1aeead2379b558a8dc64",
+      "type": "NoFilter"
+    },
+    {
+      "source": "6bd4653f8b9f00d429a5",
+      "target": "5136a8e82fd94288875f",
+      "type": "NoFilter"
+    }
+  ]
 }

@@ -1,27 +1,33 @@
 table FactDemandWeekly
+	lineageTag: 86154155-8b1b-40db-9859-0d6949d4cebd
 
 	measure 'Weekly Orders' = SUM(FactDemandWeekly[Orders])
 		formatString: #,0
+		lineageTag: 0fc606e3-9a85-4286-9ccf-f47056419c39
 
 	column WeekStart
 		dataType: dateTime
 		formatString: yyyy-mm-dd
+		lineageTag: ba473a85-6be1-46cd-8eab-cce241227dc7
 		summarizeBy: none
 		sourceColumn: WeekStart
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column Orders
 		dataType: int64
 		formatString: #,0
+		lineageTag: 7063d3b1-e484-4488-a0cc-217c0e3add04
 		summarizeBy: none
 		sourceColumn: Orders
-
 
 	partition FactDemandWeekly = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(GoldDataFolder & "/FactDemandWeekly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"WeekStart", type date}, {"Orders", Int64.Type}})
-			in
-				#"Changed Type"
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactDemandWeekly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"WeekStart", type date}, {"Orders", Int64.Type}})
+				in
+					#"Changed Type"
+

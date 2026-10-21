@@ -35,7 +35,8 @@
 | `FactPolicyCompare` | `compare_policies.csv` / research KPIs | policy |
 | `FactHolding` | `review_latest.json` (positions / targets) | name |
 | `FactRiskWeight` | `invest risk-layer` | name × Book / Min-vol / Max Sharpe |
-| `FactRiskSnapshot` | `invest risk-layer` | 1 row — 95% VaR hist/param |
+| `FactRiskSnapshot` | `invest risk-layer` | 1 row — 95% VaR hist/param + Book Sortino/Calmar |
+| `FactOverfitAudit` | `invest catalog-gate` overfit_audit | eligible strategy — DSR p, MinBTL, status |
 | `FactRebalanceAction` | `review_actions.csv` | action × name |
 | `DimMandateRule` | `capital.yaml` risk_gates + `next_review.yaml` | rule |
 | `DimNordicCompany` | Nordic Equity DimCompany | ticker (+ `InBook` / `InMidUniverse`) |
@@ -51,7 +52,7 @@ v1 = **copied gold** into this folder (portable PBIP). Prefer **weights %** on p
 | 2 | **Asset Allocation** | Comparative allocation | Strategic sleeve map + policy weights |
 | 3 | **Performance** | Analytical / benchmark | Excess return vs VWCE · curves · policy peer set |
 | 4 | **Holdings & Rebalance** | Analytical / IB book | Book weights · target book · EXIT/ENTER/TRIM/DEFER |
-| 5 | **Risk & Mandate** | Executive risk | Vol / MDD / Sharpe · mandate compliance · review calendar |
+| 5 | **Risk & Mandate** | Executive risk | Vol / MDD / Sharpe · book Sortino/Calmar · overfit audit · mandate |
 | 6 | **Regional Markets** | Market monitor | Nordic tape for book-relevant names + live board |
 | 7 | **Notes** | Context (facts) | Methodology, delay, not advice, sources |
 
@@ -77,7 +78,7 @@ Analysis page map on Landing lists 02–06 only (Notes stays last, like Context)
 No stock-level clutter on this page.
 
 ### 3. Performance
-- KPI strip: Portfolio CAGR · Benchmark (VWCE) CAGR · **Excess CAGR** · Sharpe · Max DD · Ann. vol
+- KPI strip: Mid CAGR · Core CAGR · **Excess CAGR** · Sharpe · Max DD · Ann. vol · **Sortino** · **Calmar**
 - **Line chart:** Indexed equity (€100) — Working policy vs VWCE vs Universe EW
 - **Line chart:** Drawdown (policy vs benchmark)
 - **Clustered bar:** Policy peer set — CAGR or Sharpe (`FactPolicyCompare`: applied / alts / benchmarks)
@@ -94,11 +95,11 @@ Slicer (optional): policy family
 Short sleeve **not** a live trading blotter — Mid book focus.
 
 ### 5. Risk & Mandate
-- KPI cards: Ann. vol · Max DD · Sharpe · Turnover · **Book 95% VaR (1-day historical)** · Mandate rules met (n/N)
+- KPI cards: Ann. vol · Max DD · Sharpe · Turnover · **Book 95% VaR (1-day historical)** · **Book Sortino** · **Book Calmar** · Mandate rules
 - **Bullet / bar:** Policy-set annualized volatility
 - **Clustered column:** Live-sleeve weights — Book vs min-vol vs max-Sharpe (risk layer)
 - **Table:** Mandate rules — rule · category (live authorization / cost / kill-rule / short-sleeve) · status
-- **Cards / text:** Next production review window (`next_review.yaml`) · working policy id · max name changes  
+- **Table:** Overfit audit — label · observed Sharpe · deflated Sharpe p · status (`FactOverfitAudit`)
 Framing = **Investment Policy Statement compliance**, not a hobby checklist. Risk layer is extra math on the live sleeve, not a second product.
 
 ### 6. Regional Markets (Nordic Equity)
@@ -117,7 +118,9 @@ Complements Holdings; does not replace the full Nordic Equity report.
 
 - Total Book EUR, Sleeve Weight %, Active Book %
 - Portfolio / Benchmark / Excess CAGR
-- Portfolio Sharpe, Vol, Max DD
+- Portfolio Sharpe, Sortino, Calmar, Vol, Max DD
+- Book Sortino / Book Calmar (live sleeve)
+- Deflated Sharpe p / Min Backtest Days (overfit audit)
 - Excess return (indexed series)
 - Mandate Compliance %
 - Nordic-in-book Day Change (avg)

@@ -9,6 +9,12 @@ table FactRiskSnapshot
 		formatString: 0.00%
 		lineageTag: 88dea378-5cc3-40c8-b08a-c3f535a0f71b
 
+	measure 'Book Sortino' = MAX(FactRiskSnapshot[BookSortino])
+		formatString: 0.00
+
+	measure 'Book Calmar' = MAX(FactRiskSnapshot[BookCalmar])
+		formatString: 0.00
+
 	measure 'Risk Names Used' = MAX(FactRiskSnapshot[NamesUsed])
 		formatString: 0
 		lineageTag: 9f96895f-7932-4ec2-b9e0-973b15be70d0
@@ -60,6 +66,16 @@ table FactRiskSnapshot
 		lineageTag: 9667b85a-1cb2-414c-bc3a-b322396f1169
 		sourceColumn: MaxSharpeAnn
 
+	column BookSortino
+		dataType: double
+		formatString: 0.00
+		sourceColumn: BookSortino
+
+	column BookCalmar
+		dataType: double
+		formatString: 0.00
+		sourceColumn: BookCalmar
+
 	column DroppedTickers
 		dataType: string
 		lineageTag: dbc26e08-4690-4641-903b-394bdc529ef7
@@ -73,7 +89,7 @@ table FactRiskSnapshot
 					FilePath = FolderPath & "/FactRiskSnapshot.csv",
 					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-					Typed = Table.TransformColumnTypes(WithHeaders, {{"AsOf", type text}, {"NObs", Int64.Type}, {"NamesUsed", Int64.Type}, {"VaR95HistPct", type number}, {"VaR95ParamPct", type number}, {"MinVolAnn", type number}, {"MaxSharpeAnn", type number}, {"DroppedTickers", type text}})
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"AsOf", type text}, {"NObs", Int64.Type}, {"NamesUsed", Int64.Type}, {"VaR95HistPct", type number}, {"VaR95ParamPct", type number}, {"MinVolAnn", type number}, {"MaxSharpeAnn", type number}, {"BookSortino", type number}, {"BookCalmar", type number}, {"DroppedTickers", type text}})
 				in
 					Typed
 

@@ -11,6 +11,10 @@ import {
   ensureLandingAtmosphere,
   pageBackgroundWithAtmosphere,
 } from "../../_shared/scripts/ensure-landing-atmosphere.mjs";
+import {
+  buildSlopeChart,
+  buildDumbbellChart,
+} from "../../_shared/scripts/plot-patterns.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -1063,7 +1067,7 @@ function simpleCard(name, pos, measureName, accent, label) {
   };
 }
 
-function writePageMeta(pageName, displayName) {
+function writePageMeta(pageName, displayName, extras = {}) {
   const page = {
     $schema: PAGE_SCHEMA,
     name: pageName,
@@ -1097,6 +1101,7 @@ function writePageMeta(pageName, displayName) {
         },
       ],
     },
+    ...extras,
   };
   fs.writeFileSync(
     path.join(REPORT, "definition/pages", pageName, "page.json"),
@@ -1458,7 +1463,18 @@ function buildDrivers() {
 
 function buildMarket() {
   clearVisuals(PAGES.market);
-  writePageMeta(PAGES.market, "Customer & Market");
+
+  const yearSlicerId = id();
+  const slopeId = id();
+  const dumbbellId = id();
+
+  // Year slicer must not flatten the two-year slope/dumbbell axis.
+  writePageMeta(PAGES.market, "Customer & Market", {
+    visualInteractions: [
+      { source: yearSlicerId, target: slopeId, type: "NoFilter" },
+      { source: yearSlicerId, target: dumbbellId, type: "NoFilter" },
+    ],
+  });
 
   writeVisual(
     PAGES.market,
@@ -1476,7 +1492,7 @@ function buildMarket() {
     PAGES.market,
     textbox(id(), { x: 32, y: 52, z: 1, height: 28, width: 1000, tabOrder: 1 }, [
       {
-        text: "Where revenue lives geographically, how markets grow YoY, and which customers dominate the book.",
+        text: "Country slope and product-line dumbbell for 2012→2013 (fixed years; Year slicer does not filter them), then concentration.",
         font: "Segoe UI",
         size: "11pt",
         color: "#5A6B75",
@@ -1486,7 +1502,7 @@ function buildMarket() {
   writeVisual(
     PAGES.market,
     dropdownSlicer(
-      id(),
+      yearSlicerId,
       { x: 900, y: 12, z: 2, height: 80, width: 176, tabOrder: 2 },
       "DimDate",
       "Year",
@@ -1554,29 +1570,46 @@ function buildMarket() {
 
   writeVisual(
     PAGES.market,
-    barChart(
-      id(),
-      { x: 32, y: 224, z: 10, height: 360, width: 920, tabOrder: 10 },
-      "DimCustomer",
-      "Country",
-      "Revenue",
-      "Revenue by country  -  geographic concentration",
-      "#2F5F73",
-      "#D7E6EC"
-    )
+    buildSlopeChart({
+      name: slopeId,
+      position: { x: 32, y: 224, z: 10, height: 360, width: 920, tabOrder: 10 },
+      years: [2012, 2013],
+      yearEntity: "DimDate",
+      yearColumn: "Year",
+      seriesEntity: "DimCustomer",
+      seriesColumn: "Country",
+      measureEntity: "FactSales",
+      measureName: "Revenue",
+      title: "Country slope — 2012 → 2013",
+      subtitle: "One line per country · crossings = who overtook whom",
+      seriesNames: [
+        "United States",
+        "Australia",
+        "United Kingdom",
+        "Germany",
+        "France",
+        "Canada",
+      ],
+      $schema: SCHEMA,
+    })
   );
   writeVisual(
     PAGES.market,
-    barChart(
-      id(),
-      { x: 976, y: 224, z: 11, height: 360, width: 912, tabOrder: 11 },
-      "DimCustomer",
-      "Country",
-      "YoY Revenue %",
-      "YoY revenue % by country  -  growth vs drag",
-      "#4A6B5C",
-      "#E4EDE8"
-    )
+    buildDumbbellChart({
+      name: dumbbellId,
+      position: { x: 976, y: 224, z: 11, height: 360, width: 912, tabOrder: 11 },
+      years: [2012, 2013],
+      yearEntity: "DimDate",
+      yearColumn: "Year",
+      seriesEntity: "DimProduct",
+      seriesColumn: "ProductLine",
+      measureEntity: "FactSales",
+      measureName: "Revenue",
+      title: "Product-line dumbbell — 2012 → 2013",
+      subtitle: "Mountain / Road / Touring / Other on one scale",
+      seriesNames: ["Mountain", "Road", "Touring", "Other Sales"],
+      $schema: SCHEMA,
+    })
   );
   writeVisual(
     PAGES.market,
@@ -1598,7 +1631,7 @@ function buildMarket() {
       { x: 32, y: 1032, z: 30, height: 28, width: 1856, tabOrder: 30 },
       [
         {
-          text: "Customer & Market  ·  Concentration KPIs above rankings  ·  Dual-channel YoY on Pulse cards",
+          text: "Customer & Market  ·  Slope/dumbbell locked to 2012–2013 on DimDate  ·  Dual-channel YoY on Pulse cards",
           font: "Segoe UI",
           size: "9pt",
           color: "#6B7C86",

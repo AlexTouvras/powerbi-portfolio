@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import textwrap
 from pathlib import Path
 
 import matplotlib
@@ -144,7 +145,7 @@ def _beta(result: FitResult) -> Figure:
     rows = int(np.ceil(len(terms) / cols))
     footer = 1.7
     plot = 3.15 * rows
-    fig, axes = plt.subplots(rows, cols, figsize=(3.5 * cols, plot + footer), squeeze=False)
+    fig, axes = plt.subplots(rows, cols, figsize=(4.6 * cols, plot + footer), squeeze=False)
     flat: list[Axes] = list(axes.ravel())
     for ax, term in zip(flat, terms, strict=False):
         part = beta[beta["Term"].astype(str) == term]
@@ -167,9 +168,10 @@ def _beta(result: FitResult) -> Figure:
             title = f"the effect of {term} changes over time"
         else:
             title = f"no sign that the effect of {term} changes over time"
+        lines = textwrap.wrap(title, width=36)
         if np.isfinite(p_value):
-            title = f"{title}\n(p = {format_measure('LogRankP', p_value)})"
-        ax.set_title(title, fontsize=8, loc="left", color=INK)
+            lines.append(f"(p = {format_measure('LogRankP', p_value)})")
+        ax.set_title("\n".join(lines), fontsize=8, loc="left", color=INK)
     for ax in flat[len(terms) :]:
         ax.set_visible(False)
     fig.subplots_adjust(

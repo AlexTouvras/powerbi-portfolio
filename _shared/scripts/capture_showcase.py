@@ -215,6 +215,16 @@ def canvas_box(image: Image.Image, page_width: int, page_height: int) -> tuple[i
         canvas_h = round(view_width / aspect)
         origin_x = 0
         origin_y = (height - canvas_h) // 2
+        centered = (origin_x, origin_y, origin_x + canvas_w, origin_y + canvas_h)
+        if _margins_are_flat(image, centered, view_width):
+            return centered
+        # Landing pages are top-aligned. A centered cut would slice the
+        # photograph, so the fit bar is only the flat strip under the page.
+        if origin_y > 8 and _luminance_stdev(image, (0, 0, view_width, origin_y)) > MARGIN_STDEV:
+            top_aligned = (0, 0, view_width, canvas_h)
+            if _luminance_stdev(image, (0, canvas_h, view_width, height)) <= MARGIN_STDEV:
+                return top_aligned
+        return (0, 0, view_width, height)
     else:
         return (0, 0, view_width, height)
 

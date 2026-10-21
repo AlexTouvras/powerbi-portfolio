@@ -9,3 +9,4 @@ relationship FactOrders_DimSeller
 relationship FactOrders_DimCustomer
 	fromColumn: FactOrders.CustomerID
 	toColumn: DimCustomer.CustomerID
+

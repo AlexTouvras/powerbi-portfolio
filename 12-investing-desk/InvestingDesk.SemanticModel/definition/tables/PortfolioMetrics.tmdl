@@ -41,6 +41,18 @@ table PortfolioMetrics
 		formatString: 0.00
 		lineageTag: 2ff734b1-9381-400b-9a94-73c725eac414
 
+	measure 'Core Sortino' = MAX(PortfolioMetrics[CoreSortino])
+		formatString: 0.00
+
+	measure 'Mid Sortino' = MAX(PortfolioMetrics[MidSortino])
+		formatString: 0.00
+
+	measure 'Core Calmar' = MAX(PortfolioMetrics[CoreCalmar])
+		formatString: 0.00
+
+	measure 'Mid Calmar' = MAX(PortfolioMetrics[MidCalmar])
+		formatString: 0.00
+
 	measure 'Mid Max DD' = MAX(PortfolioMetrics[MidMaxDD])
 		formatString: 0.0%
 		lineageTag: 3fa3ce84-efdb-40e7-ad3e-24aac5914226
@@ -155,6 +167,26 @@ table PortfolioMetrics
 		lineageTag: 889b2125-b946-4e81-9eed-64de0f0ea3dd
 		sourceColumn: MidSharpe
 
+	column CoreSortino
+		dataType: double
+		formatString: 0.00
+		sourceColumn: CoreSortino
+
+	column MidSortino
+		dataType: double
+		formatString: 0.00
+		sourceColumn: MidSortino
+
+	column CoreCalmar
+		dataType: double
+		formatString: 0.00
+		sourceColumn: CoreCalmar
+
+	column MidCalmar
+		dataType: double
+		formatString: 0.00
+		sourceColumn: MidCalmar
+
 	column MidMaxDD
 		dataType: double
 		formatString: 0.0%
@@ -257,7 +289,7 @@ table PortfolioMetrics
 					FilePath = FolderPath & "/PortfolioMetrics.csv",
 					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-					Typed = Table.TransformColumnTypes(WithHeaders, {{"BookEUR", type number}, {"EquityEUR", type number}, {"CashEUR", type number}, {"HoldingsAsOf", type text}, {"TopN", Int64.Type}, {"NamesHeld", Int64.Type}, {"CoreCAGR", type number}, {"MidCAGR", type number}, {"ExcessCAGR", type number}, {"CoreSharpe", type number}, {"MidSharpe", type number}, {"MidMaxDD", type number}, {"MidAnnVol", type number}, {"FeeBps", type number}, {"SampleStart", type text}, {"SampleEnd", type text}, {"UniverseN", Int64.Type}, {"WorkingPolicy", type text}, {"ProposeBy", type text}, {"ExecuteWindow", type text}, {"RingFenceEUR", type number}, {"PolicyBookEUR", type number}, {"RingFenceWeightPct", type number}, {"NordicNamesInBook", Int64.Type}, {"MandateRules", Int64.Type}, {"SimGeneratedAt", type text}, {"Benchmark", type text}})
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"BookEUR", type number}, {"EquityEUR", type number}, {"CashEUR", type number}, {"HoldingsAsOf", type text}, {"TopN", Int64.Type}, {"NamesHeld", Int64.Type}, {"CoreCAGR", type number}, {"MidCAGR", type number}, {"ExcessCAGR", type number}, {"CoreSharpe", type number}, {"MidSharpe", type number}, {"CoreSortino", type number}, {"MidSortino", type number}, {"CoreCalmar", type number}, {"MidCalmar", type number}, {"MidMaxDD", type number}, {"MidAnnVol", type number}, {"FeeBps", type number}, {"SampleStart", type text}, {"SampleEnd", type text}, {"UniverseN", Int64.Type}, {"WorkingPolicy", type text}, {"ProposeBy", type text}, {"ExecuteWindow", type text}, {"RingFenceEUR", type number}, {"PolicyBookEUR", type number}, {"RingFenceWeightPct", type number}, {"NordicNamesInBook", Int64.Type}, {"MandateRules", Int64.Type}, {"SimGeneratedAt", type text}, {"Benchmark", type text}})
 				in
 					Typed
 

@@ -1,0 +1,124 @@
+table FactRegistration
+	lineageTag: 8bd8e2ca-a108-49eb-9fbb-8b816d70c6f7
+
+	measure Registrations = COUNTROWS(FactRegistration)
+		formatString: #,0
+		lineageTag: f93c4ddd-dc27-42a1-96f1-6fe97ec5407b
+
+	measure Withdrawals = CALCULATE(COUNTROWS(FactRegistration), FactRegistration[Event] = 1)
+		formatString: #,0
+		lineageTag: 4c559230-1328-49a8-8d05-da860810dcca
+
+	measure 'Withdrawal Rate' = DIVIDE([Withdrawals], [Registrations])
+		formatString: 0.0%
+		lineageTag: 7fce482b-d314-4568-80d2-418b6596926e
+
+	column RegistrationId
+		dataType: string
+		lineageTag: ad37ae14-4ab9-4106-a7ea-58a6c9192d55
+		summarizeBy: none
+		sourceColumn: RegistrationId
+
+	column StudentId
+		dataType: string
+		lineageTag: 753f0d28-41e0-4fff-b004-64c9bed94196
+		summarizeBy: none
+		sourceColumn: StudentId
+
+	column Module
+		dataType: string
+		lineageTag: 92ba8cff-6378-4329-9918-b77c10afa01b
+		sourceColumn: Module
+
+	column Presentation
+		dataType: string
+		lineageTag: 9b63f085-767c-44a2-a42c-a2d3e8833e20
+		sourceColumn: Presentation
+
+	column TimeDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 588844ea-c4a0-4cfe-981e-92fcc561f821
+		summarizeBy: none
+		sourceColumn: TimeDays
+
+	column Event
+		dataType: int64
+		formatString: 0
+		lineageTag: 271e19e2-06b6-46da-907b-ec4cb406629a
+		summarizeBy: none
+		sourceColumn: Event
+
+	column Stratum
+		dataType: string
+		lineageTag: 639e4877-377a-4a80-9e80-08b11a80cada
+		sourceColumn: Stratum
+
+	column CourseLengthDays
+		dataType: int64
+		formatString: 0
+		lineageTag: f7bfb20a-cbd1-4158-87dd-cb06993237d2
+		summarizeBy: none
+		sourceColumn: CourseLengthDays
+
+	column FinalResult
+		dataType: string
+		lineageTag: 09932578-ebbf-4ef8-a072-796d42cbca4d
+		sourceColumn: FinalResult
+
+	column AgeBand
+		dataType: string
+		lineageTag: f866d125-ba04-48ff-9ad0-caec6a090c49
+		sourceColumn: AgeBand
+
+	column HighestEducation
+		dataType: string
+		lineageTag: 815cc09b-8cea-4f95-8a4e-bbc58b6d62bd
+		sourceColumn: HighestEducation
+
+	column Gender
+		dataType: string
+		lineageTag: 1c256a0e-1e67-4fbc-8e5c-8462b3e01fe2
+		sourceColumn: Gender
+
+	column Region
+		dataType: string
+		lineageTag: 2d2b3a56-1123-409d-b619-a324b8e17ee7
+		sourceColumn: Region
+
+	column ImdBand
+		dataType: string
+		lineageTag: 80a72898-7cd9-41f4-9235-f372398eae02
+		sourceColumn: ImdBand
+
+	column StudiedCredits
+		dataType: double
+		formatString: #,0
+		lineageTag: 8c3338b3-351d-4993-b71f-e85c5530dc4c
+		summarizeBy: none
+		sourceColumn: StudiedCredits
+
+	column PrevAttempts
+		dataType: double
+		formatString: 0
+		lineageTag: 3b0f48b2-06f9-4273-af3e-7e11beb98f29
+		summarizeBy: none
+		sourceColumn: PrevAttempts
+
+	column Disability
+		dataType: int64
+		formatString: 0
+		lineageTag: 948b1fdc-1184-416b-8d5c-1ff2b3d9433d
+		summarizeBy: none
+		sourceColumn: Disability
+
+	partition FactRegistration = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactRegistration.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"RegistrationId", type text}, {"StudentId", type text}, {"Module", type text}, {"Presentation", type text}, {"TimeDays", Int64.Type}, {"Event", Int64.Type}, {"Stratum", type text}, {"CourseLengthDays", Int64.Type}, {"FinalResult", type text}, {"AgeBand", type text}, {"HighestEducation", type text}, {"Gender", type text}, {"Region", type text}, {"ImdBand", type text}, {"StudiedCredits", type number}, {"PrevAttempts", type number}, {"Disability", Int64.Type}})
+				in
+					#"Changed Type"
+

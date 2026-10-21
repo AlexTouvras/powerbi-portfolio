@@ -1,0 +1,7 @@
+StrategyId,Label,ObservedSharpe,NObs,NTrial,DeflatedSharpeP,MinBacktestLengthDays,PassesMinLength,Status,Warning
+universe_ew,Universe equal-weight buy&hold,1.3336749904446072,1409,6,9.937765970986529e-37,240,1,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.
+mom_semi_full,Momentum · semiannual · full refresh,1.2182587430977339,1409,6,5.786558843217982e-40,288,1,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.
+mom_semi_max3,Momentum · semiannual · max 3 name changes,1.2740907216216986,1409,6,5.5971458558304286e-39,263,1,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.
+low_vol,Low volatility · semiannual · top 10,0.9767610715888275,1409,6,8.702120106771565e-42,447,1,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.
+st_reversal,Short-term reversal · semiannual · top 10,0.4616326121535452,1409,6,1.1285766180666978e-50,1999,0,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.
+wildcard_trend,Wildcard · latest 6m trend · top 10,0.8723648290171231,1409,6,3.7634862207006244e-44,560,1,weak_deflated_sharpe,Deflated Sharpe p=0.00 with 6 candidates — in-sample lead may be selection luck.

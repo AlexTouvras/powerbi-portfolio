@@ -1,0 +1,40 @@
+table FactPh
+	lineageTag: c2b6845b-b066-4f5a-9cea-9dd6e6e14586
+
+	column Term
+		dataType: string
+		lineageTag: 827f3b96-2331-42a2-9685-91e55dbed786
+		sourceColumn: Term
+
+	column Test
+		dataType: string
+		lineageTag: 221b0663-85c1-43ad-bf94-6967ec626806
+		sourceColumn: Test
+
+	column P
+		dataType: double
+		formatString: 0.000E+0
+		lineageTag: 5db38599-bffe-4e21-a492-12c210446438
+		summarizeBy: none
+		sourceColumn: P
+
+	column Verdict
+		dataType: string
+		lineageTag: 2b358fe6-f15d-4d9c-b7e5-693c3a381765
+		sourceColumn: Verdict
+
+	column TimeTransform
+		dataType: string
+		lineageTag: 03c3cf22-b25e-43eb-b3cf-3a3fb78e7a30
+		sourceColumn: TimeTransform
+
+	partition FactPh = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactPh.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Term", type text}, {"Test", type text}, {"P", type number}, {"Verdict", type text}, {"TimeTransform", type text}})
+				in
+					#"Changed Type"
+

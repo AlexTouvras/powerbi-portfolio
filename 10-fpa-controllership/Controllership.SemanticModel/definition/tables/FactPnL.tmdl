@@ -1,0 +1,167 @@
+table FactPnL
+
+	measure 'Sum Actual Eur' = SUM(FactPnL[ActualEur])
+		formatString: #,0.0
+
+	measure 'Sum Budget Eur' = SUM(FactPnL[BudgetEur])
+		formatString: #,0.0
+
+	measure 'Sum Variance Eur' = SUM(FactPnL[VarianceEur])
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Variance %' = DIVIDE([Sum Variance Eur], [Sum Budget Eur])
+		formatString: 0.0%
+
+	measure 'Operating Profit Actual' = CALCULATE([Sum Actual Eur], DimAccount[AccountID] = "O900")
+		formatString: #,0.0
+
+	measure 'Operating Profit Variance' = CALCULATE([Sum Variance Eur], DimAccount[AccountID] = "O900")
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Leaf Variance Eur' = CALCULATE([Sum Variance Eur], DimAccount[Level] = 1)
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Signed Variance Eur' = SUMX(FactPnL, FactPnL[VarianceEur] * RELATED(DimAccount[Sign]))
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Leaf Signed Variance' = CALCULATE([Signed Variance Eur], DimAccount[Level] = 1)
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Operating Profit Budget' = CALCULATE([Sum Budget Eur], DimAccount[AccountID] = "O900")
+		formatString: #,0.0
+
+	measure 'OP Gap %' = DIVIDE([Operating Profit Variance], [Operating Profit Budget])
+		formatString: 0.0%;0.0%;0.0%
+
+	measure 'Bridge Amount' =
+			VAR step = SELECTEDVALUE(DimBridgeStep[BridgeStep])
+			VAR aid = SELECTEDVALUE(DimBridgeStep[AccountID])
+			RETURN
+				SWITCH(
+					TRUE(),
+					step = "Budget OP", [Operating Profit Budget],
+					step = "Actual OP", [Operating Profit Actual],
+					NOT ISBLANK(aid) && aid <> "",
+						CALCULATE([Leaf Signed Variance], DimAccount[AccountID] = aid),
+					BLANK()
+				)
+		formatString: #,0.0;#,0.0;0
+
+	measure 'Landing Cover Entity' =
+			VAR t =
+				TOPN(
+					1,
+					ADDCOLUMNS(ALL(DimEntity[EntityName]), "@v", [Leaf Signed Variance]),
+					[@v], DESC
+				)
+			RETURN CONCATENATEX(t, DimEntity[EntityName])
+
+	measure 'Landing Drag Entity' =
+			VAR t =
+				TOPN(
+					1,
+					ADDCOLUMNS(ALL(DimEntity[EntityName]), "@v", [Leaf Signed Variance]),
+					[@v], ASC
+				)
+			RETURN CONCATENATEX(t, DimEntity[EntityName])
+
+	measure 'Landing Thesis' =
+			VAR gap = [Operating Profit Variance]
+			VAR gapAbs = FORMAT(ABS(gap), "#,0")
+			VAR cover = [Landing Cover Entity]
+			VAR drag = [Landing Drag Entity]
+			VAR coverVal = CALCULATE([Leaf Signed Variance], DimEntity[EntityName] = cover)
+			VAR dragVal = CALCULATE([Leaf Signed Variance], DimEntity[EntityName] = drag)
+			VAR sameEntity = cover = drag
+			RETURN
+				SWITCH(
+					TRUE(),
+					ISBLANK(gap), "Waiting for P&L data.",
+					sameEntity && gap < 0,
+						"Operating profit is " & gapAbs & " EUR below budget - pressure concentrates in " & drag & ".",
+					sameEntity && gap > 0,
+						"Operating profit is " & gapAbs & " EUR above budget - led by " & cover & ".",
+					gap < 0 && NOT ISBLANK(cover) && NOT ISBLANK(drag) && coverVal > 0 && dragVal < 0,
+						"Operating profit is " & gapAbs & " EUR below budget - " & cover
+							& "'s contribution does not cover " & drag & "'s drag.",
+					gap < 0,
+						"Operating profit is " & gapAbs & " EUR below budget.",
+					gap > 0 && NOT ISBLANK(cover),
+						"Operating profit is " & gapAbs & " EUR above budget - led by " & cover & ".",
+					gap > 0,
+						"Operating profit is " & gapAbs & " EUR above budget.",
+					"Operating profit is on budget."
+				)
+
+	measure 'Landing Subthesis' =
+			VAR gapPct = [OP Gap %]
+			VAR cover = [Landing Cover Entity]
+			VAR drag = [Landing Drag Entity]
+			VAR coverAmt = FORMAT(ABS(CALCULATE([Leaf Signed Variance], DimEntity[EntityName] = cover)), "#,0")
+			VAR dragAmt = FORMAT(ABS(CALCULATE([Leaf Signed Variance], DimEntity[EntityName] = drag)), "#,0")
+			RETURN
+				SWITCH(
+					TRUE(),
+					ISBLANK(gapPct), "Filter period or entity to refresh the conclusion.",
+					NOT ISBLANK(cover) && NOT ISBLANK(drag) && cover <> drag,
+						"Gap " & FORMAT(gapPct, "0.0%")
+							& " | cover " & cover & " +" & coverAmt
+							& " EUR | drag " & drag & " -" & dragAmt & " EUR.",
+					"Gap " & FORMAT(gapPct, "0.0%") & " vs budget | leaf signed contribution drives the story."
+				)
+
+	column YearMonth
+		dataType: string
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+	column EntityID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EntityID
+
+	column AccountID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column ActualLocal
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+		sourceColumn: ActualLocal
+
+	column BudgetLocal
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+		sourceColumn: BudgetLocal
+
+	column ActualEur
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+		sourceColumn: ActualEur
+
+	column BudgetEur
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+		sourceColumn: BudgetEur
+
+	column VarianceEur
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: none
+		sourceColumn: VarianceEur
+
+
+	partition FactPnL = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(GoldDataFolder & "/FactPnL.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"YearMonth", type text}, {"EntityID", type text}, {"AccountID", type text}, {"ActualLocal", type number}, {"BudgetLocal", type number}, {"ActualEur", type number}, {"BudgetEur", type number}, {"VarianceEur", type number}})
+			in
+				#"Changed Type"

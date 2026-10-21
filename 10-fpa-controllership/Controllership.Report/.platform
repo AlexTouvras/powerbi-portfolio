@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Controllership"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "086bb06b-68ba-4988-8775-0228c9954f60"
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "2b053ef58d5b943241a7",
+  "position": {
+    "x": 31.39543796397496,
+    "y": 97.6746958879221,
+    "z": 3,
+    "height": 331.39628961973568,
+    "width": 1855.8192218705199,
+    "tabOrder": 3
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "Stratum"
+                }
+              },
+              "queryRef": "FactKm.Stratum",
+              "nativeQueryRef": "Stratum",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "Time"
+                }
+              },
+              "queryRef": "FactKm.Time",
+              "nativeQueryRef": "Time",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "Survival"
+                }
+              },
+              "queryRef": "FactKm.Survival",
+              "nativeQueryRef": "Survival",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "Lo"
+                }
+              },
+              "queryRef": "FactKm.Lo",
+              "nativeQueryRef": "Lo",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "Hi"
+                }
+              },
+              "queryRef": "FactKm.Hi",
+              "nativeQueryRef": "Hi",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKm"
+                    }
+                  },
+                  "Property": "NRisk"
+                }
+              },
+              "queryRef": "FactKm.NRisk",
+              "nativeQueryRef": "NRisk",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"description\":\"Kaplan–Meier step curves with log-log band. Bind FactKm: Stratum, Time, Survival, Lo, Hi, NRisk.\",\"data\":{\"name\":\"dataset\"},\"padding\":2,\"height\":250,\"width\":\"container\",\"layer\":[{\"mark\":{\"type\":\"area\",\"opacity\":0.12,\"line\":false},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\"},\"y\":{\"field\":\"Lo\",\"type\":\"quantitative\",\"scale\":{\"domain\":[0,1]},\"axis\":null},\"y2\":{\"field\":\"Hi\"},\"color\":{\"field\":\"Stratum\",\"type\":\"nominal\",\"legend\":null,\"scale\":{\"domain\":[\"AAA\",\"BBB\",\"CCC\",\"DDD\",\"EEE\",\"FFF\",\"GGG\"],\"range\":[\"#2F5F73\",\"#5B8FA3\",\"#B42318\",\"#C17B3A\",\"#4A6B5C\",\"#8B6B4A\",\"#6B7C86\"]}}}},{\"mark\":{\"type\":\"line\",\"interpolate\":\"step-after\",\"strokeWidth\":2.25},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\",\"title\":\"Days from module start\",\"axis\":{\"labelColor\":\"#5A6B75\",\"titleColor\":\"#5A6B75\",\"grid\":false,\"tickCount\":6,\"titleFontSize\":10,\"labelFontSize\":9,\"titlePadding\":4}},\"y\":{\"field\":\"Survival\",\"type\":\"quantitative\",\"title\":null,\"scale\":{\"domain\":[0,1]},\"axis\":{\"labelColor\":\"#5A6B75\",\"format\":\".0%\",\"grid\":true,\"gridColor\":\"#E8EEF2\",\"tickCount\":5,\"labelFontSize\":9}},\"color\":{\"field\":\"Stratum\",\"type\":\"nominal\",\"legend\":{\"title\":null,\"labelColor\":\"#5A6B75\",\"orient\":\"top-right\",\"direction\":\"horizontal\",\"symbolType\":\"stroke\",\"labelFontSize\":10,\"symbolSize\":36,\"padding\":2},\"scale\":{\"domain\":[\"AAA\",\"BBB\",\"CCC\",\"DDD\",\"EEE\",\"FFF\",\"GGG\"],\"range\":[\"#2F5F73\",\"#5B8FA3\",\"#B42318\",\"#C17B3A\",\"#4A6B5C\",\"#8B6B4A\",\"#6B7C86\"]}},\"tooltip\":[{\"field\":\"Stratum\",\"type\":\"nominal\"},{\"field\":\"Time\",\"type\":\"quantitative\",\"format\":\".0f\",\"title\":\"Day\"},{\"field\":\"Survival\",\"type\":\"quantitative\",\"format\":\".1%\"},{\"field\":\"NRisk\",\"type\":\"quantitative\",\"title\":\"At risk\",\"format\":\",.0f\"}]}}],\"config\":{\"view\":{\"stroke\":null},\"background\":null,\"legend\":{\"layout\":{\"right\":{\"anchor\":\"middle\"}}}}}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'6.4.3'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "viewportHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "294D"
+                }
+              }
+            },
+            "viewportWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "1840D"
+                }
+              }
+            },
+            "supportFieldConfiguration": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"Stratum\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"Time\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"Survival\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"Lo\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"Hi\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"NRisk\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false}}'"
+                }
+              }
+            },
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "consolidateFieldParameters": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2.0.0.0'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E8EEF2'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Still enrolled over time — CCC (red) drops fastest'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F1C24'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

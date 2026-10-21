@@ -1,0 +1,5 @@
+expression GoldDataFolder = "C:/Users/kater/.cursor/projects/PowerBI/04-supply-chain/data/gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: ed3ca0ea-0f5c-4c74-8b6b-b4ba1379e3ec
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,10 @@
+BridgeStep,BridgeOrder,IsTotal,AccountID
+Budget OP,0,true,
+Product revenue,10,false,R100
+Services revenue,20,false,R200
+Cost of goods,40,false,C100
+Delivery & freight,50,false,C200
+Personnel,70,false,O100
+Marketing,80,false,O200
+Facilities & IT,90,false,O300
+Actual OP,900,true,

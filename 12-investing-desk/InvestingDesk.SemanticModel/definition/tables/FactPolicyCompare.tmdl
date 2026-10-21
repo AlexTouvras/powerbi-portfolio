@@ -9,6 +9,12 @@ table FactPolicyCompare
 		formatString: 0.00
 		lineageTag: 143f0948-9890-4a3b-8bb7-b960e9c76600
 
+	measure 'Policy Sortino' = AVERAGE(FactPolicyCompare[Sortino])
+		formatString: 0.00
+
+	measure 'Policy Calmar' = AVERAGE(FactPolicyCompare[Calmar])
+		formatString: 0.00
+
 	measure 'Policy Sharpe vs BM' = AVERAGE(FactPolicyCompare[SharpeVsBenchmark])
 		formatString: +0.00;-0.00;0.00
 		lineageTag: 67fc94d7-9f65-4eab-8c75-19e6ea2fe94d
@@ -84,6 +90,16 @@ table FactPolicyCompare
 		lineageTag: 6a21ced2-8cad-42a1-9703-8f313a643096
 		sourceColumn: Sharpe
 
+	column Sortino
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Sortino
+
+	column Calmar
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Calmar
+
 	column SharpeVsBenchmark
 		dataType: double
 		formatString: +0.00;-0.00;0.00
@@ -134,7 +150,7 @@ table FactPolicyCompare
 					FilePath = FolderPath & "/FactPolicyCompare.csv",
 					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-					Typed = Table.TransformColumnTypes(WithHeaders, {{"Label", type text}, {"ShortLabel", type text}, {"Role", type text}, {"FeeBps", type number}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"SharpeVsBenchmark", type number}, {"MaxDrawdown", type number}, {"AnnOnewayTurnover", type number}, {"AvgNamesChanged", type number}, {"AvgHoldings", type number}, {"Rebalances", type number}, {"Days", type number}})
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Label", type text}, {"ShortLabel", type text}, {"Role", type text}, {"FeeBps", type number}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"Sortino", type number}, {"Calmar", type number}, {"SharpeVsBenchmark", type number}, {"MaxDrawdown", type number}, {"AnnOnewayTurnover", type number}, {"AvgNamesChanged", type number}, {"AvgHoldings", type number}, {"Rebalances", type number}, {"Days", type number}})
 				in
 					Typed
 

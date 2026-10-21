@@ -219,6 +219,8 @@ const summaries = (sim.summaries || []).map((r) => ({
   CAGR: r.cagr,
   AnnVol: r.ann_vol,
   Sharpe: r.sharpe,
+  Sortino: r.sortino ?? "",
+  Calmar: r.calmar ?? "",
   MaxDrawdown: r.max_drawdown,
   Days: r.days,
 }));
@@ -234,6 +236,8 @@ writeCsv(
     "CAGR",
     "AnnVol",
     "Sharpe",
+    "Sortino",
+    "Calmar",
     "MaxDrawdown",
     "Days",
   ],
@@ -279,6 +283,8 @@ if (fs.existsSync(policiesPath)) {
     CAGR: Number(r.cagr),
     AnnVol: Number(r.ann_vol),
     Sharpe: Number(r.sharpe),
+    Sortino: r.sortino !== undefined && r.sortino !== "" ? Number(r.sortino) : "",
+    Calmar: r.calmar !== undefined && r.calmar !== "" ? Number(r.calmar) : "",
     MaxDrawdown: Number(r.max_drawdown),
     AnnOnewayTurnover: Number(r.ann_oneway_turnover),
     AvgNamesChanged: Number(r.avg_names_changed),
@@ -297,6 +303,8 @@ if (fs.existsSync(policiesPath)) {
     CAGR: Number(r.cagr),
     AnnVol: Number(r.ann_vol),
     Sharpe: Number(r.sharpe),
+    Sortino: r.sortino !== undefined && r.sortino !== "" ? Number(r.sortino) : "",
+    Calmar: r.calmar !== undefined && r.calmar !== "" ? Number(r.calmar) : "",
     MaxDrawdown: Number(r.max_drawdown),
     AnnOnewayTurnover: Number(r.ann_oneway_turnover || 0),
     AvgNamesChanged: "",
@@ -330,6 +338,8 @@ writeCsv(
     "CAGR",
     "AnnVol",
     "Sharpe",
+    "Sortino",
+    "Calmar",
     "SharpeVsBenchmark",
     "MaxDrawdown",
     "AnnOnewayTurnover",
@@ -541,6 +551,10 @@ writeCsv(
     "ExcessCAGR",
     "CoreSharpe",
     "MidSharpe",
+    "CoreSortino",
+    "MidSortino",
+    "CoreCalmar",
+    "MidCalmar",
     "MidMaxDD",
     "MidAnnVol",
     "FeeBps",
@@ -571,6 +585,10 @@ writeCsv(
       ExcessCAGR: excessCagr,
       CoreSharpe: core?.Sharpe ?? "",
       MidSharpe: mid?.Sharpe ?? "",
+      CoreSortino: core?.Sortino ?? "",
+      MidSortino: mid?.Sortino ?? "",
+      CoreCalmar: core?.Calmar ?? "",
+      MidCalmar: mid?.Calmar ?? "",
       MidMaxDD: mid?.MaxDrawdown ?? "",
       MidAnnVol: mid?.AnnVol ?? "",
       FeeBps: sim.meta?.fee_bps ?? 5,
@@ -719,6 +737,8 @@ if (fs.existsSync(riskWeightsSrc) && fs.existsSync(riskSnapSrc)) {
     VaR95ParamPct: Number(r.VaR95ParamPct),
     MinVolAnn: Number(r.MinVolAnn),
     MaxSharpeAnn: Number(r.MaxSharpeAnn),
+    BookSortino: r.BookSortino !== undefined && r.BookSortino !== "" ? Number(r.BookSortino) : "",
+    BookCalmar: r.BookCalmar !== undefined && r.BookCalmar !== "" ? Number(r.BookCalmar) : "",
     DroppedTickers: r.DroppedTickers || "",
   }));
 } else {
@@ -741,9 +761,45 @@ writeCsv(
     "VaR95ParamPct",
     "MinVolAnn",
     "MaxSharpeAnn",
+    "BookSortino",
+    "BookCalmar",
     "DroppedTickers",
   ],
   riskSnapRows
+);
+
+const catalogGatePath = path.join(investingRoot, "reports/catalog_gate.json");
+let overfitRows = [];
+if (fs.existsSync(catalogGatePath)) {
+  const gate = readJson(catalogGatePath);
+  overfitRows = (gate.overfit_audit?.strategies || []).map((s) => ({
+    StrategyId: s.id,
+    Label: s.label,
+    ObservedSharpe: s.observed_sharpe ?? "",
+    NObs: s.n_obs ?? "",
+    NTrial: s.n_trials ?? gate.overfit_audit?.n_trials ?? "",
+    DeflatedSharpeP: s.deflated_sharpe_p ?? "",
+    MinBacktestLengthDays: s.min_backtest_length_days ?? "",
+    PassesMinLength: s.passes_min_length === true ? 1 : s.passes_min_length === false ? 0 : "",
+    Status: s.status ?? "",
+    Warning: s.warning ?? "",
+  }));
+}
+writeCsv(
+  "FactOverfitAudit.csv",
+  [
+    "StrategyId",
+    "Label",
+    "ObservedSharpe",
+    "NObs",
+    "NTrial",
+    "DeflatedSharpeP",
+    "MinBacktestLengthDays",
+    "PassesMinLength",
+    "Status",
+    "Warning",
+  ],
+  overfitRows
 );
 
 const meta = {
@@ -765,6 +821,7 @@ const meta = {
     DimDate: dimDates.length,
     FactRiskWeight: riskWeightRows.length,
     FactRiskSnapshot: riskSnapRows.length,
+    FactOverfitAudit: overfitRows.length,
   },
   hero: {
     ExcessCAGR: excessCagr,

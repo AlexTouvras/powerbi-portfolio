@@ -120,3 +120,14 @@ Nuuka open API (no auth): property list + daily/hourly electricity/heat/water/co
 
 Seeded P&L (Actual vs Budget, entities, CoA, FX) — public XBRL dumps skipped for clean BvA / what-if storytelling.
 
+## Wave 3 — gold drafted, pages not started
+
+Draft specs only. No PBIP until a spec is approved. Duration fits stay drafts until a person writes `APPROVED`.
+
+| Folder | Dataset | Grain |
+|--------|---------|--------|
+| `13-wine-market` | Wine Enthusiast reviews (CC BY-NC-SA) + OWID/FAOSTAT production tonnes + UCI Wine Quality lab file | Bottle, country-year, and a lab sample that does not join |
+| `14-learning-duration` | OULAD (CC BY 4.0), registration tables | Days to withdrawal; stayers censored at course length |
+| `15-drive-reliability` | Backblaze Drive Stats, 2025 Q1 | Days observed in the quarter to failure; still-running drives censored |
+| `16-cohort-survival` | METABRIC overall survival | Months to all-cause death; living patients censored |
+

@@ -451,3 +451,11 @@ _tmp_sources/
 
 # Credit risk scoring intermediates
 11-credit-risk/data/gold/_full_features.parquet
+
+# Wave 3 raw downloads (commit SOURCE.md + gold only)
+13-wine-market/data/raw/**/*.csv
+14-learning-duration/data/raw/**/*.parquet
+15-drive-reliability/data/raw/**/*.zip
+15-drive-reliability/data/raw/**/*.csv
+16-cohort-survival/data/raw/**/*.txt
+**/data/fit-draft/

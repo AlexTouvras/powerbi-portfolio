@@ -755,6 +755,7 @@ const NCO = "DimNordicCompany";
 const NPX = "FactNordicPrices";
 const RSW = "FactRiskWeight";
 const RSS = "FactRiskSnapshot";
+const FOA = "FactOverfitAudit";
 
 // Landing
 {
@@ -857,9 +858,11 @@ const RSS = "FactRiskSnapshot";
     kpiCard(id(), { x: 620, y: 100, z: z++, height: 96, width: 180, tabOrder: 5 }, PM, "Mid Sharpe", "Mid Sharpe", ACCENTS.teal),
     kpiCard(id(), { x: 816, y: 100, z: z++, height: 96, width: 180, tabOrder: 6 }, PM, "Mid Max DD", "Mid max DD", ACCENTS.danger),
     kpiCard(id(), { x: 1012, y: 100, z: z++, height: 96, width: 180, tabOrder: 7 }, PM, "Mid Ann Vol", "Mid ann. vol", ACCENTS.soft),
+    kpiCard(id(), { x: 1208, y: 100, z: z++, height: 96, width: 180, tabOrder: 8 }, PM, "Mid Sortino", "Mid Sortino", ACCENTS.teal),
+    kpiCard(id(), { x: 1404, y: 100, z: z++, height: 96, width: 180, tabOrder: 9 }, PM, "Mid Calmar", "Mid Calmar", ACCENTS.copper),
     seriesLineChart(
       id(),
-      { x: 32, y: 216, z: z++, height: 400, width: 1100, tabOrder: 8 },
+      { x: 32, y: 216, z: z++, height: 400, width: 1100, tabOrder: 10 },
       CURVE,
       "Date",
       "Series",
@@ -873,7 +876,7 @@ const RSS = "FactRiskSnapshot";
     ),
     seriesLineChart(
       id(),
-      { x: 1152, y: 216, z: z++, height: 400, width: 736, tabOrder: 9 },
+      { x: 1152, y: 216, z: z++, height: 400, width: 736, tabOrder: 11 },
       CURVE,
       "Date",
       "Series",
@@ -887,7 +890,7 @@ const RSS = "FactRiskSnapshot";
     ),
     clusteredColumn(
       id(),
-      { x: 32, y: 636, z: z++, height: 360, width: 1100, tabOrder: 10 },
+      { x: 32, y: 636, z: z++, height: 360, width: 1100, tabOrder: 12 },
       POL,
       "ShortLabel",
       "Policy Sharpe",
@@ -896,7 +899,7 @@ const RSS = "FactRiskSnapshot";
     ),
     barChart(
       id(),
-      { x: 1152, y: 636, z: z++, height: 360, width: 736, tabOrder: 11 },
+      { x: 1152, y: 636, z: z++, height: 360, width: 736, tabOrder: 13 },
       POL,
       "ShortLabel",
       "Policy Sharpe vs BM",
@@ -904,7 +907,7 @@ const RSS = "FactRiskSnapshot";
       "Descending",
       { showLabels: true, labelPrecision: 2, fill: ACCENTS.copper }
     ),
-    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 12 }),
+    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 14 }),
   ].forEach((v) => writeVisual(p, v));
 }
 
@@ -962,16 +965,18 @@ const RSS = "FactRiskSnapshot";
   let z = 0;
   [
     pageNavigator(id(), { ...NAV, z: z++, tabOrder: 0 }),
-    pageTitle(id(), { x: 32, y: 16, z: z++, height: 72, width: 1100, tabOrder: 1 }, "Risk & Mandate", "Live-sleeve VaR and optimizer weights beside policy risk and IPS rules"),
+    pageTitle(id(), { x: 32, y: 16, z: z++, height: 72, width: 1100, tabOrder: 1 }, "Risk & Mandate", "Live-sleeve VaR and optimizer weights beside policy risk, IPS rules, and overfit audit"),
     kpiCard(id(), { x: 32, y: 100, z: z++, height: 96, width: 188, tabOrder: 2 }, PM, "Mid Ann Vol", "Ann. volatility", ACCENTS.soft),
     kpiCard(id(), { x: 236, y: 100, z: z++, height: 96, width: 188, tabOrder: 3 }, PM, "Mid Max DD", "Max drawdown", ACCENTS.danger),
     kpiCard(id(), { x: 440, y: 100, z: z++, height: 96, width: 188, tabOrder: 4 }, PM, "Mid Sharpe", "Sharpe", ACCENTS.teal),
     kpiCard(id(), { x: 644, y: 100, z: z++, height: 96, width: 188, tabOrder: 5 }, POL, "Policy Turnover", "Ann. one-way turnover", ACCENTS.copper),
     kpiCard(id(), { x: 848, y: 100, z: z++, height: 96, width: 188, tabOrder: 6 }, RSS, "VaR 95 Hist", "Book 95% VaR (1d)", ACCENTS.danger),
-    kpiCard(id(), { x: 1052, y: 100, z: z++, height: 96, width: 188, tabOrder: 7 }, MAN, "Rules Total", "Mandate rules", ACCENTS.muted),
+    kpiCard(id(), { x: 1052, y: 100, z: z++, height: 96, width: 188, tabOrder: 7 }, RSS, "Book Sortino", "Book Sortino", ACCENTS.teal),
+    kpiCard(id(), { x: 1256, y: 100, z: z++, height: 96, width: 188, tabOrder: 8 }, RSS, "Book Calmar", "Book Calmar", ACCENTS.copper),
+    kpiCard(id(), { x: 1460, y: 100, z: z++, height: 96, width: 188, tabOrder: 9 }, MAN, "Rules Total", "Mandate rules", ACCENTS.muted),
     clusteredColumn(
       id(),
-      { x: 32, y: 216, z: z++, height: 360, width: 720, tabOrder: 8 },
+      { x: 32, y: 216, z: z++, height: 360, width: 720, tabOrder: 10 },
       POL,
       "Label",
       "Policy Vol",
@@ -979,7 +984,7 @@ const RSS = "FactRiskSnapshot";
     ),
     clusteredColumnSeries(
       id(),
-      { x: 768, y: 216, z: z++, height: 360, width: 1120, tabOrder: 9 },
+      { x: 768, y: 216, z: z++, height: 360, width: 1120, tabOrder: 11 },
       RSW,
       "Name",
       "BookLabel",
@@ -993,21 +998,21 @@ const RSS = "FactRiskSnapshot";
     ),
     columnTable(
       id(),
-      { x: 32, y: 596, z: z++, height: 300, width: 1200, tabOrder: 10 },
+      { x: 32, y: 596, z: z++, height: 300, width: 1200, tabOrder: 12 },
       MAN,
       ["Category", "RuleId", "Status"],
       "Mandate rules (IPS)",
       sortByColumnField(MAN, "CategorySort", "Ascending")
     ),
-    textbox(id(), { x: 1256, y: 596, z: z++, height: 300, width: 632, tabOrder: 11 }, [
-      { text: "Review calendar", size: "14pt", font: "Segoe UI Semibold", bold: true },
-      { text: "Cadence · semiannual (Apr / Oct)", size: "12pt" },
-      { text: "Working policy · mom_semi_max3 (max 3 name changes)", size: "12pt" },
-      { text: "Risk layer · 1-day 95% VaR on live weights vs min-vol / max-Sharpe", size: "12pt" },
-      { text: "Short sleeve · blocked until mid gates + costs modeled", size: "12pt", color: "#B42318" },
-      { text: "Live trading requires explicit authorization — never auto-routed.", size: "12pt", color: "#5A6B75" },
-    ]),
-    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 12 }),
+    columnTable(
+      id(),
+      { x: 1256, y: 596, z: z++, height: 300, width: 632, tabOrder: 13 },
+      FOA,
+      ["Label", "ObservedSharpe", "DeflatedSharpeP", "Status"],
+      "Overfit audit (deflated Sharpe)",
+      sortByColumnField(FOA, "ObservedSharpe", "Descending")
+    ),
+    footerBox(id(), { x: 32, y: 1020, z: z++, height: 36, width: 1856, tabOrder: 14 }),
   ].forEach((v) => writeVisual(p, v));
 }
 

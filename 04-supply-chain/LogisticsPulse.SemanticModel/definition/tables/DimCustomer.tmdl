@@ -1,27 +1,31 @@
 table DimCustomer
+	lineageTag: cb569b94-b703-401a-a148-3a8fa7884f88
 
 	column CustomerID
 		dataType: string
+		lineageTag: e896d142-1151-4184-bf26-860814d7272e
 		summarizeBy: none
 		sourceColumn: CustomerID
 
 	column State
 		dataType: string
+		lineageTag: a14b8ca4-c624-4360-8f14-4d8f4e16c2cf
 		sourceColumn: State
 
 	column OrderN
 		dataType: int64
 		formatString: #,0
+		lineageTag: c40518d2-5996-4280-803c-96bc169a86ec
 		summarizeBy: none
 		sourceColumn: OrderN
-
 
 	partition DimCustomer = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", type text}, {"State", type text}, {"OrderN", Int64.Type}})
-			in
-				#"Changed Type"
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/DimCustomer.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"CustomerID", type text}, {"State", type text}, {"OrderN", Int64.Type}})
+				in
+					#"Changed Type"
+

@@ -1,0 +1,22 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["GoldDataFolder","FactRegistration","FactKm","FactCox","FactBetaT","FactPh","StratumSummary","ModelMetrics"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table FactRegistration
+ref table FactKm
+ref table FactCox
+ref table FactBetaT
+ref table FactPh
+ref table StratumSummary
+ref table ModelMetrics
+

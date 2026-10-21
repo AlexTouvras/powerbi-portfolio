@@ -1,67 +1,91 @@
 table ModelMetrics
+	lineageTag: 2faaee44-9ed7-4e92-86c7-1581ecbdb899
 
 	measure 'Holdout MAPE' = MAX(ModelMetrics[HoldoutMAPE])
 		formatString: 0.0%
+		lineageTag: 9e349d87-d39a-4e67-a874-5be4d68b45e3
 
 	measure 'Coverage 80' = MAX(ModelMetrics[Coverage80])
 		formatString: 0.0%
+		lineageTag: 954f4daa-497f-4565-b890-5561fa508845
 
 	measure 'Coverage 95' = MAX(ModelMetrics[Coverage95])
 		formatString: 0.0%
+		lineageTag: a209fced-2caf-4907-bfdd-971c0276ef37
 
 	column HoldoutMAPE
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 6d3bc465-6288-4547-bc1f-7bcc8946a937
 		summarizeBy: none
 		sourceColumn: HoldoutMAPE
 
 	column Coverage80
 		dataType: double
 		formatString: 0.0%
+		lineageTag: 999a2a18-1614-43c7-af4f-dd20a4d12cd4
 		summarizeBy: none
 		sourceColumn: Coverage80
 
 	column Coverage95
 		dataType: double
 		formatString: 0.0%
+		lineageTag: ac85973d-20a5-4b6f-9e08-b10b792a5f3d
 		summarizeBy: none
 		sourceColumn: Coverage95
 
 	column Method
 		dataType: string
+		lineageTag: 3e8a8076-9fcb-4644-bae0-91a3f13f64b8
 		sourceColumn: Method
 
 	column HorizonWeeks
 		dataType: int64
 		formatString: 0
+		lineageTag: edbd124d-1bcf-49d8-a4e9-f7e74b852487
 		summarizeBy: none
 		sourceColumn: HorizonWeeks
 
 	column HoldoutWeeks
 		dataType: int64
 		formatString: 0
+		lineageTag: 293967ae-ada3-4fa8-9f27-47b12d76debb
 		summarizeBy: none
 		sourceColumn: HoldoutWeeks
 
 	column SampleN
 		dataType: int64
 		formatString: #,0
+		lineageTag: e2a48a19-982f-408a-8c1a-70a3712d8a7e
 		summarizeBy: none
 		sourceColumn: SampleN
 
 	column WeekCount
 		dataType: int64
 		formatString: #,0
+		lineageTag: bfea1bd2-4678-4cbd-872a-c78261edf27c
 		summarizeBy: none
 		sourceColumn: WeekCount
 
+	column DecompMethod
+		dataType: string
+		lineageTag: 4a5b6c7d-8e9f-0a1b-2c3d-4e5f6a7b8c9d
+		sourceColumn: DecompMethod
+
+	column DecompPeriod
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b6c7d8e-9f0a-1b2c-3d4e-5f6a7b8c9d0e
+		summarizeBy: none
+		sourceColumn: DecompPeriod
 
 	partition ModelMetrics = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(GoldDataFolder & "/ModelMetrics.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"HoldoutMAPE", type number}, {"Coverage80", type number}, {"Coverage95", type number}, {"Method", type text}, {"HorizonWeeks", Int64.Type}, {"HoldoutWeeks", Int64.Type}, {"SampleN", Int64.Type}, {"WeekCount", Int64.Type}})
-			in
-				#"Changed Type"
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/ModelMetrics.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"HoldoutMAPE", type number}, {"Coverage80", type number}, {"Coverage95", type number}, {"Method", type text}, {"DecompMethod", type text}, {"DecompPeriod", Int64.Type}, {"HorizonWeeks", Int64.Type}, {"HoldoutWeeks", Int64.Type}, {"SampleN", Int64.Type}, {"WeekCount", Int64.Type}})
+				in
+					#"Changed Type"
+

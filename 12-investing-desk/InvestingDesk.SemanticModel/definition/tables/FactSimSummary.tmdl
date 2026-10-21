@@ -9,6 +9,12 @@ table FactSimSummary
 		formatString: 0.00
 		lineageTag: 107fb34c-d2b4-4db9-b463-343711fe673d
 
+	measure 'Sim Sortino' = AVERAGE(FactSimSummary[Sortino])
+		formatString: 0.00
+
+	measure 'Sim Calmar' = AVERAGE(FactSimSummary[Calmar])
+		formatString: 0.00
+
 	measure 'Sim Max DD' = AVERAGE(FactSimSummary[MaxDrawdown])
 		formatString: 0.0%
 		lineageTag: a94674f5-d75c-4d18-bb42-127ed829b84a
@@ -68,6 +74,16 @@ table FactSimSummary
 		lineageTag: 81d48d39-07af-4749-ad2d-5d6d370037b4
 		sourceColumn: Sharpe
 
+	column Sortino
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Sortino
+
+	column Calmar
+		dataType: double
+		formatString: 0.00
+		sourceColumn: Calmar
+
 	column MaxDrawdown
 		dataType: double
 		formatString: 0.0%
@@ -89,7 +105,7 @@ table FactSimSummary
 					FilePath = FolderPath & "/FactSimSummary.csv",
 					RawCsv = Csv.Document(File.Contents(FilePath), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 					WithHeaders = Table.PromoteHeaders(RawCsv, [PromoteAllScalars=true]),
-					Typed = Table.TransformColumnTypes(WithHeaders, {{"Strategy", type text}, {"SeriesLabel", type text}, {"Role", type text}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"MaxDrawdown", type number}, {"Days", Int64.Type}})
+					Typed = Table.TransformColumnTypes(WithHeaders, {{"Strategy", type text}, {"SeriesLabel", type text}, {"Role", type text}, {"StartEUR", type number}, {"EndEUR", type number}, {"TotalReturn", type number}, {"CAGR", type number}, {"AnnVol", type number}, {"Sharpe", type number}, {"Sortino", type number}, {"Calmar", type number}, {"MaxDrawdown", type number}, {"Days", Int64.Type}})
 				in
 					Typed
 

@@ -1,99 +1,129 @@
 table FactOrders
+	lineageTag: 1e1a45ed-e34b-4654-a26c-d43300349553
 
 	measure Orders = COUNTROWS(FactOrders)
 		formatString: #,0
+		lineageTag: aab7fd63-bb05-43ae-8f9f-b51d70ee0e2f
 
 	measure 'OnTime Orders' = CALCULATE([Orders], FactOrders[OnTime] = 1)
 		formatString: #,0
+		lineageTag: ff5b40b1-4470-49ae-989e-b607e6a2843b
 
 	measure 'On-time %' = DIVIDE([OnTime Orders], [Orders])
 		formatString: 0.0%
+		lineageTag: 344b5f6a-9c53-4b67-be9f-f521b6526554
 
 	measure 'Late Orders' = CALCULATE([Orders], FactOrders[LateFlag] = 1)
 		formatString: #,0
+		lineageTag: 78702de2-84c8-4d38-87c1-475e42c2eb6b
 
 	measure 'Avg Lead Time' = AVERAGE(FactOrders[LeadTimeDays])
 		formatString: #,0.0
+		lineageTag: 6548fae5-6f57-4347-b400-5575cdd6dbd8
 
 	measure 'Avg Freight' = AVERAGE(FactOrders[Freight])
 		formatString: #,0.00
+		lineageTag: be0a4a79-0504-4578-ac17-8df1f9490834
+
+	measure 'Orders Stem' = [Orders]
+		formatString: #,0
+		lineageTag: 8f1a2b3c-4d5e-6f70-8192-a3b4c5d6e7f8
+
+	measure 'Orders Dot' = [Orders]
+		formatString: #,0
+		lineageTag: 9a2b3c4d-5e6f-7081-92a3-b4c5d6e7f809
 
 	column OrderID
 		dataType: string
+		lineageTag: 63075e14-4fc5-4604-8d4b-0af800f29041
 		summarizeBy: none
 		sourceColumn: OrderID
 
 	column CustomerID
 		dataType: string
+		lineageTag: 495e9ff8-8bb6-4b12-b898-5831e77ddd3d
 		summarizeBy: none
 		sourceColumn: CustomerID
 
 	column OrderDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
+		lineageTag: 7749c9ef-b5f1-4a7b-a963-04bd81071798
 		summarizeBy: none
 		sourceColumn: OrderDate
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column SellerID
 		dataType: string
+		lineageTag: f7aa717f-18a8-4fdf-acf0-57dc0bfdd90c
 		summarizeBy: none
 		sourceColumn: SellerID
 
 	column CustomerState
 		dataType: string
+		lineageTag: 1af4736c-521e-4704-bdcf-1dc3b9b341f1
 		sourceColumn: CustomerState
 
 	column SellerState
 		dataType: string
+		lineageTag: fab3f94a-d117-41e5-9119-95a2ee689458
 		sourceColumn: SellerState
 
 	column Category
 		dataType: string
+		lineageTag: 7d5c06a8-fc24-4142-9eb2-21f7d58248b5
 		sourceColumn: Category
 
 	column OnTime
 		dataType: int64
 		formatString: 0
+		lineageTag: 1ea9c420-d4fc-4d5d-95a4-9bf6edec5cef
 		summarizeBy: none
 		sourceColumn: OnTime
 
 	column LateFlag
 		dataType: int64
 		formatString: 0
+		lineageTag: 0ac2d0c8-180e-4b0d-bc82-db9b945360b4
 		summarizeBy: none
 		sourceColumn: LateFlag
 
 	column LeadTimeDays
 		dataType: int64
 		formatString: 0
+		lineageTag: d0a02387-2878-4928-a1e5-6131fdca400e
 		summarizeBy: none
 		sourceColumn: LeadTimeDays
 
 	column Freight
 		dataType: double
 		formatString: #,0.00
+		lineageTag: fe39a0ce-46f7-46a9-a218-55ba28843d57
 		summarizeBy: none
 		sourceColumn: Freight
 
 	column ItemCount
 		dataType: int64
 		formatString: 0
+		lineageTag: b57b4b75-2425-40af-86be-c9639a9c587f
 		summarizeBy: none
 		sourceColumn: ItemCount
 
 	column SellerCount
 		dataType: int64
 		formatString: 0
+		lineageTag: e55bf107-9090-4464-a57b-4fd867870b85
 		summarizeBy: none
 		sourceColumn: SellerCount
-
 
 	partition FactOrders = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(GoldDataFolder & "/FactOrders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-				#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-				#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"OrderID", type text}, {"CustomerID", type text}, {"OrderDate", type date}, {"SellerID", type text}, {"CustomerState", type text}, {"SellerState", type text}, {"Category", type text}, {"OnTime", Int64.Type}, {"LateFlag", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"Freight", type number}, {"ItemCount", Int64.Type}, {"SellerCount", Int64.Type}})
-			in
-				#"Changed Type"
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactOrders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"OrderID", type text}, {"CustomerID", type text}, {"OrderDate", type date}, {"SellerID", type text}, {"CustomerState", type text}, {"SellerState", type text}, {"Category", type text}, {"OnTime", Int64.Type}, {"LateFlag", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"Freight", type number}, {"ItemCount", Int64.Type}, {"SellerCount", Int64.Type}})
+				in
+					#"Changed Type"
+

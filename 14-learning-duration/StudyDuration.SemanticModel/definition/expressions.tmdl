@@ -1,0 +1,3 @@
+expression GoldDataFolder = "c:/Users/kater/.cursor/projects/PowerBI/14-learning-duration/data/gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: be8966af-3699-4d64-88c9-971dac07b4f4
+

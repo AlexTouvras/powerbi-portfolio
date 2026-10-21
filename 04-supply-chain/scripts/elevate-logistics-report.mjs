@@ -11,6 +11,11 @@ import {
   ensureLandingAtmosphere,
   pageBackgroundWithAtmosphere,
 } from "../../_shared/scripts/ensure-landing-atmosphere.mjs";
+import {
+  buildStreamChart,
+  buildSeasonalDecompPanels,
+  buildLollipopChart,
+} from "../../_shared/scripts/plot-patterns.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -905,7 +910,7 @@ fs.writeFileSync(
       { text: "Delivery Pulse — Is delivery performance on track?", size: "18pt", font: "Segoe UI Semibold", bold: true },
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 900, tabOrder: 1 }, [
-      { text: "On-time rate, lead time, and category mix for delivered orders.", size: "11pt", color: "#5A6B75" },
+      { text: "On-time rate, lead time, and how the top categories share the book over time.", size: "11pt", color: "#5A6B75" },
     ]),
     slicer(id(), { ...SL.a, z: z++, tabOrder: 2 }, "DimDate", "Year", "Year", true),
     slicer(id(), { ...SL.b, z: z++, tabOrder: 3 }, "FactOrders", "CustomerState", "Customer state", true),
@@ -914,27 +919,57 @@ fs.writeFileSync(
     kpiCard(id(), { x: 504, y: 112, z: z++, height: 140, width: 448, tabOrder: 6 }, "FactOrders", "Avg Lead Time", "Avg lead time (days)", ACCENTS.leadTime),
     kpiCard(id(), { x: 976, y: 112, z: z++, height: 140, width: 448, tabOrder: 7 }, "FactOrders", "Late Orders", "Late orders", ACCENTS.late),
     kpiCard(id(), { x: 1448, y: 112, z: z++, height: 140, width: 440, tabOrder: 8 }, "FactOrders", "Orders", "Orders", ACCENTS.orders),
-    lineChart(
-      id(),
-      { x: 32, y: 276, z: z++, height: 736, width: 920, tabOrder: 9 },
-      "DimDate",
-      "YearMonth",
-      "FactOrders",
-      "Orders",
-      "Monthly order volume"
-    ),
-    barChart(
-      id(),
-      { x: 976, y: 276, z: z++, height: 736, width: 912, tabOrder: 10 },
-      "FactOrders",
-      "Category",
-      "FactOrders",
-      "On-time %",
-      "On-time % by category — lowest first",
-      "#B42318",
-      "#F3D9D4",
-      sortByMeasureField("FactOrders", "On-time %", "Ascending")
-    ),
+    buildStreamChart({
+      name: id(),
+      position: { x: 32, y: 276, z: z++, height: 736, width: 920, tabOrder: 9 },
+      timeEntity: "DimDate",
+      timeColumn: "YearMonth",
+      timeSortColumn: "MonthYearSort",
+      seriesEntity: "FactOrders",
+      seriesColumn: "Category",
+      measureEntity: "FactOrders",
+      measureName: "Orders",
+      mode: "share",
+      seriesNames: [
+        "bed_bath_table",
+        "health_beauty",
+        "sports_leisure",
+        "computers_accessories",
+      ],
+      title: "Category mix stream — top 4 share of orders",
+      subtitle: "100% stacked · related YearMonth · mix shifts without spaghetti",
+      $schema: SCHEMA,
+    }),
+    buildLollipopChart({
+      name: id(),
+      position: { x: 976, y: 276, z: z++, height: 736, width: 912, tabOrder: 10 },
+      categoryEntity: "FactOrders",
+      categoryColumn: "Category",
+      measureEntity: "FactOrders",
+      stemMeasure: "Orders Stem",
+      dotMeasure: "Orders Dot",
+      sortDirection: "Descending",
+      innerPadding: 96,
+      stemColor: "#9AA8B2",
+      dotColor: "#2F5F73",
+      categoryNames: [
+        "bed_bath_table",
+        "health_beauty",
+        "sports_leisure",
+        "computers_accessories",
+        "furniture_decor",
+        "housewares",
+        "watches_gifts",
+        "telephony",
+        "auto",
+        "toys",
+        "cool_stuff",
+        "garden_tools",
+      ],
+      title: "Orders by category — lollipop (top 12)",
+      subtitle: "Hairline stem + heavy dot · less ink than bars",
+      $schema: SCHEMA,
+    }),
     textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 11 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
@@ -1003,7 +1038,7 @@ fs.writeFileSync(
 // --- Page 3: Demand Outlook (signature) ---
 {
   const p = PAGES.demand;
-  pageChrome(p, "Demand Outlook");
+  pageChrome(p, "Demand Outlook", {}, 0);
   clearVisuals(p);
   let z = 0;
   const visuals = [
@@ -1011,16 +1046,16 @@ fs.writeFileSync(
       { text: "Demand Outlook — What demand should we plan for, with uncertainty?", size: "18pt", font: "Segoe UI Semibold", bold: true },
     ]),
     textbox(id(), { x: 32, y: 52, z: z++, height: 28, width: 1200, tabOrder: 1 }, [
-      { text: "Weekly actuals, forecast, and 80% prediction-interval band — 8-week horizon.", size: "11pt", color: "#5A6B75" },
+      { text: "Weekly band up top; trend / seasonal / remainder below — not one collapsed line.", size: "11pt", color: "#5A6B75" },
     ]),
     pageNavigator(id(), { ...NAV, z: z++, tabOrder: 2 }),
     kpiCard(id(), { x: 32, y: 100, z: z++, height: 96, width: 608, tabOrder: 3 }, "ModelMetrics", "Holdout MAPE", "Holdout MAPE", ACCENTS.late),
     kpiCard(id(), { x: 656, y: 100, z: z++, height: 96, width: 608, tabOrder: 4 }, "ModelMetrics", "Coverage 80", "Coverage 80", ACCENTS.band),
     kpiCard(id(), { x: 1280, y: 100, z: z++, height: 96, width: 608, tabOrder: 5 }, "FactForecast", "Forecast Horizon Orders", "Forecast horizon orders (8wk)", ACCENTS.forecast),
-    forecastBandChart(id(), { x: 32, y: 212, z: z++, height: 552, width: 1560, tabOrder: 6 }),
+    forecastBandChart(id(), { x: 32, y: 212, z: z++, height: 360, width: 1560, tabOrder: 6 }),
     barChart(
       id(),
-      { x: 1608, y: 212, z: z++, height: 552, width: 280, tabOrder: 7 },
+      { x: 1608, y: 212, z: z++, height: 360, width: 280, tabOrder: 7 },
       "FactOrders",
       "Category",
       "FactOrders",
@@ -1029,16 +1064,21 @@ fs.writeFileSync(
       "#2F5F73",
       "#D7E6EC"
     ),
-    textbox(id(), { x: 32, y: 780, z: z++, height: 220, width: 1856, tabOrder: 8 }, [
-      { text: "How to read the band", size: "13pt", font: "Segoe UI Semibold", bold: true },
-      { text: "Solid near-black = actual weekly orders. Dashed copper = point forecast (backtest on history, forward 8 weeks).", size: "11pt" },
-      { text: "Dotted teal = 80% prediction interval (Lo80 / Hi80). The gap between the dotted lines is the confidence zone.", size: "11pt" },
-      { text: "Holdout MAPE and Coverage 80 are measured on the last 12 weeks held out from training — see Context for method.", size: "11pt", color: "#5A6B75" },
+    ...buildSeasonalDecompPanels({
+      id,
+      position: { x: 32, y: 588, z: z, height: 220, width: 1856, gap: 16, tabOrder: 8 },
+    }),
+    textbox(id(), { x: 32, y: 824, z: z + 3, height: 180, width: 1856, tabOrder: 11 }, [
+      { text: "How to read", size: "13pt", font: "Segoe UI Semibold", bold: true },
+      { text: "Solid near-black = actual weekly orders. Dashed copper = point forecast. Dotted teal = 80% PI (Lo80 / Hi80).", size: "11pt" },
+      { text: "Decomposition (STL, period 12) splits the same stable window into trend, seasonal pulse, and remainder — three panels, not one stacked line.", size: "11pt" },
+      { text: "Holdout MAPE and Coverage 80 use the last 12 weeks held out from training — see Context for method.", size: "11pt", color: "#5A6B75" },
     ]),
-    textbox(id(), { x: 32, y: 1032, z: z++, height: 28, width: 1856, tabOrder: 9 }, [
+    textbox(id(), { x: 32, y: 1032, z: z + 4, height: 28, width: 1856, tabOrder: 12 }, [
       { text: FOOTER, size: "9pt", color: "#6B7C86" },
     ]),
   ];
+  z += 5;
   visuals.forEach((v) => writeVisual(p, v));
 }
 
@@ -1070,9 +1110,9 @@ fs.writeFileSync(
     ]),
     textbox(id(), { x: 976, y: 240, z: z++, height: 260, width: 912, tabOrder: 5 }, [
       { text: "Forecast method", size: "14pt", font: "Segoe UI Semibold", bold: true },
-      { text: "Weekly order counts by purchase week; SARIMAX (weekly seasonality) when available, else seasonal-naive fallback.", size: "11pt" },
+      { text: "Weekly order counts by purchase week; SARIMAX (period-12 seasonality) when available, else seasonal-naive fallback.", size: "11pt" },
       { text: "Backtest holds out the last 12 weeks; forward horizon is 8 weeks with 80%/95% prediction intervals.", size: "11pt" },
-      { text: "Holdout MAPE and interval coverage are computed on the held-out weeks and shown on Demand Outlook.", size: "11pt" },
+      { text: "Seasonal decomposition (STL) on Demand Outlook shows trend / seasonal / remainder as three panels from the same stable window.", size: "11pt" },
       { text: "This is a demand-volume forecast — not an inventory or safety-stock policy recommendation.", size: "11pt", color: "#5A6B75" },
     ]),
     textbox(id(), { x: 32, y: 540, z: z++, height: 240, width: 1856, tabOrder: 6 }, [

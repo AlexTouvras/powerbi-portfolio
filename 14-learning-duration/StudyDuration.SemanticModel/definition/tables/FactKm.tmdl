@@ -1,0 +1,67 @@
+table FactKm
+	lineageTag: 2ff2e608-80e0-4298-a141-e48c976db569
+
+	column Stratum
+		dataType: string
+		lineageTag: 0d7f3a3a-3332-4ad1-8b1e-986ec684f1d0
+		sourceColumn: Stratum
+
+	column Time
+		dataType: double
+		formatString: 0.0
+		lineageTag: 15ba9fb0-9bbe-44b6-bbb3-ecf81d5c2431
+		summarizeBy: none
+		sourceColumn: Time
+
+	column Survival
+		dataType: double
+		formatString: 0.000
+		lineageTag: 847e47ba-9193-44a0-9b4c-d4905740cf0c
+		summarizeBy: none
+		sourceColumn: Survival
+
+	column Lo
+		dataType: double
+		formatString: 0.000
+		lineageTag: 455233ed-2959-4c41-be7d-1dc964857576
+		summarizeBy: none
+		sourceColumn: Lo
+
+	column Hi
+		dataType: double
+		formatString: 0.000
+		lineageTag: bd65e975-2bb8-4740-9e97-9a487247ab76
+		summarizeBy: none
+		sourceColumn: Hi
+
+	column NRisk
+		dataType: int64
+		formatString: 0
+		lineageTag: 43dee377-35dd-47f0-9408-1aa81e306e6b
+		summarizeBy: none
+		sourceColumn: NRisk
+
+	column NEvent
+		dataType: int64
+		formatString: 0
+		lineageTag: 33d11af7-1df6-4de8-811f-a5a1bc359899
+		summarizeBy: none
+		sourceColumn: NEvent
+
+	column NCensor
+		dataType: int64
+		formatString: 0
+		lineageTag: 0d7c6a14-8672-4528-b9ca-e9091d47a3a1
+		summarizeBy: none
+		sourceColumn: NCensor
+
+	partition FactKm = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/FactKm.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Stratum", type text}, {"Time", type number}, {"Survival", type number}, {"Lo", type number}, {"Hi", type number}, {"NRisk", Int64.Type}, {"NEvent", Int64.Type}, {"NCensor", Int64.Type}})
+				in
+					#"Changed Type"
+

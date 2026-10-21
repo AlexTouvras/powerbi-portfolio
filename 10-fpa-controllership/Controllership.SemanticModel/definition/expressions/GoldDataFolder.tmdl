@@ -1,0 +1,1 @@
+expression GoldDataFolder = "c:/Users/kater/.cursor/projects/PowerBI/10-fpa-controllership/data/gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]

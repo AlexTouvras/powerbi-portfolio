@@ -1,0 +1,5 @@
+expression GoldDataFolder = "C:/Users/kater/.cursor/projects/PowerBI/03-sales-executive/data/gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 39a3c001-64ff-4fd0-9625-490a50c42085
+
+	annotation PBI_ResultType = Text
+

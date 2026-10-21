@@ -63,3 +63,15 @@ def test_collapsed_pane_does_not_eat_the_page():
     assert cropped.size[1] == 180
     assert 340 <= cropped.size[0] <= 352
     assert find_pane_cut(cropped) is None
+
+
+def test_top_aligned_page_drops_the_fit_bar():
+    width = 320
+    page_h = round(width * 9 / 16)
+    image = Image.new("RGB", (width, page_h + 40), (238, 238, 238))
+    for y in range(page_h):
+        tone = 80 + (y % 17)
+        image.paste(Image.new("RGB", (width, 1), (tone, tone + 10, tone + 30)), (0, y))
+    cropped = crop_to_canvas(image, 1920, 1080)
+    assert cropped.size == (width, page_h)
+    assert cropped.getpixel((4, 4)) != (238, 238, 238)

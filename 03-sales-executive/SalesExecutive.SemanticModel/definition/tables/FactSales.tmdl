@@ -200,6 +200,21 @@ table FactSales
 		formatString: 0.0%
 		lineageTag: 74c2be7c-a16a-4102-952e-3e03f04889e6
 
+	/// Two-point slope/dumbbell value: Prior = max year in scope − 1, Latest = max year in scope.
+	/// Pair with disconnected DimComparePeriod on Category (catalogue #16–17).
+	measure 'Compare Revenue' =
+			VAR yMax = CALCULATE(MAX(DimDate[Year]), ALLSELECTED(DimDate))
+			VAR ep = SELECTEDVALUE(DimComparePeriod[Period])
+			VAR y = IF(ep = "Latest", yMax, yMax - 1)
+			RETURN
+				IF(
+					ISBLANK(ep) || ISBLANK(yMax),
+					BLANK(),
+					CALCULATE([Revenue], REMOVEFILTERS(DimDate), DimDate[Year] = y)
+				)
+		formatString: $#,0
+		lineageTag: d4f7b5a6-8e9c-4d0f-c345-0a9f8e7d6c54
+
 	column OrderNumber
 		dataType: string
 		lineageTag: bb31a33f-db01-45be-a00f-24b1d0157ff0

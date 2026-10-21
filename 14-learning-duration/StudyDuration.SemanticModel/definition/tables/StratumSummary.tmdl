@@ -1,0 +1,90 @@
+table StratumSummary
+	lineageTag: e0f1070b-b700-407b-9f64-6cb900b55a00
+
+	measure 'Restricted Mean' = AVERAGE(StratumSummary[RestrictedMean])
+		formatString: 0.0
+		lineageTag: ddc353ae-3fd8-427f-b881-a0cfcb7bdd68
+
+	measure 'RM vs FFF' = AVERAGE(StratumSummary[Difference])
+		formatString: +0.0;-0.0;0.0
+		lineageTag: beb2086d-a0fc-4dc7-ae33-08d0cb63ceef
+
+	measure 'Stratum N' = SUM(StratumSummary[N])
+		formatString: #,0
+		lineageTag: 23441543-6dff-4f21-afaa-238a29137e75
+
+	measure 'Stratum Events' = SUM(StratumSummary[Events])
+		formatString: #,0
+		lineageTag: b4bc758d-86e3-4455-8e8f-54461f9571c8
+
+	column Stratum
+		dataType: string
+		lineageTag: 2c854835-fd89-4c1c-abe0-0f2271e2a909
+		sourceColumn: Stratum
+
+	column N
+		dataType: int64
+		formatString: #,0
+		lineageTag: 26f2340d-c493-4adc-b515-bcc5661e0021
+		summarizeBy: none
+		sourceColumn: N
+
+	column Events
+		dataType: int64
+		formatString: #,0
+		lineageTag: b0f6c194-29d8-4c0e-8dcb-cdbc79ef63f9
+		summarizeBy: none
+		sourceColumn: Events
+
+	column Median
+		dataType: double
+		formatString: 0.0
+		lineageTag: e825137a-4180-49e4-84f0-cb1d888b5693
+		summarizeBy: none
+		sourceColumn: Median
+
+	column RestrictedMean
+		dataType: double
+		formatString: 0.0
+		lineageTag: 029f0a84-7343-4613-8ddd-5be3609838e8
+		summarizeBy: none
+		sourceColumn: RestrictedMean
+
+	column Tau
+		dataType: double
+		formatString: 0.0
+		lineageTag: 2a89fea7-7229-4b62-a322-691b0dc0aa87
+		summarizeBy: none
+		sourceColumn: Tau
+
+	column Difference
+		dataType: double
+		formatString: 0.0
+		lineageTag: 7c3ff070-f4b5-4b08-b459-bfa236fa76b9
+		summarizeBy: none
+		sourceColumn: Difference
+
+	column DiffLo
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9da53d9a-c577-4b60-afd0-71bb716f3620
+		summarizeBy: none
+		sourceColumn: DiffLo
+
+	column DiffHi
+		dataType: double
+		formatString: 0.0
+		lineageTag: 27ea4b78-a622-4efb-84ed-7e9e0ea21e8e
+		summarizeBy: none
+		sourceColumn: DiffHi
+
+	partition StratumSummary = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(GoldDataFolder & "/StratumSummary.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"Stratum", type text}, {"N", Int64.Type}, {"Events", Int64.Type}, {"Median", type number}, {"RestrictedMean", type number}, {"Tau", type number}, {"Difference", type number}, {"DiffLo", type number}, {"DiffHi", type number}})
+				in
+					#"Changed Type"
+

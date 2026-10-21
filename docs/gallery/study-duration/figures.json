@@ -1,0 +1,25 @@
+{
+  "binding": "time = TimeDays · event = Event · strata = Stratum · covariates = AgeBand, HighestEducation, StudiedCredits, PrevAttempts, Disability, Gender · horizon = 100 · reference Stratum = FFF · follow-up through 269 · fit 9d191288",
+  "hash": "9d1912888e2bad01d6e69c9bb316252b38881493cb9d77e100bccc0f44c7f071",
+  "follow_up": 269.0,
+  "figures": {
+    "kaplan-meier": "kaplan-meier.png",
+    "forest": "forest.png",
+    "beta-time": "beta-time.png",
+    "cumulative-hazard": "cumulative-hazard.png",
+    "cumulative-events": "cumulative-events.png",
+    "log-cumulative-hazard": "log-cumulative-hazard.png",
+    "censoring": "censoring.png",
+    "martingale": "martingale.png",
+    "deviance": "deviance.png",
+    "influence": "influence.png",
+    "adjusted-survival": "adjusted-survival.png",
+    "hazard": "hazard.png",
+    "cox-snell": "cox-snell.png",
+    "calibration": "calibration.png",
+    "aalen": "aalen.png",
+    "decision-curve": "decision-curve.png",
+    "nomogram": "nomogram.png",
+    "rmst": "rmst.png"
+  }
+}

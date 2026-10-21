@@ -10,7 +10,8 @@ annotation PBI_QueryOrder = ["GoldDataFolder","DimDate","DimSeller","DimProduct"
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-ref expression GoldDataFolder
+annotation PBI_ProTooling = ["DevMode"]
+
 ref table DimDate
 ref table DimSeller
 ref table DimProduct
@@ -20,3 +21,4 @@ ref table FactDemandWeekly
 ref table FactForecast
 ref table FactCorridor
 ref table ModelMetrics
+

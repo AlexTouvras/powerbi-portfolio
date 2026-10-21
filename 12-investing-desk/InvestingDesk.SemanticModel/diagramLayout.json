@@ -163,6 +163,18 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3692.5580401778161,
+            "y": 204.70587140168584
+          },
+          "nodeIndex": "FactOverfitAudit",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",

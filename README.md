@@ -2,6 +2,20 @@
 
 Nordic-inspired Power BI reports and dashboards — clean executive storytelling you can open as PBIP projects.
 
+## Duration engine
+
+A clock plus a censoring flag goes through `_shared/analytics_engine`. A person copies `fit_hash.txt` into `APPROVED` before a sentence or a figure may quote the fit. Fixed-horizon labels stay on the logistic scripts. One measured series stays on SARIMAX.
+
+Study Duration is the first approved fit: 29,824 Open University registrations, 7,387 withdrawals, concordance 0.64. These four figures are that fit. Every figure from the same render, including β(t) and the diagnostics, is in [`docs/GALLERY.md`](docs/GALLERY.md). The plot list those figures belong to is [`docs/PLOT_CATALOGUE.md`](docs/PLOT_CATALOGUE.md).
+
+![Kaplan–Meier, still enrolled by module](docs/gallery/study-duration/kaplan-meier.png)
+
+![Cox forest versus FFF](docs/gallery/study-duration/forest.png)
+
+![Restricted mean time versus FFF](docs/gallery/study-duration/rmst.png)
+
+![Decision curve at day 100](docs/gallery/study-duration/decision-curve.png)
+
 ## Featured projects
 
 ### Sales Executive
@@ -18,6 +32,8 @@ C-level sales portfolio report built as a local **PBIP** (report + semantic mode
 ![Landing](03-sales-executive/screenshots/landing.png)
 
 ![Portfolio Pulse](03-sales-executive/screenshots/portfolio-pulse.png)
+
+![Customer and Market, country slope and category dumbbell](03-sales-executive/screenshots/customer-market.png)
 
 Details: [`03-sales-executive/README.md`](03-sales-executive/README.md)
 
@@ -134,7 +150,7 @@ Details: [`12-investing-desk/README.md`](12-investing-desk/README.md)
 
 ### Logistics Pulse
 
-COO on-time delivery story with seller risk queues and the portfolio’s first **demand forecast** (SARIMAX) with dashed forecast + dotted 80% prediction-interval bounds.
+COO on-time delivery story with seller risk queues and the portfolio’s first **demand forecast** (SARIMAX) with dashed forecast + dotted 80% prediction-interval bounds. Delivery Pulse also draws the category mix as a stream and orders as a lollipop. Demand Outlook adds trend, season, and remainder under that ribbon.
 
 | | |
 |---|---|
@@ -198,6 +214,25 @@ Near-live Nordic large-cap heatmap and ticker explorer with classic day-trading 
 
 Details: [`01-finance/README.md`](01-finance/README.md)
 
+### Controllership
+
+Budget versus actual for a seeded Nordic operating company: a live landing sentence, a Budget-to-Actual operating-profit bridge, a chart-of-accounts statement, and scenario bands.
+
+| | |
+|---|---|
+| Audience | CFO / FP&A |
+| Theme | Nordic Boardroom |
+| Pages | Landing · P&L Pulse · Variance Drivers · Scenarios · Context |
+| Open | [`10-fpa-controllership/Controllership.pbip`](10-fpa-controllership/Controllership.pbip) |
+
+![P&L Pulse, bridge and statement](10-fpa-controllership/screenshots/p-l-pulse.png)
+
+![Variance Drivers](10-fpa-controllership/screenshots/variance-drivers.png)
+
+![Scenarios](10-fpa-controllership/screenshots/scenarios.png)
+
+Details: [`10-fpa-controllership/README.md`](10-fpa-controllership/README.md)
+
 ## Projects
 
 Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets.com/5-real-world-sql-projects-to-build-your-data-portfolio) — see [`DATASETS.md`](DATASETS.md).
@@ -213,8 +248,9 @@ Data lined up from [5 Real-World SQL Projects (KDNuggets)](https://www.kdnuggets
 | [`12-investing-desk`](12-investing-desk/) | Investment Portfolio | **Featured** — dual-source (investing + Nordic Equity) |
 | [`04-supply-chain`](04-supply-chain/) | Logistics Pulse (Olist) | **Featured** — on-time + SARIMAX demand forecast |
 | [`08-customer-experience`](08-customer-experience/) | Experience Pulse (Olist reviews) | **Featured** — propensity + Key Influencers + recovery queue |
+| [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA) | **Featured** — statement, OP bridge, scenarios |
+| [`14-learning-duration`](14-learning-duration/) | Study Duration (OULAD withdrawals) | **PBIP** — approved fit and Argument page; figures in [`docs/GALLERY.md`](docs/GALLERY.md); canvas screenshots not taken yet |
 | [`07-helsinki-energy`](07-helsinki-energy/) | Facility Energy (Nuuka API) | **Planned** — prework |
-| [`10-fpa-controllership`](10-fpa-controllership/) | Controllership (BvA / what-if) | **Planned** — prework |
 
 ## Design system
 

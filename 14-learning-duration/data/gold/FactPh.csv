@@ -1,0 +1,17 @@
+Term,Test,P,Verdict,TimeTransform
+AgeBand[35-55],grambsch-therneau,0.0002714064592757411,changes,km
+AgeBand[55<=],grambsch-therneau,0.9594226908284363,holds,km
+Disability,grambsch-therneau,9.370852835903252e-06,changes,km
+Gender[M],grambsch-therneau,0.054519818612690445,holds,km
+HighestEducation[HE Qualification],grambsch-therneau,0.030829762120742586,changes,km
+HighestEducation[Lower Than A Level],grambsch-therneau,0.0022253200384129285,changes,km
+HighestEducation[No Formal quals],grambsch-therneau,0.03658340985438944,changes,km
+HighestEducation[Post Graduate Qualification],grambsch-therneau,0.17331327943898028,holds,km
+PrevAttempts,grambsch-therneau,1.263322467418442e-05,changes,km
+Stratum[AAA],grambsch-therneau,2.102009855495452e-09,changes,km
+Stratum[BBB],grambsch-therneau,6.160152292981091e-07,changes,km
+Stratum[CCC],grambsch-therneau,0.41795888304701434,holds,km
+Stratum[DDD],grambsch-therneau,7.375332520543114e-05,changes,km
+Stratum[EEE],grambsch-therneau,0.0013364612290273966,changes,km
+Stratum[GGG],grambsch-therneau,0.004301387134587108,changes,km
+StudiedCredits,grambsch-therneau,2.3332032449363837e-11,changes,km

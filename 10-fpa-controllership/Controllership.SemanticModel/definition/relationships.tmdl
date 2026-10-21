@@ -1,0 +1,15 @@
+relationship FactPnL_DimDate
+	fromColumn: FactPnL.YearMonth
+	toColumn: DimDate.YearMonth
+
+relationship FactPnL_DimEntity
+	fromColumn: FactPnL.EntityID
+	toColumn: DimEntity.EntityID
+
+relationship FactPnL_DimAccount
+	fromColumn: FactPnL.AccountID
+	toColumn: DimAccount.AccountID
+
+relationship FactScenario_DimDate
+	fromColumn: FactScenario.YearMonth
+	toColumn: DimDate.YearMonth

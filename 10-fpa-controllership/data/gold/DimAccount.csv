@@ -1,0 +1,11 @@
+AccountID,AccountName,Level,Operator,Sign,ParentID,SortOrder,Section,StatementLabel
+R100,Product revenue,1,+,1,,10,Revenue,+  Product revenue
+R200,Services revenue,1,+,1,,20,Revenue,+  Services revenue
+R900,Total revenue,0,=,1,,30,Revenue,=  Total revenue
+C100,Cost of goods,1,-,-1,,40,COGS,-  Cost of goods
+C200,Delivery & freight,1,-,-1,,50,COGS,-  Delivery & freight
+C900,Gross profit,0,=,1,,60,Margin,=  Gross profit
+O100,Personnel,1,-,-1,,70,OPEX,-  Personnel
+O200,Marketing,1,-,-1,,80,OPEX,-  Marketing
+O300,Facilities & IT,1,-,-1,,90,OPEX,-  Facilities & IT
+O900,Operating profit,0,=,1,,100,Result,=  Operating profit

@@ -143,6 +143,7 @@ const tableNames = [
   "FactNordicPrices",
   "FactRiskWeight",
   "FactRiskSnapshot",
+  "FactOverfitAudit",
 ];
 
 write(
@@ -193,6 +194,10 @@ const pmCols = [
   ["ExcessCAGR", "double", { formatString: "0.0%" }],
   ["CoreSharpe", "double", { formatString: "0.00" }],
   ["MidSharpe", "double", { formatString: "0.00" }],
+  ["CoreSortino", "double", { formatString: "0.00" }],
+  ["MidSortino", "double", { formatString: "0.00" }],
+  ["CoreCalmar", "double", { formatString: "0.00" }],
+  ["MidCalmar", "double", { formatString: "0.00" }],
   ["MidMaxDD", "double", { formatString: "0.0%" }],
   ["MidAnnVol", "double", { formatString: "0.0%" }],
   ["FeeBps", "double", { formatString: "0.0" }],
@@ -221,6 +226,10 @@ const pmMeasures = [
   measure("Excess CAGR", "MAX(PortfolioMetrics[ExcessCAGR])", "0.0%"),
   measure("Core Sharpe", "MAX(PortfolioMetrics[CoreSharpe])", "0.00"),
   measure("Mid Sharpe", "MAX(PortfolioMetrics[MidSharpe])", "0.00"),
+  measure("Core Sortino", "MAX(PortfolioMetrics[CoreSortino])", "0.00"),
+  measure("Mid Sortino", "MAX(PortfolioMetrics[MidSortino])", "0.00"),
+  measure("Core Calmar", "MAX(PortfolioMetrics[CoreCalmar])", "0.00"),
+  measure("Mid Calmar", "MAX(PortfolioMetrics[MidCalmar])", "0.00"),
   measure("Mid Max DD", "MAX(PortfolioMetrics[MidMaxDD])", "0.0%"),
   measure("Mid Ann Vol", "MAX(PortfolioMetrics[MidAnnVol])", "0.0%"),
   measure("Fee Bps", "MAX(PortfolioMetrics[FeeBps])", "0.0"),
@@ -370,6 +379,8 @@ ${tableBody(
     ["CAGR", "double", { formatString: "0.0%" }],
     ["AnnVol", "double", { formatString: "0.0%" }],
     ["Sharpe", "double", { formatString: "0.00" }],
+    ["Sortino", "double", { formatString: "0.00" }],
+    ["Calmar", "double", { formatString: "0.00" }],
     ["MaxDrawdown", "double", { formatString: "0.0%" }],
     ["Days", "int64", { formatString: "0", summarizeBy: "none" }],
   ],
@@ -378,6 +389,8 @@ ${tableBody(
   [
     measure("Sim CAGR", "AVERAGE(FactSimSummary[CAGR])", "0.0%"),
     measure("Sim Sharpe", "AVERAGE(FactSimSummary[Sharpe])", "0.00"),
+    measure("Sim Sortino", "AVERAGE(FactSimSummary[Sortino])", "0.00"),
+    measure("Sim Calmar", "AVERAGE(FactSimSummary[Calmar])", "0.00"),
     measure("Sim Max DD", "AVERAGE(FactSimSummary[MaxDrawdown])", "0.0%"),
     measure("Sim Ann Vol", "AVERAGE(FactSimSummary[AnnVol])", "0.0%"),
   ]
@@ -424,6 +437,8 @@ ${tableBody(
     ["CAGR", "double", { formatString: "0.0%" }],
     ["AnnVol", "double", { formatString: "0.0%" }],
     ["Sharpe", "double", { formatString: "0.00" }],
+    ["Sortino", "double", { formatString: "0.00" }],
+    ["Calmar", "double", { formatString: "0.00" }],
     ["SharpeVsBenchmark", "double", { formatString: "+0.00;-0.00;0.00" }],
     ["MaxDrawdown", "double", { formatString: "0.0%" }],
     ["AnnOnewayTurnover", "double", { formatString: "0.00" }],
@@ -437,6 +452,8 @@ ${tableBody(
   [
     measure("Policy CAGR", "AVERAGE(FactPolicyCompare[CAGR])", "0.0%"),
     measure("Policy Sharpe", "AVERAGE(FactPolicyCompare[Sharpe])", "0.00"),
+    measure("Policy Sortino", "AVERAGE(FactPolicyCompare[Sortino])", "0.00"),
+    measure("Policy Calmar", "AVERAGE(FactPolicyCompare[Calmar])", "0.00"),
     measure("Policy Sharpe vs BM", "AVERAGE(FactPolicyCompare[SharpeVsBenchmark])", "+0.00;-0.00;0.00"),
     measure("Policy Max DD", "AVERAGE(FactPolicyCompare[MaxDrawdown])", "0.0%"),
     measure("Policy Vol", "AVERAGE(FactPolicyCompare[AnnVol])", "0.0%"),
@@ -594,6 +611,8 @@ ${tableBody(
     ["VaR95ParamPct", "double", { formatString: "0.00%" }],
     ["MinVolAnn", "double", { formatString: "0.0%" }],
     ["MaxSharpeAnn", "double", { formatString: "0.00" }],
+    ["BookSortino", "double", { formatString: "0.00" }],
+    ["BookCalmar", "double", { formatString: "0.00" }],
     ["DroppedTickers", "string", {}],
   ],
   "FactRiskSnapshot.csv",
@@ -601,8 +620,38 @@ ${tableBody(
   [
     measure("VaR 95 Hist", "MAX(FactRiskSnapshot[VaR95HistPct])", "0.00%"),
     measure("VaR 95 Param", "MAX(FactRiskSnapshot[VaR95ParamPct])", "0.00%"),
+    measure("Book Sortino", "MAX(FactRiskSnapshot[BookSortino])", "0.00"),
+    measure("Book Calmar", "MAX(FactRiskSnapshot[BookCalmar])", "0.00"),
     measure("Risk Names Used", "MAX(FactRiskSnapshot[NamesUsed])", "0"),
     measure("Risk Return Days", "MAX(FactRiskSnapshot[NObs])", "#,0"),
+  ]
+)}
+`
+);
+
+write(
+  path.join(tablesDir, "FactOverfitAudit.tmdl"),
+  `table FactOverfitAudit
+
+${tableBody(
+  [
+    ["StrategyId", "string", {}],
+    ["Label", "string", {}],
+    ["ObservedSharpe", "double", { formatString: "0.00" }],
+    ["NObs", "int64", { formatString: "#,0", summarizeBy: "none" }],
+    ["NTrial", "int64", { formatString: "0", summarizeBy: "none" }],
+    ["DeflatedSharpeP", "double", { formatString: "0.00" }],
+    ["MinBacktestLengthDays", "int64", { formatString: "#,0", summarizeBy: "none" }],
+    ["PassesMinLength", "int64", { formatString: "0", summarizeBy: "none" }],
+    ["Status", "string", {}],
+    ["Warning", "string", {}],
+  ],
+  "FactOverfitAudit.csv",
+  "FactOverfitAudit",
+  [
+    measure("Observed Sharpe", "AVERAGE(FactOverfitAudit[ObservedSharpe])", "0.00"),
+    measure("Deflated Sharpe p", "AVERAGE(FactOverfitAudit[DeflatedSharpeP])", "0.00"),
+    measure("Min Backtest Days", "AVERAGE(FactOverfitAudit[MinBacktestLengthDays])", "#,0"),
   ]
 )}
 `

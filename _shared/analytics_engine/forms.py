@@ -31,6 +31,37 @@ FORM_NAMES = (
     "rmst",
 )
 
+
+def _clock(value: float) -> str:
+    """A follow-up time for a caption. 100 stays 100; .2g would print 1e+02."""
+    if float(value).is_integer():
+        return str(int(value))
+    return f"{value:.4g}"
+
+
+def _tick_label(text: object) -> str:
+    raw = str(text).strip()
+    try:
+        value = float(raw)
+    except ValueError:
+        return raw
+    if value.is_integer() and abs(value) < 1_000_000:
+        return str(int(round(value)))
+    return raw
+
+
+def _axis_name(name: str) -> str:
+    prefix = "Survival at "
+    if not name.startswith(prefix):
+        return name
+    try:
+        value = float(name[len(prefix) :])
+    except ValueError:
+        return name
+    if value.is_integer():
+        return f"{prefix}{int(value)}"
+    return name
+
 _DASH = (0, (3, 2))
 
 
@@ -121,7 +152,7 @@ def _calibration(result: FitResult) -> Figure:
     fig, ax = _canvas(
         6.8,
         7.4,
-        f"Calibration at time {when:.2g}. Each point is a quantile group of predicted risk"
+        f"Calibration at time {_clock(when)}. Each point is a quantile group of predicted risk"
         + (
             f", {int(table['N'].iloc[0])} rows in every group"
             if table["N"].nunique() == 1
@@ -200,7 +231,7 @@ def _decision(result: FitResult) -> Figure:
     fig, ax = _canvas(
         8.2,
         6.2,
-        f"Decision curve at time {when:.2g}. Net benefit of acting when the Cox probability of the event by that time exceeds the threshold. True and false positives are Kaplan–Meier rates, so a censored row is not counted as a survivor or as an event. Treat all acts on the whole cohort. Treat none is the line at 0. Above both lines, the model has the higher net benefit.",
+        f"Decision curve at time {_clock(when)}. Net benefit of acting when the Cox probability of the event by that time exceeds the threshold. True and false positives are Kaplan–Meier rates, so a censored row is not counted as a survivor or as an event. Treat all acts on the whole cohort. Treat none is the line at 0. Above both lines, the model has the higher net benefit.",
         result,
     )
     styles = {"Model": (PALETTE[0], "-"), "Treat all": (PALETTE[1], "-"), "Treat none": (INK, _DASH)}
@@ -224,7 +255,8 @@ def _nomogram(result: FitResult) -> Figure:
         .drop_duplicates()
         .sort_values("Order", ascending=False)
     )
-    names = list(axes_order["Axis"].astype(str))
+    raw_names = list(axes_order["Axis"].astype(str))
+    names = [_axis_name(name) for name in raw_names]
     fig, ax = _canvas(
         8.8,
         max(5.4, 0.72 * len(names) + 2.8),
@@ -233,18 +265,29 @@ def _nomogram(result: FitResult) -> Figure:
         wrap=96,
     )
     positions = {name: index for index, name in enumerate(names)}
-    for name in names:
+    for raw, name in zip(raw_names, names, strict=True):
         y = positions[name]
-        part = table[table["Axis"].astype(str) == name]
+        part = table[table["Axis"].astype(str) == raw]
         left = 0.0 if name in {"Points", "Total points"} or name.startswith("Survival") else float(part["Points"].min())
         right = 100.0 if name in {"Points", "Total points"} or name.startswith("Survival") else float(part["Points"].max())
         ax.plot([left, right], [y, y], color=INK, lw=0.8, solid_capstyle="butt")
-        for row in part.itertuples(index=False):
-            ax.plot([row.Points, row.Points], [y - 0.12, y + 0.12], color=INK, lw=0.6)
-            ax.text(row.Points, y + 0.18, str(row.Label), ha="center", va="bottom", fontsize=8, color=INK)
+        ticks = sorted(part.itertuples(index=False), key=lambda row: float(row.Points))
+        for index, row in enumerate(ticks):
+            x = float(row.Points)
+            above = index % 2 == 0
+            ax.plot([x, x], [y - 0.12, y + 0.12], color=INK, lw=0.6)
+            ax.text(
+                x,
+                y + (0.2 if above else -0.2),
+                _tick_label(row.Label),
+                ha="center",
+                va="bottom" if above else "top",
+                fontsize=7.5,
+                color=INK,
+            )
     ax.set_yticks([positions[name] for name in names], names)
     ax.set_xlim(-2, 104)
-    ax.set_ylim(-0.45, len(names) - 0.35)
+    ax.set_ylim(-0.85, len(names) - 0.15)
     ax.tick_params(axis="y", length=0)
     ax.set_xticks([])
     for spine in ax.spines.values():
@@ -263,7 +306,7 @@ def _rmst(result: FitResult) -> Figure | None:
     fig, ax = _canvas(
         8.4,
         max(4.2, 0.55 * len(summary) + 3.0),
-        f"Difference in restricted mean time versus {reference}. Both areas stop at {tau:.2g}, the latest time at which every stratum still has at least a tenth of its rows at risk. The line at 0 is no difference. The interval uses the Greenwood variance of the area under the Kaplan–Meier curve. A negative difference is a shorter mean time without the event.",
+        f"Difference in restricted mean time versus {reference}. Both areas stop at {_clock(tau)}, the latest time at which every stratum still has at least a tenth of its rows at risk. The line at 0 is no difference. The interval uses the Greenwood variance of the area under the Kaplan–Meier curve. A negative difference is a shorter mean time without the event.",
         result,
         wrap=96,
     )
