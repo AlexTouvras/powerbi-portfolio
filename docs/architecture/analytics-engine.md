@@ -67,6 +67,18 @@ PYTHONPATH=_shared python -m analytics_engine render \
 
 `fit` writes the tables, `draft.json`, and `fit_hash.txt`. It never writes `APPROVED`. `cite` and `render` require `APPROVED` to contain the current hash. Refitting changes the hash, and the old approval stops matching.
 
+## What a figure claims
+
+Every figure ends with the same binding: the columns the caller named, the latest time in the table, and the first eight characters of the fit hash.
+
+```text
+time = days · event = died · strata = arm · covariates = age · horizon = 365 · reference arm = control · follow-up through 420 · fit a1b2c3d4
+```
+
+`follow-up through` is the latest time on `FactKm`, which is the latest observed time. `fit` is the prefix of the hash in `fit_hash.txt`. A whole number is printed without a decimal.
+
+`render` writes that line again to `figures.json` beside the pngs, with the full hash and the follow-up as a number. The argument page prints the binding under the figure. The method sentence above the binding says which estimand the panel is. The binding says which columns it was counted from.
+
 ## Figure collection
 
 The set follows the publication gallery in survminer and the survival package: `ggsurvplot`, `ggforest`, `ggcoxzph`, `ggcoxdiagnostics`, and `ggadjustedcurves`.

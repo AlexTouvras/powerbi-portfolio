@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
@@ -13,8 +15,29 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from analytics_engine import CitationError, Outcome, RouteError, cite, fit, read_fit, release, render, route
 from analytics_engine.fit import approval_matches, hash_directory, write_fit
-from analytics_engine.forms import FORM_NAMES
-from analytics_engine.gallery import cumulative_hazard_frame
+from analytics_engine.figures import _beta, _forest, _kaplan_meier
+from analytics_engine.forms import (
+    FORM_NAMES,
+    _aalen,
+    _calibration,
+    _cox_snell,
+    _decision,
+    _hazard,
+    _nomogram,
+    _rmst,
+)
+from analytics_engine.gallery import (
+    _adjusted,
+    _censoring,
+    _cumulative_events,
+    _cumulative_hazard,
+    _deviance,
+    _influence,
+    _log_cumulative_hazard,
+    _martingale,
+    cumulative_hazard_frame,
+)
+from analytics_engine.stamp import binding, follow_up, format_number
 from analytics_engine.__main__ import main
 
 
@@ -148,10 +171,70 @@ def test_missing_column_and_bad_event_fail_before_a_figure():
         fit(broken, Outcome.duration("time", "event"))
 
 
+def test_binding_names_the_columns_the_clock_and_the_hash(tmp_path: Path):
+    frame = _draw(n=80, seed=11)
+    bare = fit(frame, Outcome.duration("time", "event"))
+    text = binding(bare)
+    assert text == (
+        "time = time · event = event · "
+        f"follow-up through {format_number(follow_up(bare))} · "
+        f"fit {bare.content_hash[:8]}"
+    )
+    assert "strata" not in text
+    assert "horizon" not in text
+    assert "covariates" not in text
+    assert "reference" not in text
+    assert follow_up(bare) == pytest.approx(float(frame["time"].max()))
+    assert format_number(2.0) == "2"
+    assert format_number(0.5) == "0.5"
+
+    write_fit(bare, tmp_path / "fit")
+    assert bare.content_hash == (tmp_path / "fit" / "fit_hash.txt").read_text().strip()
+
+    released = release(fit(frame, _outcome()))
+    line = binding(released)
+    assert "strata = group" in line
+    assert "covariates = x" in line
+    assert "horizon = 0.5" in line
+    assert "reference group = A" in line
+    assert f"fit {released.content_hash[:8]}" in line
+    assert follow_up(released) == pytest.approx(float(frame["time"].max()))
+
+    figures = [
+        _kaplan_meier(released),
+        _forest(released),
+        _beta(released),
+        _cumulative_hazard(released),
+        _cumulative_events(released),
+        _log_cumulative_hazard(released),
+        _censoring(released),
+        _martingale(released),
+        _deviance(released),
+        _influence(released),
+        _adjusted(released),
+        _hazard(released),
+        _cox_snell(released),
+        _calibration(released),
+        _aalen(released),
+        _decision(released),
+        _nomogram(released),
+        _rmst(released),
+    ]
+    try:
+        flat = " ".join(line.split())
+        for fig in figures:
+            assert fig is not None
+            drawn = " ".join(text.get_text() for text in fig.texts)
+            assert flat in " ".join(drawn.split())
+    finally:
+        plt.close("all")
+
+
 def test_approval_hash_gates_the_files(tmp_path: Path):
     directory = tmp_path / "fit"
     result = fit(_draw(n=200, seed=3), _outcome())
     write_fit(result, directory)
+    assert result.content_hash == (directory / "fit_hash.txt").read_text().strip()
     assert hash_directory(directory) == (directory / "fit_hash.txt").read_text().strip()
     assert approval_matches(directory) is False
     loaded = read_fit(directory)
@@ -182,8 +265,16 @@ def test_approval_hash_gates_the_files(tmp_path: Path):
         blob = written[name].read_bytes()
         assert blob.startswith(b"\x89PNG")
         assert len(blob) > 8_000
+    manifest = json.loads(written["manifest"].read_text(encoding="utf-8"))
+    assert manifest["binding"] == binding(released)
+    assert manifest["hash"] == (directory / "fit_hash.txt").read_text().strip()
+    assert manifest["hash"][:8] in manifest["binding"]
+    assert manifest["figures"]["kaplan-meier"] == "kaplan-meier.png"
+    assert "manifest" not in manifest["figures"]
+    assert manifest["follow_up"] == pytest.approx(follow_up(released))
     with pytest.raises(CitationError):
         render(loaded, tmp_path / "nope")
+    assert not (tmp_path / "nope").exists()
 
 
 def test_cli_cannot_approve(tmp_path: Path):
@@ -222,6 +313,11 @@ def test_cli_cannot_approve(tmp_path: Path):
     figures = tmp_path / "fig"
     assert main(["render", "--fit", str(out), "--out", str(figures)]) == 0
     assert (figures / "kaplan-meier.png").is_file()
+    manifest = json.loads((figures / "figures.json").read_text(encoding="utf-8"))
+    assert manifest["hash"] == (out / "fit_hash.txt").read_text().strip()
+    assert "time = time" in manifest["binding"]
+    assert "follow-up through" in manifest["binding"]
+    assert manifest["hash"][:8] in manifest["binding"]
     assert main(["cite", "--fit", str(out), "--template", "N = {N}."]) == 0
     assert main(["route", "--kind", "label", "--label", "flag"]) == 0
     assert main(["route", "--kind", "series", "--time", "week", "--value", "orders"]) == 0

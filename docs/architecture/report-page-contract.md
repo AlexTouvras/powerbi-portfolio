@@ -10,4 +10,4 @@ flowchart TB
   Queue --> Context[Context and caveats]
 ```
 
-Instrument pages stay on that path. A duration question — a clock plus a censoring flag — also gets an argument page. The contract for that page, the fit tables, and the citation rule live in [analytics-engine.md](analytics-engine.md).
+Instrument pages stay on that path. A duration question — a clock plus a censoring flag — also gets an argument page. The contract for that page, the fit tables, and the citation rule live in [analytics-engine.md](analytics-engine.md). The argument page prints the binding from `figures.json` under each figure.

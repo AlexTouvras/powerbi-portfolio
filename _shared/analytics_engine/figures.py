@@ -13,16 +13,23 @@ import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from analytics_engine.cite import cite, format_measure
+from analytics_engine.cite import CitationError, cite, format_measure
 from analytics_engine.fit import FitResult
 from analytics_engine.forms import render_forms
 from analytics_engine.gallery import render_gallery
+from analytics_engine.stamp import caption, write_manifest
 from analytics_engine.style import INK, MUTED, PALETTE, RULE
 
 
 def render(result: FitResult, directory: str | Path) -> dict[str, Path]:
-    """Write the figures the fit can support. A draft raises before any file is written."""
+    """Write the figures the fit can support. A draft raises before any file is written.
 
+    Each figure ends with the column binding. The same line is written to
+    ``figures.json`` in ``directory``.
+    """
+
+    if not result.released:
+        raise CitationError("a draft fit cannot be drawn; release it after approval")
     path = Path(directory)
     path.mkdir(parents=True, exist_ok=True)
     written: dict[str, Path] = {}
@@ -44,6 +51,7 @@ def render(result: FitResult, directory: str | Path) -> dict[str, Path]:
         written["beta-time"] = beta_path
     written.update(render_gallery(result, path))
     written.update(render_forms(result, path))
+    written["manifest"] = write_manifest(result, path, written)
     return written
 
 
@@ -80,7 +88,7 @@ def _kaplan_meier(result: FitResult) -> Figure:
     ax.set_axisbelow(True)
     _risk_table(table_ax, strata, ticks, risk_rows)
     fig.text(0.01, 0.01, _km_caption(result), ha="left", va="bottom", fontsize=9, color=MUTED, wrap=True)
-    fig.subplots_adjust(left=0.16, bottom=0.14)
+    fig.subplots_adjust(left=0.16, bottom=0.20)
     return fig
 
 
@@ -88,7 +96,11 @@ def _forest(result: FitResult) -> Figure:
     terms = result.tables["FactCox"].copy()
     terms = terms.replace([np.inf, -np.inf], np.nan).dropna(subset=["HazardRatio", "Lo", "Hi"])
     terms = terms[terms["HazardRatio"] > 0].sort_values("HazardRatio")
-    fig, ax = plt.subplots(figsize=(8.4, max(3.2, 0.48 * len(terms) + 1.6)))
+    footer = 1.85
+    plot = max(2.3, 0.48 * max(len(terms), 1) + 0.6)
+    height = plot + footer
+    fig = plt.figure(figsize=(8.6, height))
+    ax = fig.add_axes((0.18, footer / height, 0.78, plot / height * 0.96))
     y = np.arange(len(terms))
     ax.errorbar(
         terms["HazardRatio"],
@@ -120,9 +132,7 @@ def _forest(result: FitResult) -> Figure:
     lo = float(terms["Lo"].min()) if len(terms) else 0.5
     hi = float(terms["Hi"].max()) if len(terms) else 2
     ax.set_xlim(min(lo, 1.0) / 1.7, max(hi, 1.0) * 4.0)
-    fig.text(0.01, 0.01, _forest_caption(result), ha="left", va="bottom", fontsize=9, color=MUTED)
-    fig.tight_layout()
-    fig.subplots_adjust(bottom=0.22)
+    fig.text(0.02, 0.03, _forest_caption(result), ha="left", va="bottom", fontsize=9, color=MUTED, wrap=True)
     return fig
 
 
@@ -132,7 +142,9 @@ def _beta(result: FitResult) -> Figure:
     terms = list(dict.fromkeys(beta["Term"].astype(str)))
     cols = min(4, max(1, len(terms)))
     rows = int(np.ceil(len(terms) / cols))
-    fig, axes = plt.subplots(rows, cols, figsize=(3.4 * cols, 3.1 * rows), squeeze=False)
+    footer = 1.7
+    plot = 3.15 * rows
+    fig, axes = plt.subplots(rows, cols, figsize=(3.5 * cols, plot + footer), squeeze=False)
     flat: list[Axes] = list(axes.ravel())
     for ax, term in zip(flat, terms, strict=False):
         part = beta[beta["Term"].astype(str) == term]
@@ -160,17 +172,28 @@ def _beta(result: FitResult) -> Figure:
         ax.set_title(title, fontsize=8, loc="left", color=INK)
     for ax in flat[len(terms) :]:
         ax.set_visible(False)
+    fig.subplots_adjust(
+        left=0.08,
+        right=0.98,
+        top=0.88,
+        bottom=footer / (plot + footer),
+        hspace=0.55,
+        wspace=0.32,
+    )
     fig.text(
         0.01,
-        -0.01,
-        "Proportional hazards (Grambsch–Therneau), Kaplan–Meier time transform. "
-        "Dashed line: the Cox coefficient. Band: pointwise 95% interval of a cubic smooth on log time.",
+        0.01,
+        caption(
+            "Proportional hazards (Grambsch–Therneau), Kaplan–Meier time transform. "
+            "Dashed line: the Cox coefficient. Band: pointwise 95% interval of a cubic smooth on log time.",
+            result,
+        ),
         ha="left",
-        va="top",
+        va="bottom",
         fontsize=9,
         color=MUTED,
+        wrap=True,
     )
-    fig.tight_layout()
     return fig
 
 
@@ -200,7 +223,7 @@ def _km_caption(result: FitResult) -> str:
     text = cite("Kaplan–Meier, log-log 95% bands. N = {N}. Events = {Events}.", result)
     if "LogRankP" in result.measures:
         text += " " + cite("Log-rank p = {LogRankP}.", result)
-    return text
+    return caption(text, result)
 
 
 def _forest_caption(result: FitResult) -> str:
@@ -213,4 +236,4 @@ def _forest_caption(result: FitResult) -> str:
             "Of the {NAtRisk} still at risk, about {ExpectedExits} are expected to have the event within {Horizon}.",
             result,
         )
-    return text
+    return caption(text, result)
