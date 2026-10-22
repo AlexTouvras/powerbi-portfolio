@@ -29,7 +29,7 @@
 - [x] Controllership showcase capture → `10-fpa-controllership/screenshots/` (2026-10-20)
 - [x] Deneb KM + forest + β(t) binders — `_shared/deneb/` templates + `deneb-binders.mjs` (2026-10-20)
 - [x] Study Duration Argument page wired to approved fit + Deneb KM/forest/β(t) (2026-10-20)
-- [ ] Study Duration: showcase capture is on disk (`screenshots/`, 5508×3098) but Argument Deneb cards were blank (2026-10-21)
+- [x] Study Duration Argument cards draw: KM legend and 55–100% scale, forest vertical line at 1, β(t) panels on the smooth curve (2026-10-22)
 - [x] **Canvas recapture** — Study Duration, Care Pulse, Investing Desk, Nordic Equity, Churn, Sales recaptured at one canvas size (2026-10-21). Controllership landing was cropped earlier, not re-shot. Logistics, Experience, Bank, and Credit were already one size from the older pass.
 - [x] Study Duration visual pass — Landing poster, Pulse charts/matrix, KM/β(t) Deneb fixes + model refresh (2026-10-20)
 - [x] Study Duration narrative clarity — plain OULAD / CCC vs FFF framing on Landing–Context (2026-10-21)

@@ -1,50 +1,66 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-  "description": "Kaplan–Meier step curves with log-log band. Bind FactKm: Stratum, Time, Survival, Lo, Hi, NRisk.",
+  "description": "Kaplan-Meier step curves. Bind FactKm: Stratum, Time, Survival, Lo, Hi, NRisk.",
   "data": { "name": "dataset" },
   "padding": 2,
-  "height": 250,
+  "height": 200,
   "width": "container",
+  "encoding": {
+    "x": {
+      "field": "Time",
+      "type": "quantitative",
+      "title": "Days from module start",
+      "axis": {
+        "labelColor": "#5A6B75",
+        "titleColor": "#5A6B75",
+        "grid": false,
+        "tickCount": 6,
+        "titleFontSize": 10,
+        "labelFontSize": 9,
+        "titlePadding": 4
+      }
+    },
+    "color": {
+      "field": "Stratum",
+      "type": "nominal",
+      "legend": {
+        "title": null,
+        "labelColor": "#5A6B75",
+        "orient": "top",
+        "direction": "horizontal",
+        "symbolType": "stroke",
+        "labelFontSize": 11,
+        "symbolSize": 80,
+        "columns": 7,
+        "padding": 2
+      },
+      "scale": {
+        "domain": ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG"],
+        "range": ["#2F5F73", "#5B8FA3", "#B42318", "#C17B3A", "#4A6B5C", "#8B6B4A", "#6B7C86"]
+      }
+    }
+  },
   "layer": [
     {
-      "mark": { "type": "area", "opacity": 0.12, "line": false },
+      "mark": { "type": "area", "opacity": 0.18, "line": false },
       "encoding": {
-        "x": { "field": "Time", "type": "quantitative" },
-        "y": { "field": "Lo", "type": "quantitative", "scale": { "domain": [0, 1] }, "axis": null },
-        "y2": { "field": "Hi" },
-        "color": {
-          "field": "Stratum",
-          "type": "nominal",
-          "legend": null,
-          "scale": {
-            "domain": ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG"],
-            "range": ["#2F5F73", "#5B8FA3", "#B42318", "#C17B3A", "#4A6B5C", "#8B6B4A", "#6B7C86"]
-          }
-        }
+        "y": {
+          "field": "Lo",
+          "type": "quantitative",
+          "scale": { "domain": [0.55, 1], "zero": false },
+          "axis": null
+        },
+        "y2": { "field": "Hi" }
       }
     },
     {
       "mark": { "type": "line", "interpolate": "step-after", "strokeWidth": 2.25 },
       "encoding": {
-        "x": {
-          "field": "Time",
-          "type": "quantitative",
-          "title": "Days from module start",
-          "axis": {
-            "labelColor": "#5A6B75",
-            "titleColor": "#5A6B75",
-            "grid": false,
-            "tickCount": 6,
-            "titleFontSize": 10,
-            "labelFontSize": 9,
-            "titlePadding": 4
-          }
-        },
         "y": {
           "field": "Survival",
           "type": "quantitative",
           "title": null,
-          "scale": { "domain": [0, 1] },
+          "scale": { "domain": [0.55, 1], "zero": false },
           "axis": {
             "labelColor": "#5A6B75",
             "format": ".0%",
@@ -52,24 +68,6 @@
             "gridColor": "#E8EEF2",
             "tickCount": 5,
             "labelFontSize": 9
-          }
-        },
-        "color": {
-          "field": "Stratum",
-          "type": "nominal",
-          "legend": {
-            "title": null,
-            "labelColor": "#5A6B75",
-            "orient": "top-right",
-            "direction": "horizontal",
-            "symbolType": "stroke",
-            "labelFontSize": 10,
-            "symbolSize": 36,
-            "padding": 2
-          },
-          "scale": {
-            "domain": ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG"],
-            "range": ["#2F5F73", "#5B8FA3", "#B42318", "#C17B3A", "#4A6B5C", "#8B6B4A", "#6B7C86"]
           }
         },
         "tooltip": [
@@ -83,7 +81,6 @@
   ],
   "config": {
     "view": { "stroke": null },
-    "background": null,
-    "legend": { "layout": { "right": { "anchor": "middle" } } }
+    "background": "#FFFFFF"
   }
 }

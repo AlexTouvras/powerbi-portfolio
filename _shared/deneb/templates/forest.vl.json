@@ -1,8 +1,8 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-  "description": "Cox forest — all terms, row step sized to fill Argument card height.",
+  "description": "Cox forest. Bind FactCox: Term, HazardRatio, Lo, Hi. Vertical rule at 1.",
   "data": { "name": "dataset" },
-  "height": { "step": 30 },
+  "height": { "step": 22 },
   "width": "container",
   "padding": 4,
   "encoding": {
@@ -13,15 +13,15 @@
       "axis": {
         "title": null,
         "labelColor": "#0F1C24",
-        "labelLimit": 200,
-        "labelFontSize": 10,
-        "labelPadding": 4
+        "labelLimit": 220,
+        "labelFontSize": 11,
+        "labelPadding": 6
       }
     }
   },
   "layer": [
     {
-      "mark": { "type": "rule", "strokeWidth": 1.5, "color": "#A8B5BC" },
+      "mark": { "type": "rule", "strokeWidth": 1.5, "color": "#5A6B75" },
       "encoding": {
         "x": { "field": "Lo", "type": "quantitative", "scale": { "type": "log", "nice": true } },
         "x2": { "field": "Hi" }
@@ -35,14 +35,14 @@
           "type": "quantitative",
           "scale": { "type": "log" },
           "axis": {
-            "title": "Hazard ratio (log)",
+            "title": "Hazard ratio (log scale)",
             "labelColor": "#5A6B75",
             "titleColor": "#5A6B75",
             "titleFontSize": 10,
             "labelFontSize": 9,
             "grid": true,
             "gridColor": "#E8EEF2",
-            "titlePadding": 4
+            "titlePadding": 6
           }
         },
         "tooltip": [
@@ -54,9 +54,10 @@
       }
     },
     {
-      "mark": { "type": "rule", "strokeDash": [4, 4], "color": "#B42318", "strokeWidth": 1 },
+      "mark": { "type": "rule", "strokeDash": [4, 3], "color": "#B42318", "strokeWidth": 1.25 },
       "encoding": {
-        "x": { "datum": 1 }
+        "x": { "datum": 1, "type": "quantitative" },
+        "y": null
       }
     }
   ],

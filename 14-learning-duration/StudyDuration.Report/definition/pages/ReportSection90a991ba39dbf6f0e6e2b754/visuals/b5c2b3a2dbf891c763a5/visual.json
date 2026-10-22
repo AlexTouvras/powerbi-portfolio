@@ -5,8 +5,8 @@
     "x": 31.39543796397496,
     "y": 436.04774949965224,
     "z": 4,
-    "height": 566.86207434954792,
-    "width": 900.00255496728221,
+    "height": 566.8620743495479,
+    "width": 900.0025549672822,
     "tabOrder": 4
   },
   "visual": {
@@ -86,7 +86,7 @@
             "jsonSpec": {
               "expr": {
                 "Literal": {
-                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"description\":\"Cox forest — all terms, row step sized to fill Argument card height.\",\"data\":{\"name\":\"dataset\"},\"height\":{\"step\":30},\"width\":\"container\",\"padding\":4,\"encoding\":{\"y\":{\"field\":\"Term\",\"type\":\"nominal\",\"sort\":{\"field\":\"HazardRatio\",\"order\":\"descending\"},\"axis\":{\"title\":null,\"labelColor\":\"#0F1C24\",\"labelLimit\":200,\"labelFontSize\":10,\"labelPadding\":4}}},\"layer\":[{\"mark\":{\"type\":\"rule\",\"strokeWidth\":1.5,\"color\":\"#A8B5BC\"},\"encoding\":{\"x\":{\"field\":\"Lo\",\"type\":\"quantitative\",\"scale\":{\"type\":\"log\",\"nice\":true}},\"x2\":{\"field\":\"Hi\"}}},{\"mark\":{\"type\":\"point\",\"filled\":true,\"size\":70,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"HazardRatio\",\"type\":\"quantitative\",\"scale\":{\"type\":\"log\"},\"axis\":{\"title\":\"Hazard ratio (log)\",\"labelColor\":\"#5A6B75\",\"titleColor\":\"#5A6B75\",\"titleFontSize\":10,\"labelFontSize\":9,\"grid\":true,\"gridColor\":\"#E8EEF2\",\"titlePadding\":4}},\"tooltip\":[{\"field\":\"Term\",\"type\":\"nominal\"},{\"field\":\"HazardRatio\",\"type\":\"quantitative\",\"format\":\".2f\"},{\"field\":\"Lo\",\"type\":\"quantitative\",\"format\":\".2f\",\"title\":\"Lo\"},{\"field\":\"Hi\",\"type\":\"quantitative\",\"format\":\".2f\",\"title\":\"Hi\"}]}},{\"mark\":{\"type\":\"rule\",\"strokeDash\":[4,4],\"color\":\"#B42318\",\"strokeWidth\":1},\"encoding\":{\"x\":{\"datum\":1}}}],\"config\":{\"view\":{\"stroke\":null},\"background\":null}}'"
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"description\":\"Cox forest. Bind FactCox: Term, HazardRatio, Lo, Hi. Vertical rule at 1.\",\"data\":{\"name\":\"dataset\"},\"height\":{\"step\":22},\"width\":\"container\",\"padding\":4,\"encoding\":{\"y\":{\"field\":\"Term\",\"type\":\"nominal\",\"sort\":{\"field\":\"HazardRatio\",\"order\":\"descending\"},\"axis\":{\"title\":null,\"labelColor\":\"#0F1C24\",\"labelLimit\":220,\"labelFontSize\":11,\"labelPadding\":6}}},\"layer\":[{\"mark\":{\"type\":\"rule\",\"strokeWidth\":1.5,\"color\":\"#5A6B75\"},\"encoding\":{\"x\":{\"field\":\"Lo\",\"type\":\"quantitative\",\"scale\":{\"type\":\"log\",\"nice\":true}},\"x2\":{\"field\":\"Hi\"}}},{\"mark\":{\"type\":\"point\",\"filled\":true,\"size\":70,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"HazardRatio\",\"type\":\"quantitative\",\"scale\":{\"type\":\"log\"},\"axis\":{\"title\":\"Hazard ratio (log scale)\",\"labelColor\":\"#5A6B75\",\"titleColor\":\"#5A6B75\",\"titleFontSize\":10,\"labelFontSize\":9,\"grid\":true,\"gridColor\":\"#E8EEF2\",\"titlePadding\":6}},\"tooltip\":[{\"field\":\"Term\",\"type\":\"nominal\"},{\"field\":\"HazardRatio\",\"type\":\"quantitative\",\"format\":\".2f\"},{\"field\":\"Lo\",\"type\":\"quantitative\",\"format\":\".2f\",\"title\":\"Lo\"},{\"field\":\"Hi\",\"type\":\"quantitative\",\"format\":\".2f\",\"title\":\"Hi\"}]}},{\"mark\":{\"type\":\"rule\",\"strokeDash\":[4,3],\"color\":\"#B42318\",\"strokeWidth\":1.25},\"encoding\":{\"x\":{\"datum\":1,\"type\":\"quantitative\"},\"y\":null}}],\"config\":{\"view\":{\"stroke\":null},\"background\":null}}'"
                 }
               }
             },

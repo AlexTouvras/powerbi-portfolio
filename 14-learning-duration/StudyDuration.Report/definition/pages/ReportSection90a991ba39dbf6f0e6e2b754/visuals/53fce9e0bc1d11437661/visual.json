@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "53fce9e0bc1d11437661",
   "position": {
-    "x": 948.83990291124326,
-    "y": 631.39714127549644,
+    "x": 948.8399029112433,
+    "y": 631.3971412754964,
     "z": 6,
     "height": 181.39586379185533,
-    "width": 938.37475692325154,
+    "width": 938.3747569232515,
     "tabOrder": 6
   },
   "visual": {
@@ -131,7 +131,7 @@
             "jsonSpec": {
               "expr": {
                 "Literal": {
-                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"description\":\"Single β(t) panel. Bind FactBetaT; filter Term in the visual or keep one term in the template placeholder.\",\"data\":{\"name\":\"dataset\"},\"padding\":4,\"width\":\"container\",\"height\":118,\"transform\":[{\"filter\":{\"field\":\"Term\",\"equal\":\"Disability\"}}],\"layer\":[{\"transform\":[{\"filter\":{\"field\":\"Kind\",\"equal\":\"residual\"}}],\"mark\":{\"type\":\"point\",\"filled\":true,\"size\":16,\"opacity\":0.3,\"color\":\"#8A9AA3\"},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\",\"axis\":{\"title\":null,\"labelColor\":\"#5A6B75\",\"labelFontSize\":9,\"grid\":false,\"tickCount\":5}},\"y\":{\"field\":\"Residual\",\"type\":\"quantitative\",\"axis\":{\"title\":null,\"labelColor\":\"#5A6B75\",\"labelFontSize\":9,\"grid\":true,\"gridColor\":\"#E8EEF2\",\"tickCount\":3}}}},{\"transform\":[{\"filter\":{\"field\":\"Kind\",\"equal\":\"smooth\"}}],\"mark\":{\"type\":\"area\",\"opacity\":0.16,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\"},\"y\":{\"field\":\"Lo\",\"type\":\"quantitative\"},\"y2\":{\"field\":\"Hi\"}}},{\"transform\":[{\"filter\":{\"field\":\"Kind\",\"equal\":\"smooth\"}}],\"mark\":{\"type\":\"line\",\"strokeWidth\":2,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\"},\"y\":{\"field\":\"Beta\",\"type\":\"quantitative\"},\"tooltip\":[{\"field\":\"Term\",\"type\":\"nominal\"},{\"field\":\"Time\",\"type\":\"quantitative\",\"format\":\".0f\"},{\"field\":\"Beta\",\"type\":\"quantitative\",\"format\":\".3f\"}]}}],\"config\":{\"view\":{\"stroke\":null},\"background\":null}}'"
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"description\":\"Single beta(t) panel. Bind FactBetaT. Smooth curve and interval only, so a large Schoenfeld residual cannot flatten the line.\",\"data\":{\"name\":\"dataset\"},\"padding\":4,\"width\":\"container\",\"height\":118,\"transform\":[{\"filter\":{\"field\":\"Term\",\"equal\":\"Disability\"}}],\"layer\":[{\"transform\":[{\"filter\":{\"field\":\"Kind\",\"equal\":\"smooth\"}}],\"mark\":{\"type\":\"area\",\"opacity\":0.18,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\"},\"y\":{\"field\":\"Lo\",\"type\":\"quantitative\",\"scale\":{\"zero\":false},\"axis\":null},\"y2\":{\"field\":\"Hi\"}}},{\"transform\":[{\"filter\":{\"field\":\"Kind\",\"equal\":\"smooth\"}}],\"mark\":{\"type\":\"line\",\"strokeWidth\":2,\"color\":\"#2F5F73\"},\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"quantitative\",\"axis\":{\"title\":null,\"labelColor\":\"#5A6B75\",\"labelFontSize\":9,\"grid\":false,\"tickCount\":5}},\"y\":{\"field\":\"Beta\",\"type\":\"quantitative\",\"scale\":{\"zero\":false},\"axis\":{\"title\":null,\"labelColor\":\"#5A6B75\",\"labelFontSize\":9,\"grid\":true,\"gridColor\":\"#E8EEF2\",\"tickCount\":3}},\"tooltip\":[{\"field\":\"Term\",\"type\":\"nominal\"},{\"field\":\"Time\",\"type\":\"quantitative\",\"format\":\".0f\"},{\"field\":\"Beta\",\"type\":\"quantitative\",\"format\":\".3f\"}]}}],\"config\":{\"view\":{\"stroke\":null},\"background\":\"#FFFFFF\"}}'"
                 }
               }
             },

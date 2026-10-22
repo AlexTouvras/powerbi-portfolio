@@ -19,6 +19,7 @@ Certified AppSource Deneb — no `.pbiviz` folder required in the PBIP. Register
 | `templates/km-at-risk.vl.json` | `FactKm` | `Stratum`, `Time`, `Survival`, `Lo`, `Hi`, `NRisk` |
 | `templates/forest.vl.json` | `FactCox` | `Term`, `HazardRatio`, `Lo`, `Hi` |
 | `templates/beta-t.vl.json` | `FactBetaT` | `Term`, `Time`, `Residual`, `Beta`, `Lo`, `Hi`, `Kind` |
+| `templates/beta-t-panel.vl.json` | `FactBetaT` | same fields; one `__TERM__`; smooth curve and interval only |
 
 Column names match `_shared/analytics_engine/fit.py` (`_KM_COLUMNS`, `_COX_COLUMNS`, `_BETA_COLUMNS`).
 
